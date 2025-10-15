@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mbg_mobile_app/features/authentication/screens/onboarding/onboarding.dart';
 import 'package:mbg_mobile_app/utils/constants/text_strings.dart';
 import 'package:mbg_mobile_app/utils/theme/theme.dart';
 
@@ -17,16 +18,7 @@ class App extends StatelessWidget {
       themeMode: ThemeMode.system,
       theme: MBGAppTheme.lightTheme,
       darkTheme: MBGAppTheme.darkTheme,
-      debugShowCheckedModeBanner: false,
-      // initialBinding: GeneralBindings(),
-      home: const Scaffold(
-        body: Center(
-          child: Text(
-            'Project Structure is set up and running.\n LEGOHHHHH 🎊',
-            textAlign: TextAlign.center,
-          ),
-        ),
-      ),
+      home: const OnBoardingScreen(),
     );
   }
 }

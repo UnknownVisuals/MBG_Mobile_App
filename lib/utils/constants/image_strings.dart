@@ -3,10 +3,7 @@
 /// This class contains all the App Images in String formats.
 class MBGImages {
   // -- App Logos
-  static const String darkAppLogo =
-      "assets/logos/t-store-splash-logo-black.png";
-  static const String lightAppLogo =
-      "assets/logos/t-store-splash-logo-white.png";
+  static const String logo = "assets/logos/logo.png";
 
   // -- Social Logos
   static const String google = "assets/logos/google-icon.png";
@@ -19,6 +16,13 @@ class MBGImages {
       "assets/images/on_boarding_images/sammy-line-shopping.gif";
   static const String onBoardingImage3 =
       "assets/images/on_boarding_images/sammy-line-delivery.gif";
+
+  static const String verifyIllustration =
+      "assets/images/on_boarding_images/sammy-line-verification.gif";
+  static const String deliveredEmailIllustration =
+      "assets/images/on_boarding_images/sammy-line-verification.gif";
+  static const String staticSuccessIllustration =
+      "assets/images/on_boarding_images/sammy-line-verification.gif";
 
   //Profile
   static const String user = "assets/images/content/user.png";

@@ -5,26 +5,27 @@ class MBGTexts {
   static const String skip = "Skip";
   static const String done = "Done";
   static const String submit = "Submit";
-  static const String appName = "T-Store";
+  static const String appName = "MBG App";
   static const String tContinue = "Continue";
 
   // -- OnBoarding Texts
-  static const String onBoardingTitle1 = "Choose your product";
-  static const String onBoardingTitle2 = "Select Payment Method";
-  static const String onBoardingTitle3 = "Deliver at your door step";
+  static const String onBoardingTitle1 = "Pilih makanan bergizi";
+  static const String onBoardingTitle2 = "Pilih metode pembayaran";
+  static const String onBoardingTitle3 = "Diantar ke rumah Anda";
 
   static const String onBoardingSubTitle1 =
-      "Welcome to a World of Limitless Choices - Your Perfect Product Awaits!";
+      "Selamat datang di dunia pilihan makanan bergizi tak terbatas - Makanan sempurna menanti Anda!";
   static const String onBoardingSubTitle2 =
-      "For Seamless Transactions, Choose Your Payment Path - Your Convenience, Our Priority!";
+      "Untuk transaksi yang lancar, pilih jalur pembayaran Anda - Kenyamanan Anda, Prioritas Kami!";
   static const String onBoardingSubTitle3 =
-      "From Our Doorstep to Yours - Swift, Secure, and Contactless Delivery!";
+      "Dari dapur kami ke rumah Anda - Pengiriman cepat, aman, dan tanpa kontak!";
 
   // -- Authentication Forms
   static const String firstName = "First Name";
   static const String lastName = "Last Name";
   static const String email = "E-Mail";
   static const String password = "Password";
+  static const String confirmPassword = "Confirm Password";
   static const String newPassword = "New Password";
   static const String username = "Username";
   static const String phoneNo = "Phone Number";

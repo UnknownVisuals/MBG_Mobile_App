@@ -1,5 +1,4 @@
-
-class TValidator {
+class MBGValidator {
   static String? validateEmail(String? value) {
     if (value == null || value.isEmpty) {
       return 'Email is required.';
@@ -58,5 +57,5 @@ class TValidator {
     return null;
   }
 
-// Add more custom validators as needed for your specific requirements.
+  // Add more custom validators as needed for your specific requirements.
 }
