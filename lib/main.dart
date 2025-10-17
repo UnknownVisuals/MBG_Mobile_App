@@ -1,10 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:mbg_mobile_app/features/authentication/screens/onboarding/onboarding.dart';
 import 'package:mbg_mobile_app/utils/constants/text_strings.dart';
 import 'package:mbg_mobile_app/utils/theme/theme.dart';
+import 'package:mbg_mobile_app/utils/http/http_client.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await dotenv.load(fileName: ".env");
+  await GetStorage.init();
+
+  MBGHttpHelper.loadSessionToken();
+
   runApp(const App());
 }
 

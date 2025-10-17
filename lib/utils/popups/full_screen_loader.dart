@@ -5,7 +5,7 @@ import 'package:mbg_mobile_app/utils/helpers/helper_functions.dart';
 import 'package:mbg_mobile_app/utils/loaders/animation_loader.dart';
 
 /// A utility class for managing a full-screen loading dialog.
-class TFullScreenLoader {
+class MBGFullScreenLoader {
   /// Open a full-screen loading dialog with a given text and animation.
   /// This method doesn't return anything.
   ///

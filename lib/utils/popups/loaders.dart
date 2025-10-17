@@ -4,7 +4,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/helpers/helper_functions.dart';
 
-class TLoaders {
+class MBGLoaders {
   static hideSnackBar() =>
       ScaffoldMessenger.of(Get.context!).hideCurrentSnackBar();
 

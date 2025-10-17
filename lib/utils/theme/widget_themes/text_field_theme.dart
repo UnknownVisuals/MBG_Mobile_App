@@ -58,7 +58,7 @@ class MBGTextFormFieldTheme {
       color: MBGColors.white,
     ),
     floatingLabelStyle: const TextStyle().copyWith(
-      color: MBGColors.white.withOpacity(0.8),
+      color: MBGColors.white.withValues(alpha: 0.8),
     ),
     border: const OutlineInputBorder().copyWith(
       borderRadius: BorderRadius.circular(MBGSizes.inputFieldRadius),
