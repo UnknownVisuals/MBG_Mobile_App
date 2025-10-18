@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:mbg_mobile_app/features/authentication/models/login_model.dart';
+import 'package:mbg_mobile_app/navigation_menu.dart';
 import 'package:mbg_mobile_app/utils/http/http_client.dart';
 import 'package:mbg_mobile_app/utils/local_storage/storage_utility.dart';
 import 'package:mbg_mobile_app/utils/popups/loaders.dart';
@@ -58,6 +59,8 @@ class LoginController extends GetxController {
             message:
                 'Welcome back, ${responseData['data']['user']['name']}!\nToken: $tokenStorage',
           );
+
+          Get.offAll(() => const NavigationMenu());
         } else {
           MBGLoaders.errorSnackBar(
             title: 'Login Failed',
