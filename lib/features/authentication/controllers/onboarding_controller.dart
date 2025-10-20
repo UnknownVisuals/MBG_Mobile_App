@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:mbg_mobile_app/features/authentication/screens/login/login.dart';
+import 'package:mbg_mobile_app/utils/local_storage/storage_utility.dart';
 
 class OnBoardingController extends GetxController {
   // Dependencies
-  final GetStorage storage = GetStorage();
+  final MBGLocalStorage storage = MBGLocalStorage();
   final PageController pageController = PageController();
 
   // State Variables
@@ -29,8 +29,8 @@ class OnBoardingController extends GetxController {
   //  Update Current Index & Jump to Next Page
   void nextPage() {
     if (currentPageIndex.value == 2) {
-      storage.write('hasSeenOnboarding', true);
-      Get.to(const LoginScreen());
+      storage.saveData('hasSeenOnboarding', true);
+      Get.offAll(() => const LoginScreen());
     } else {
       int page = currentPageIndex.value + 1;
       currentPageIndex.value = page;

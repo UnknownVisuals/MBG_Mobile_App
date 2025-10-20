@@ -1,8 +1,11 @@
 import 'package:get/get.dart';
+import 'package:mbg_mobile_app/features/authentication/controllers/user_controller.dart';
 import 'package:mbg_mobile_app/features/authentication/models/login_model.dart';
+import 'package:mbg_mobile_app/features/dapur/screens/dapur.dart';
+import 'package:mbg_mobile_app/features/driver/screens/driver.dart';
+import 'package:mbg_mobile_app/features/sekolah/screens/sekolah.dart';
 import 'package:mbg_mobile_app/navigation_menu.dart';
 import 'package:mbg_mobile_app/utils/http/http_client.dart';
-import 'package:mbg_mobile_app/utils/local_storage/storage_utility.dart';
 import 'package:mbg_mobile_app/utils/popups/loaders.dart';
 
 class LoginController extends GetxController {
@@ -45,32 +48,50 @@ class LoginController extends GetxController {
 
         if (responseData['success'] == true) {
           final String token = responseData['data']['token'] as String;
+
+          // Save token based on remember me preference
           await MBGHttpHelper.setSessionToken(
             token,
             persist: isRememberMe.value,
           );
 
-          MBGLocalStorage localStorage = MBGLocalStorage();
-          final String tokenStorage =
-              localStorage.readData<String>('session_token') ?? '';
+          // Get UserController instance
+          final userController = Get.put(UserController());
 
+          // Fetch complete user profile from auth/me endpoint
+          await userController.fetchUserProfile();
+
+          // Show success message
           await MBGLoaders.successSnackBar(
             title: 'Login Successful',
             message:
-                'Welcome back, ${responseData['data']['user']['name']}!\nToken: $tokenStorage',
+                'Welcome back, ${userController.user.value?.name ?? 'User'}!',
           );
 
-          Get.offAll(() => const NavigationMenu());
+          // Navigate based on user role
+          final userRole = userController.user.value?.role;
+
+          if (userRole == 'PIC_DAPUR') {
+            Get.offAll(() => const DapurScreen());
+          } else if (userRole == 'DRIVER') {
+            Get.offAll(() => const DriverScreen());
+          } else if (userRole == 'PIC_SEKOLAH') {
+            Get.offAll(() => const SekolahScreen());
+          } else if (userRole == 'SUPERADMIN') {
+            Get.offAll(() => const NavigationMenu());
+          } else {
+            Get.offAll(() => const NavigationMenu());
+          }
         } else {
           MBGLoaders.errorSnackBar(
             title: 'Login Failed',
-            message: responseData?['message'] ?? 'Invalid response format',
+            message: responseData['message'],
           );
         }
       } else {
         MBGLoaders.errorSnackBar(
           title: 'Login Failed',
-          message: loginResponse.body?['message'] ?? 'Unknown error occurred',
+          message: loginResponse.body['message'],
         );
       }
     } catch (e) {

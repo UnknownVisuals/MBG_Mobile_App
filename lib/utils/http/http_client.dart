@@ -37,6 +37,16 @@ class MBGHttpHelper extends GetConnect {
     await _localStorage.removeData('session_token');
   }
 
+  // Method to check if session token exists
+  static bool hasSessionToken() {
+    return _sessionToken.isNotEmpty;
+  }
+
+  // Method to get current session token
+  static String getSessionToken() {
+    return _sessionToken;
+  }
+
   // Setter headers for HTTP requests
   static Map<String, String> _getHeaders() {
     final headers = <String, String>{'Content-Type': 'application/json'};

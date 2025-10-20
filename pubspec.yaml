@@ -45,6 +45,8 @@ dependencies:
   logger: ^2.6.2
   lottie: ^3.3.2
   smooth_page_indicator: ^1.2.1
+  timelines_plus: ^1.0.7
+  sidebarx: ^0.17.2
 
 dev_dependencies:
   flutter_test:

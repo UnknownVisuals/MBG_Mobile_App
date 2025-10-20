@@ -14,6 +14,7 @@ class MBGAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.leadingIcon,
     this.leadingOnPressed,
     this.showBackArrow = false,
+    this.showDrawerIcon = false,
   });
 
   final Widget? title;
@@ -21,6 +22,7 @@ class MBGAppBar extends StatelessWidget implements PreferredSizeWidget {
   final IconData? leadingIcon;
   final VoidCallback? leadingOnPressed;
   final bool showBackArrow;
+  final bool showDrawerIcon;
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +38,16 @@ class MBGAppBar extends StatelessWidget implements PreferredSizeWidget {
                 icon: Icon(
                   Iconsax.arrow_left,
                   color: dark ? MBGColors.white : MBGColors.black,
+                ),
+              )
+            : showDrawerIcon
+            ? Builder(
+                builder: (context) => IconButton(
+                  onPressed: () => Scaffold.of(context).openDrawer(),
+                  icon: Icon(
+                    Iconsax.menu,
+                    color: dark ? MBGColors.white : MBGColors.black,
+                  ),
                 ),
               )
             : leadingIcon != null
