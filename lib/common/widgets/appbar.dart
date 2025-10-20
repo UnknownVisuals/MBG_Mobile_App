@@ -45,7 +45,7 @@ class MBGAppBar extends StatelessWidget implements PreferredSizeWidget {
                 builder: (context) => IconButton(
                   onPressed: () => Scaffold.of(context).openDrawer(),
                   icon: Icon(
-                    Iconsax.menu,
+                    Iconsax.menu_1,
                     color: dark ? MBGColors.white : MBGColors.black,
                   ),
                 ),

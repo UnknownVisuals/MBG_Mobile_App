@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:mbg_mobile_app/common/styles/shadow_styles.dart';
 import 'package:mbg_mobile_app/features/dapur/models/timeline_event_data.dart';
-import 'package:mbg_mobile_app/features/dapur/screens/widgets/timeline_utils.dart';
+import 'package:mbg_mobile_app/utils/constants/colors.dart';
+import 'package:mbg_mobile_app/utils/constants/sizes.dart';
 
 class TimelineEventCard extends StatelessWidget {
   final TimelineEventData event;
@@ -14,197 +16,131 @@ class TimelineEventCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final eventColor = TimelineUtils.getEventColor(
-      event.type,
-      event.isCompleted,
-    );
-
     return Container(
+      padding: const EdgeInsets.all(MBGSizes.md),
       decoration: BoxDecoration(
-        gradient: event.isCompleted
-            ? LinearGradient(
-                colors: [Colors.white, eventColor.withValues(alpha: .05)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              )
-            : null,
-        color: event.isCompleted ? null : Colors.grey.shade100,
-        borderRadius: BorderRadius.circular(16),
+        // Active card uses primary gradient like progress card
+        gradient: event.isActive ? MBGColors.primaryGradient : null,
+        color: event.isActive ? null : MBGColors.white,
+        borderRadius: BorderRadius.circular(MBGSizes.cardRadiusLg),
         border: Border.all(
-          color: event.isCompleted
-              ? eventColor.withValues(alpha: 0.3)
-              : Colors.grey.shade300,
-          width: 2,
+          color: event.isActive ? MBGColors.primary : MBGColors.borderPrimary,
+          width: event.isActive ? 2 : 1,
         ),
-        boxShadow: event.isCompleted
-            ? [
-                BoxShadow(
-                  color: eventColor.withValues(alpha: 0.2),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ]
-            : [],
+        boxShadow: event.isActive ? [MBGShadowStyles.primaryCardShadow] : null,
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                // Icon badge
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: event.isCompleted
-                        ? eventColor.withValues(alpha: 0.15)
-                        : Colors.grey.shade200,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Icon(
-                    TimelineUtils.getEventIcon(event.type),
-                    color: event.isCompleted ? eventColor : Colors.grey,
-                    size: 20,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Title and time
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  event.title,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: event.isActive
+                        ? MBGColors.white
+                        : MBGColors.textPrimary,
                   ),
                 ),
-                const SizedBox(width: 12),
+              ),
+              Row(
+                children: [
+                  Icon(
+                    Iconsax.clock,
+                    size: MBGSizes.iconSm,
+                    color: event.isActive
+                        ? MBGColors.white
+                        : MBGColors.darkGrey,
+                  ),
+                  const SizedBox(width: MBGSizes.spaceBtwItems / 2),
+                  Text(
+                    _formatTime(event.timestamp),
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: event.isActive
+                          ? MBGColors.white
+                          : MBGColors.darkGrey,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: MBGSizes.sm),
 
-                // Title and time
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        event.title,
-                        style: Theme.of(context).textTheme.titleMedium
-                            ?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: event.isCompleted
-                                  ? Colors.black87
-                                  : Colors.grey.shade600,
-                            ),
-                      ),
-                      const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          Icon(
-                            Iconsax.clock,
-                            size: 14,
-                            color: event.isCompleted ? eventColor : Colors.grey,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            _formatTime(event.timestamp),
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: event.isCompleted
-                                  ? eventColor
-                                  : Colors.grey,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-
-                // Status badge
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
-                  ),
-                  decoration: BoxDecoration(
-                    gradient: event.isCompleted
-                        ? LinearGradient(
-                            colors: [
-                              Colors.green.shade400,
-                              Colors.green.shade600,
-                            ],
-                          )
-                        : null,
-                    color: event.isCompleted ? null : Colors.grey.shade200,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: event.isCompleted
-                        ? [
-                            BoxShadow(
-                              color: Colors.green.withValues(alpha: 0.3),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
-                            ),
-                          ]
-                        : [],
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        event.isCompleted
-                            ? Iconsax.tick_circle5
-                            : Iconsax.timer_pause,
-                        size: 14,
-                        color: event.isCompleted
-                            ? Colors.white
-                            : Colors.grey.shade600,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        event.isCompleted ? 'Selesai' : 'Pending',
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.bold,
-                          color: event.isCompleted
-                              ? Colors.white
-                              : Colors.grey.shade600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+          // Description
+          Text(
+            event.description,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: event.isActive
+                  ? MBGColors.white.withValues(alpha: 0.9)
+                  : MBGColors.darkerGrey,
             ),
-            const SizedBox(height: 12),
+          ),
+          const SizedBox(height: MBGSizes.md),
 
-            // Description box
+          // Action button (only show if not completed)
+          if (!event.isCompleted)
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  // TODO: Handle completion action
+                },
+                icon: Icon(
+                  Iconsax.tick_circle,
+                  color: event.isActive ? MBGColors.primary : MBGColors.white,
+                ),
+                label: Text(
+                  'Tandai Selesai',
+                  style: TextStyle(
+                    color: event.isActive ? MBGColors.primary : MBGColors.white,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: event.isActive
+                      ? MBGColors.white
+                      : MBGColors.primary,
+                  foregroundColor: event.isActive
+                      ? MBGColors.primary
+                      : MBGColors.white,
+                ),
+              ),
+            )
+          else
+            // Completed badge
             Container(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(MBGSizes.xs),
               decoration: BoxDecoration(
-                color: event.isCompleted ? Colors.white : Colors.grey.shade50,
-                borderRadius: BorderRadius.circular(10),
+                color: MBGColors.success.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(MBGSizes.borderRadiusMd),
                 border: Border.all(
-                  color: event.isCompleted
-                      ? eventColor.withValues(alpha: 0.2)
-                      : Colors.grey.shade200,
+                  color: MBGColors.success.withValues(alpha: 0.4),
+                  width: 1,
                 ),
               ),
               child: Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(
-                    Iconsax.document_text,
-                    size: 16,
-                    color: event.isCompleted
-                        ? eventColor.withValues(alpha: 0.7)
-                        : Colors.grey,
+                    Iconsax.tick_circle5,
+                    size: MBGSizes.iconSm,
+                    color: MBGColors.success.withValues(alpha: 0.8),
                   ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      event.description,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: event.isCompleted
-                            ? Colors.black87
-                            : Colors.grey.shade600,
-                        height: 1.4,
-                      ),
+                  const SizedBox(width: MBGSizes.spaceBtwItems),
+                  Text(
+                    'Selesai   ',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: MBGColors.success.withValues(alpha: 0.8),
                     ),
                   ),
                 ],
               ),
             ),
-          ],
-        ),
+        ],
       ),
     );
   }

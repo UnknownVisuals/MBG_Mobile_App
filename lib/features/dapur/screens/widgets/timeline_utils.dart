@@ -68,7 +68,8 @@ class TimelineUtils {
         title: 'Selesai Packing',
         description: 'Makanan sudah dikemas dan siap dikirim',
         timestamp: DateTime.now().subtract(const Duration(hours: 2)),
-        isCompleted: true,
+        isCompleted: false,
+        isActive: true,
       ),
       TimelineEventData(
         type: TimelineEventType.kitchenReceived,
@@ -76,6 +77,7 @@ class TimelineUtils {
         description: 'Wadah makanan kembali diterima di dapur',
         timestamp: DateTime.now().subtract(const Duration(hours: 1)),
         isCompleted: false,
+        isActive: false,
       ),
       TimelineEventData(
         type: TimelineEventType.washingComplete,
@@ -83,6 +85,7 @@ class TimelineUtils {
         description: 'Proses pencucian wadah selesai',
         timestamp: DateTime.now(),
         isCompleted: false,
+        isActive: false,
       ),
     ];
   }

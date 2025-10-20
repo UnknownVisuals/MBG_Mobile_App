@@ -8,4 +8,11 @@ class MBGSpacingStyles {
     MBGSizes.defaultSpace,
     MBGSizes.defaultSpace,
   );
+
+  static const EdgeInsetsGeometry homeScreenPadding = EdgeInsets.fromLTRB(
+    MBGSizes.defaultSpace,
+    MBGSizes.defaultSpace,
+    MBGSizes.defaultSpace,
+    0,
+  );
 }

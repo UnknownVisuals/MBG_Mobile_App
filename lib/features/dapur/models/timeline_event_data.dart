@@ -16,6 +16,7 @@ class TimelineEventData {
   final String description;
   final DateTime timestamp;
   final bool isCompleted;
+  final bool isActive;
 
   TimelineEventData({
     required this.type,
@@ -23,5 +24,6 @@ class TimelineEventData {
     required this.description,
     required this.timestamp,
     this.isCompleted = false,
+    this.isActive = false,
   });
 }

@@ -12,16 +12,7 @@ class SplashScreen extends StatelessWidget {
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              MBGColors.primary,
-              MBGColors.primary.withValues(alpha: 0.8),
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
+        decoration: BoxDecoration(gradient: MBGColors.primaryGradient),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -33,7 +24,7 @@ class SplashScreen extends StatelessWidget {
             const CircularProgressIndicator(
               valueColor: AlwaysStoppedAnimation<Color>(MBGColors.white),
             ),
-            const SizedBox(height: MBGSizes.md),
+            const SizedBox(height: MBGSizes.spaceBtwItems),
 
             // Loading text
             Text(

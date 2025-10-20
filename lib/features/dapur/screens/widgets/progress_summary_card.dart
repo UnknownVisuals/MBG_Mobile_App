@@ -1,44 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:mbg_mobile_app/common/styles/shadow_styles.dart';
 import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
 
 class ProgressSummaryCard extends StatelessWidget {
-  final int completedCount;
-  final int totalCount;
-
   const ProgressSummaryCard({
     super.key,
     required this.completedCount,
     required this.totalCount,
   });
 
+  final int completedCount, totalCount;
+
   @override
   Widget build(BuildContext context) {
     final progressPercentage = (completedCount / totalCount * 100).round();
 
     return Container(
-      margin: const EdgeInsets.all(MBGSizes.md),
-      padding: const EdgeInsets.all(MBGSizes.lg),
+      padding: const EdgeInsets.all(MBGSizes.defaultSpace),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [MBGColors.primary, MBGColors.primary.withValues(alpha: 0.8)],
-          begin: Alignment.bottomLeft,
-          end: Alignment.topRight,
-        ),
-        borderRadius: BorderRadius.circular(MBGSizes.lg),
-        boxShadow: [
-          BoxShadow(
-            color: MBGColors.primary.withValues(alpha: 0.4),
-            blurRadius: 15,
-            offset: const Offset(0, MBGSizes.sm),
-          ),
-        ],
+        gradient: MBGColors.primaryGradient,
+        borderRadius: BorderRadius.circular(MBGSizes.cardRadiusLg),
+        boxShadow: [MBGShadowStyles.primaryCardShadow],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -50,52 +40,38 @@ class ProgressSummaryCard extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: MBGSizes.xs),
                   Text(
-                    'Total $completedCount dari $totalCount selesai',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: MBGColors.white.withValues(alpha: 0.7),
-                    ),
+                    '$completedCount dari $totalCount checkpoint selesai',
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodyMedium?.copyWith(color: MBGColors.grey),
                   ),
                 ],
               ),
-              Container(
-                padding: const EdgeInsets.all(MBGSizes.md),
-                decoration: BoxDecoration(
-                  color: MBGColors.white.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(
-                    MBGSizes.borderRadiusLg + 3,
-                  ),
-                ),
-                child: Column(
-                  children: [
-                    Text(
-                      '$progressPercentage%',
-                      style: Theme.of(context).textTheme.headlineMedium
-                          ?.copyWith(
-                            color: MBGColors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                    ),
-                    Text(
-                      'Complete',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: MBGColors.white.withValues(alpha: 0.7),
-                      ),
-                    ),
-                  ],
+              Text(
+                '$progressPercentage%',
+                style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                  color: MBGColors.white,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: MBGSizes.md),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(MBGSizes.borderRadiusMd + 2),
-            child: LinearProgressIndicator(
-              value: completedCount / totalCount,
-              minHeight: MBGSizes.sm,
-              backgroundColor: MBGColors.white.withValues(alpha: 0.3),
-              valueColor: const AlwaysStoppedAnimation<Color>(MBGColors.white),
+          const SizedBox(height: MBGSizes.spaceBtwItems),
+          TweenAnimationBuilder<double>(
+            duration: const Duration(milliseconds: 1000),
+            curve: Curves.easeInOut,
+            tween: Tween<double>(begin: 0.0, end: completedCount / totalCount),
+            builder: (context, value, child) => ClipRRect(
+              borderRadius: BorderRadius.circular(MBGSizes.sm),
+              child: LinearProgressIndicator(
+                value: value,
+                minHeight: MBGSizes.sm,
+                backgroundColor: MBGColors.accent,
+                valueColor: const AlwaysStoppedAnimation<Color>(
+                  MBGColors.white,
+                ),
+              ),
             ),
           ),
         ],
