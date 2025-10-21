@@ -8,17 +8,6 @@ class DriverController extends GetxController {
   final RxList<dynamic> deliveries = <dynamic>[].obs;
   final RxBool isLoading = false.obs;
 
-  @override
-  void onInit() {
-    super.onInit();
-    // Initialize data if needed
-  }
-
-  @override
-  void onClose() {
-    super.onClose();
-  }
-
   /// Fetch driver's deliveries
   Future<void> fetchDeliveries() async {
     try {

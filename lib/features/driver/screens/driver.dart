@@ -4,10 +4,10 @@ import 'package:mbg_mobile_app/common/widgets/appbar.dart';
 import 'package:mbg_mobile_app/common/widgets/drawer_driver.dart';
 import 'package:mbg_mobile_app/features/authentication/controllers/user_controller.dart';
 import 'package:mbg_mobile_app/features/driver/controllers/driver_controller.dart';
-import 'package:mbg_mobile_app/features/driver/screens/delivery_history_screen.dart';
-import 'package:mbg_mobile_app/features/driver/screens/driver_dashboard_screen.dart';
+import 'package:mbg_mobile_app/features/driver/screens/delivery_history/delivery_history_screen.dart';
+import 'package:mbg_mobile_app/features/driver/screens/driver_dashboard/driver_dashboard_screen.dart';
 import 'package:mbg_mobile_app/features/driver/screens/my_deliveries_screen.dart';
-import 'package:mbg_mobile_app/features/driver/screens/qr_scanner_screen.dart';
+import 'package:mbg_mobile_app/features/driver/screens/qr_scanner/qr_scanner_screen.dart';
 import 'package:mbg_mobile_app/features/setting/sceens/setting.dart';
 
 class DriverScreen extends StatelessWidget {
@@ -15,7 +15,7 @@ class DriverScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final userController = Get.put(UserController());
+    final userController = Get.find<UserController>();
     final driverController = Get.put(DriverController());
 
     return Obx(

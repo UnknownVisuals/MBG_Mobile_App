@@ -1,8 +1,7 @@
 import 'package:get/get.dart';
 import 'package:mbg_mobile_app/features/authentication/controllers/user_controller.dart';
 import 'package:mbg_mobile_app/features/authentication/models/login_model.dart';
-import 'package:mbg_mobile_app/features/dapur/screens/dapur.dart';
-import 'package:mbg_mobile_app/features/dapur/screens/dapur_dashboard_screen.dart';
+import 'package:mbg_mobile_app/features/dapur/screens/dapur_dashboard/dapur_dashboard_screen.dart';
 import 'package:mbg_mobile_app/features/driver/screens/driver.dart';
 import 'package:mbg_mobile_app/features/sekolah/screens/sekolah.dart';
 import 'package:mbg_mobile_app/navigation_menu.dart';
@@ -10,7 +9,7 @@ import 'package:mbg_mobile_app/utils/http/http_client.dart';
 import 'package:mbg_mobile_app/utils/popups/loaders.dart';
 
 class LoginController extends GetxController {
-  final MBGHttpHelper httpHelper = MBGHttpHelper();
+  final MBGHttpHelper httpHelper = Get.find<MBGHttpHelper>();
 
   RxBool isObscurePassword = true.obs;
   RxBool isRememberMe = false.obs;
@@ -28,12 +27,22 @@ class LoginController extends GetxController {
     required String username,
     required String password,
   }) async {
+    final trimmedEmail = username.trim();
+
+    if (trimmedEmail.isEmpty || password.isEmpty) {
+      MBGLoaders.warningSnackBar(
+        title: 'Data tidak lengkap',
+        message: 'Email dan kata sandi wajib diisi.',
+      );
+      return;
+    }
+
     isLoading.value = true;
 
     try {
       // Create login model
       final LoginModel loginModel = LoginModel(
-        email: username,
+        email: trimmedEmail,
         password: password,
       );
 
@@ -41,14 +50,18 @@ class LoginController extends GetxController {
       final loginResponse = await httpHelper.postRequest(
         'auth/login',
         loginModel.toJson(),
+        handleUnauthorized: false,
       );
 
       // Handle response
       if (loginResponse.statusCode == 200) {
         final responseData = loginResponse.body;
 
-        if (responseData['success'] == true) {
-          final String token = responseData['data']['token'] as String;
+        if (responseData is Map<String, dynamic> &&
+            responseData['success'] == true) {
+          final Map<String, dynamic> data =
+              responseData['data'] as Map<String, dynamic>;
+          final String token = data['token'] as String;
 
           // Save token based on remember me preference
           await MBGHttpHelper.setSessionToken(
@@ -57,7 +70,9 @@ class LoginController extends GetxController {
           );
 
           // Get UserController instance
-          final userController = Get.put(UserController());
+          final userController = Get.isRegistered<UserController>()
+              ? Get.find<UserController>()
+              : Get.put(UserController());
 
           // Fetch complete user profile from auth/me endpoint
           await userController.fetchUserProfile();
@@ -87,13 +102,20 @@ class LoginController extends GetxController {
         } else {
           MBGLoaders.errorSnackBar(
             title: 'Login Failed',
-            message: responseData['message'],
+            message: responseData is Map<String, dynamic>
+                ? responseData['message']?.toString() ?? 'Terjadi kesalahan.'
+                : 'Terjadi kesalahan.',
           );
         }
       } else {
+        final responseBody = loginResponse.body;
+        String? message;
+        if (responseBody is Map<String, dynamic>) {
+          message = responseBody['message']?.toString();
+        }
         MBGLoaders.errorSnackBar(
           title: 'Login Failed',
-          message: loginResponse.body['message'],
+          message: message ?? 'Terjadi kesalahan saat login.',
         );
       }
     } catch (e) {

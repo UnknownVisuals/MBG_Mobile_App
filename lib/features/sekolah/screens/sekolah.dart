@@ -4,14 +4,16 @@ import 'package:mbg_mobile_app/common/widgets/appbar.dart';
 import 'package:mbg_mobile_app/common/widgets/drawer_pic_sekolah.dart';
 import 'package:mbg_mobile_app/features/authentication/controllers/user_controller.dart';
 import 'package:mbg_mobile_app/features/sekolah/controllers/sekolah_controller.dart';
-import 'package:mbg_mobile_app/features/sekolah/screens/absensi_screen.dart';
+import 'package:mbg_mobile_app/features/sekolah/screens/absensi/absensi_screen.dart';
 import 'package:mbg_mobile_app/features/sekolah/screens/kelas_management_screen.dart';
 import 'package:mbg_mobile_app/features/sekolah/screens/menu_view_screen.dart';
 import 'package:mbg_mobile_app/features/sekolah/screens/nutrition_monitor_screen.dart';
 import 'package:mbg_mobile_app/features/sekolah/screens/receive_delivery_screen.dart';
-import 'package:mbg_mobile_app/features/sekolah/screens/sekolah_dashboard_screen.dart';
+import 'package:mbg_mobile_app/features/sekolah/screens/sekolah_dashboard/sekolah_dashboard_screen.dart';
 import 'package:mbg_mobile_app/features/sekolah/screens/sekolah_management_screen.dart';
-import 'package:mbg_mobile_app/features/sekolah/screens/siswa_management_screen.dart';
+import 'package:mbg_mobile_app/features/sekolah/screens/siswa_management/siswa_management_screen.dart';
+import 'package:mbg_mobile_app/features/sekolah/screens/delivery_history/delivery_history_screen.dart';
+import 'package:mbg_mobile_app/features/dapur/screens/kalender_akademik/kalender_akademik_screen.dart';
 import 'package:mbg_mobile_app/features/setting/sceens/setting.dart';
 
 class SekolahScreen extends StatelessWidget {
@@ -19,7 +21,7 @@ class SekolahScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final userController = Get.put(UserController());
+    final userController = Get.find<UserController>();
     final sekolahController = Get.put(SekolahController());
 
     return Obx(
@@ -65,7 +67,11 @@ class SekolahScreen extends StatelessWidget {
             ReceiveDeliveryScreen(),
             // 7 - Menu
             MenuViewScreen(),
-            // 8 - Setting
+            // 8 - Delivery History
+            DeliveryHistoryScreen(),
+            // 9 - Kalender Akademik
+            KalenderAkademikScreen(),
+            // 10 - Setting
             SettingScreen(),
           ],
         ),

@@ -138,10 +138,26 @@ class MBGDrawerPicSekolah extends StatelessWidget {
                 },
               ),
               SidebarXItem(
+                icon: Iconsax.truck_fast,
+                label: 'Delivery History',
+                onTap: () {
+                  sekolahController.drawerSelectedIndex.value = 8;
+                  Navigator.of(context).pop();
+                },
+              ),
+              SidebarXItem(
+                icon: Iconsax.calendar_2,
+                label: 'Kalender Akademik',
+                onTap: () {
+                  sekolahController.drawerSelectedIndex.value = 9;
+                  Navigator.of(context).pop();
+                },
+              ),
+              SidebarXItem(
                 icon: Iconsax.setting,
                 label: 'Setting',
                 onTap: () {
-                  sekolahController.drawerSelectedIndex.value = 8;
+                  sekolahController.drawerSelectedIndex.value = 10;
                   Navigator.of(context).pop();
                 },
               ),

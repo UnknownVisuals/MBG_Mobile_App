@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:mbg_mobile_app/features/dapur/models/pengiriman_model.dart';
+import 'package:mbg_mobile_app/features/driver/screens/qr_scanner/qr_scanner_screen.dart';
 import 'package:mbg_mobile_app/utils/http/driver_service.dart';
-import 'package:mbg_mobile_app/features/driver/screens/qr_scanner_screen.dart';
 
 class MyDeliveriesScreen extends StatefulWidget {
   const MyDeliveriesScreen({super.key});

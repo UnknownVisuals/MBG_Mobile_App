@@ -1,7 +1,8 @@
 class PengirimanModel {
   final String id;
   final String qrCodeId;
-  final String status; // PENDING, DIAMBIL, DITERIMA
+  final String
+  status; // PENDING, IN_TRANSIT, MENUNGGU_PENGIRIMAN, SEDANG_DIJEMPUT, DIAMBIL, DITERIMA
   final DateTime? waktuDiambil;
   final DateTime? waktuDiterima;
   final int jumlahTray;

@@ -6,6 +6,7 @@ import '../../../utils/popups/full_screen_loader.dart';
 import '../../../utils/constants/image_strings.dart';
 import '../../../common/widgets/appbar.dart';
 import '../models/kelas_model.dart';
+import '../../authentication/controllers/user_controller.dart';
 
 class KelasManagementScreen extends StatefulWidget {
   const KelasManagementScreen({super.key});
@@ -16,6 +17,7 @@ class KelasManagementScreen extends StatefulWidget {
 
 class _KelasManagementScreenState extends State<KelasManagementScreen> {
   final SekolahService _sekolahService = Get.find<SekolahService>();
+  final UserController _userController = Get.find<UserController>();
   List<KelasModel> _kelasList = [];
   bool _isLoading = true;
 
@@ -25,13 +27,20 @@ class _KelasManagementScreenState extends State<KelasManagementScreen> {
     _loadKelas();
   }
 
+  String? get _sekolahId {
+    final sekolahAsPIC = _userController.user.value?.sekolahAsPIC;
+    if (sekolahAsPIC == null || sekolahAsPIC.isEmpty) return null;
+    return sekolahAsPIC[0].id;
+  }
+
   Future<void> _loadKelas() async {
     setState(() => _isLoading = true);
     try {
-      // TODO: Replace with actual sekolahId from user session
-      final kelas = await _sekolahService.getKelasBySekolah(
-        'current-sekolah-id',
-      );
+      final sekolahId = _sekolahId;
+      if (sekolahId == null) {
+        throw Exception('Anda tidak memiliki akses ke sekolah');
+      }
+      final kelas = await _sekolahService.getKelasBySekolah(sekolahId);
       setState(() {
         _kelasList = kelas;
         _isLoading = false;
@@ -43,6 +52,15 @@ class _KelasManagementScreenState extends State<KelasManagementScreen> {
   }
 
   Future<void> _showAddKelasDialog() async {
+    final sekolahId = _sekolahId;
+    if (sekolahId == null) {
+      MBGLoaders.errorSnackBar(
+        title: 'Error',
+        message: 'Anda tidak memiliki akses ke sekolah',
+      );
+      return;
+    }
+
     final namaController = TextEditingController();
     final tingkatController = TextEditingController();
 
@@ -103,10 +121,10 @@ class _KelasManagementScreenState extends State<KelasManagementScreen> {
               );
 
               try {
-                await _sekolahService.createKelas(
-                  'current-sekolah-id', // TODO: Replace with actual sekolahId
-                  {'nama': namaController.text, 'tingkat': tingkat},
-                );
+                await _sekolahService.createKelas(sekolahId, {
+                  'nama': namaController.text,
+                  'tingkat': tingkat,
+                });
                 MBGFullScreenLoader.stopLoading();
                 MBGLoaders.successSnackBar(
                   title: 'Berhasil',

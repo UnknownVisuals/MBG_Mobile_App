@@ -15,17 +15,6 @@ class SekolahController extends GetxController {
   final RxList<dynamic> deliveries = <dynamic>[].obs;
   final RxBool isLoading = false.obs;
 
-  @override
-  void onInit() {
-    super.onInit();
-    // Initialize data if needed
-  }
-
-  @override
-  void onClose() {
-    super.onClose();
-  }
-
   /// Fetch students
   Future<void> fetchStudents(String sekolahId) async {
     try {

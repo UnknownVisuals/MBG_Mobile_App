@@ -11,7 +11,7 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    UserController userController = Get.put(UserController());
+    UserController userController = Get.find<UserController>();
 
     return Scaffold(
       appBar: MBGAppBar(title: const Text('Profile'), showBackArrow: true),
@@ -51,13 +51,15 @@ class ProfileScreen extends StatelessWidget {
                   title: 'Dapur as PIC',
                   value: user?.dapurAsPIC.isEmpty ?? true
                       ? 'None'
-                      : user!.dapurAsPIC.join(', '),
+                      : user!.dapurAsPIC.map((dapur) => dapur.nama).join(', '),
                 ),
                 MBGInfoRow(
                   title: 'Sekolah as PIC',
                   value: user?.sekolahAsPIC.isEmpty ?? true
                       ? 'None'
-                      : user!.sekolahAsPIC.join(', '),
+                      : user!.sekolahAsPIC
+                            .map((sekolah) => sekolah.nama)
+                            .join(', '),
                 ),
 
                 const SizedBox(height: MBGSizes.spaceBtwSections),

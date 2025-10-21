@@ -1,29 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mbg_mobile_app/common/styles/spacing_styles.dart';
 import 'package:mbg_mobile_app/common/widgets/appbar.dart';
 import 'package:mbg_mobile_app/common/widgets/drawer_pic_dapur.dart';
 import 'package:mbg_mobile_app/features/authentication/controllers/user_controller.dart';
 import 'package:mbg_mobile_app/features/dapur/controllers/dapur_controller.dart';
-import 'package:mbg_mobile_app/features/dapur/screens/checkpoint_screen.dart';
-import 'package:mbg_mobile_app/features/dapur/screens/dapur_dashboard_screen.dart';
+import 'package:mbg_mobile_app/features/dapur/screens/checkpoint/checkpoint_screen.dart';
+import 'package:mbg_mobile_app/features/dapur/screens/dapur_dashboard/dapur_dashboard_screen.dart';
 import 'package:mbg_mobile_app/features/dapur/screens/dapur_management_screen.dart';
-import 'package:mbg_mobile_app/features/dapur/screens/karyawan_management_screen.dart';
-import 'package:mbg_mobile_app/features/dapur/screens/menu_planning_screen.dart';
-import 'package:mbg_mobile_app/features/dapur/screens/pengiriman_screen.dart';
-import 'package:mbg_mobile_app/features/dapur/screens/stok_management_screen.dart';
-import 'package:mbg_mobile_app/features/dapur/screens/widgets/progress_summary_card.dart';
-import 'package:mbg_mobile_app/features/dapur/screens/widgets/timeline_list.dart';
-import 'package:mbg_mobile_app/features/dapur/screens/widgets/timeline_header.dart';
+import 'package:mbg_mobile_app/features/dapur/screens/karyawan_management/karyawan_management_screen.dart';
+import 'package:mbg_mobile_app/features/dapur/screens/menu_planning/menu_planning_screen.dart';
+import 'package:mbg_mobile_app/features/dapur/screens/pengiriman/pengiriman_screen.dart';
+import 'package:mbg_mobile_app/features/dapur/screens/stok_management/stok_management_screen.dart';
 import 'package:mbg_mobile_app/features/setting/sceens/setting.dart';
-import 'package:mbg_mobile_app/utils/constants/sizes.dart';
 
 class DapurScreen extends StatelessWidget {
   const DapurScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final userController = Get.put(UserController());
+    final userController = Get.find<UserController>();
     final dapurController = Get.put(DapurController());
 
     return Obx(
@@ -54,35 +49,35 @@ class DapurScreen extends StatelessWidget {
           index: dapurController.drawerSelectedIndex.value,
           children: [
             // 0 - Dashboard
-            Padding(
-              padding: MBGSpacingStyles.homeScreenPadding,
-              child: Obx(
-                () => Column(
-                  children: [
-                    // Progress Summary Card
-                    ProgressSummaryCard(
-                      completedCount: dapurController.completedCount.value,
-                      totalCount: dapurController.totalCount.value,
-                    ),
-                    const SizedBox(height: MBGSizes.spaceBtwSections),
+            // Padding(
+            //   padding: MBGSpacingStyles.homeScreenPadding,
+            //   child: Obx(
+            //     () => Column(
+            //       children: [
+            //         // Progress Summary Card
+            //         ProgressSummaryCard(
+            //           completedCount: dapurController.completedCount.value,
+            //           totalCount: dapurController.totalCount.value,
+            //         ),
+            //         const SizedBox(height: MBGSizes.spaceBtwSections),
 
-                    // Timeline Header
-                    const TimelineHeader(),
-                    const SizedBox(height: MBGSizes.spaceBtwItems),
+            //         // Timeline Header
+            //         const TimelineHeader(),
+            //         const SizedBox(height: MBGSizes.spaceBtwItems),
 
-                    // Timeline List
-                    Expanded(
-                      child: TimelineList(
-                        events: dapurController.events.toList(),
-                        scrollController: dapurController.scrollController,
-                        cardKeys: dapurController.cardKeys,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            // const DapurDashboardScreen(),
+            //         // Timeline List
+            //         Expanded(
+            //           child: TimelineList(
+            //             events: dapurController.events.toList(),
+            //             scrollController: dapurController.scrollController,
+            //             cardKeys: dapurController.cardKeys,
+            //           ),
+            //         ),
+            //       ],
+            //     ),
+            //   ),
+            // ),
+            const DapurDashboardScreen(),
             // 1 - Dapur Management
             const DapurManagementScreen(),
             // 2 - Karyawan

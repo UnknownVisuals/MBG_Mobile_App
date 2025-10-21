@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mbg_mobile_app/features/dapur/models/checkpoint_model.dart';
@@ -17,13 +16,6 @@ class CheckpointController extends GetxController {
   final RxList<CheckpointModel> checkpoints = <CheckpointModel>[].obs;
   final RxBool isLoading = false.obs;
   final RxBool isLoadingCheckpoints = false.obs;
-
-  @override
-  void onInit() {
-    super.onInit();
-    // In a real app, fetch today's menus from the API
-    // For now, we'll need to implement this based on menu planning
-  }
 
   /// Fetch checkpoints for a specific menu harian
   Future<void> fetchCheckpoints(String menuHarianId) async {

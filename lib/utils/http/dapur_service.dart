@@ -84,6 +84,7 @@ class DapurService extends GetxService {
   }
 
   Future<KaryawanModel> createKaryawan({
+    required String dapurId,
     required String nama,
     required String posisi,
     File? foto,
@@ -94,7 +95,7 @@ class DapurService extends GetxService {
       fotoUrl = await uploadImage(foto);
     }
 
-    final response = await _httpHelper.postRequest('karyawan', {
+    final response = await _httpHelper.postRequest('dapur/$dapurId/karyawan', {
       'nama': nama,
       'posisi': posisi,
       if (fotoUrl != null) 'foto': fotoUrl,
@@ -255,8 +256,27 @@ class DapurService extends GetxService {
 
   // ==================== PENGIRIMAN ====================
 
-  Future<List<PengirimanModel>> getAllPengiriman() async {
-    final response = await _httpHelper.getRequest('pengiriman');
+  Future<List<PengirimanModel>> getAllPengiriman({
+    String? dapurId,
+    String? status,
+  }) async {
+    var endpoint = 'pengiriman';
+    final queryParameters = <String, String>{};
+
+    if (dapurId != null && dapurId.isNotEmpty) {
+      queryParameters['dapurId'] = dapurId;
+    }
+
+    if (status != null && status.isNotEmpty) {
+      queryParameters['status'] = status;
+    }
+
+    if (queryParameters.isNotEmpty) {
+      final query = Uri(queryParameters: queryParameters).query;
+      endpoint = '$endpoint?$query';
+    }
+
+    final response = await _httpHelper.getRequest(endpoint);
     if (response.statusCode == 200 && response.body['success'] == true) {
       // API returns paginated response: {success, data: {data: [], pagination: {}}}
       final dataWrapper = response.body['data'];

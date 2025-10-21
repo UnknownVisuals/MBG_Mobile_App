@@ -1,16 +1,21 @@
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:mbg_mobile_app/features/dapur/controllers/dapur_controller.dart';
 import 'package:mbg_mobile_app/features/dapur/models/checkpoint_model.dart';
 import 'package:mbg_mobile_app/features/dapur/models/menu_harian_model.dart';
 import 'package:mbg_mobile_app/features/dapur/models/menu_planning_model.dart';
 import 'package:mbg_mobile_app/features/dapur/models/pengiriman_model.dart';
 import 'package:mbg_mobile_app/features/dapur/models/stok_model.dart';
 import 'package:mbg_mobile_app/utils/http/dapur_service.dart';
-import 'package:intl/intl.dart';
 
 class DapurDashboardController extends GetxController {
-  final DapurService _dapurService = Get.find<DapurService>();
+  DapurDashboardController()
+    : _dapurService = Get.find<DapurService>(),
+      _dapurController = Get.find<DapurController>();
 
-  // Observable variables
+  final DapurService _dapurService;
+  final DapurController _dapurController;
+
   final RxList<MenuPlanningModel> activeMenuPlans = <MenuPlanningModel>[].obs;
   final RxList<MenuHarianModel> todaysMenus = <MenuHarianModel>[].obs;
   final RxList<CheckpointModel> todaysCheckpoints = <CheckpointModel>[].obs;
@@ -25,132 +30,175 @@ class DapurDashboardController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    fetchDashboardData();
+    ever(_dapurController.selectedDapur, (_) => fetchDashboardData());
+
+    if (_dapurController.assignedDapur.isEmpty) {
+      _dapurController.loadAssignedDapur();
+    } else {
+      fetchDashboardData();
+    }
   }
 
-  /// Fetch all dashboard data
   Future<void> fetchDashboardData() async {
+    final dapurId = _dapurController.selectedDapur.value?.id;
+
+    if (dapurId == null) {
+      _resetDashboardState();
+      return;
+    }
+
     isLoading.value = true;
     try {
+      await fetchActiveMenuPlans(dapurId);
+      await fetchTodaysMenus(dapurId);
       await Future.wait([
-        fetchActiveMenuPlans(),
-        fetchTodaysMenus(),
-        fetchPendingDeliveries(),
-        fetchLowStockItems(),
+        fetchPendingDeliveries(dapurId),
+        fetchLowStockItems(dapurId),
       ]);
     } catch (e) {
-      print('Error fetching dashboard data: $e');
+      Get.log('Error fetching dashboard data: $e');
     } finally {
       isLoading.value = false;
     }
   }
 
-  /// Fetch active menu plans (current week)
-  Future<void> fetchActiveMenuPlans() async {
+  Future<void> fetchActiveMenuPlans(String dapurId) async {
     try {
       final plannings = await _dapurService.getAllMenuPlanning();
-
-      // Filter for current week
       final now = DateTime.now();
       activeMenuPlans.value = plannings.where((plan) {
-        return plan.tanggalMulai.isBefore(now.add(Duration(days: 7))) &&
-            plan.tanggalSelesai.isAfter(now.subtract(Duration(days: 7)));
+        if (plan.dapurId != dapurId) return false;
+        final start = plan.tanggalMulai.toLocal();
+        final end = plan.tanggalSelesai.toLocal();
+        return start.isBefore(now.add(const Duration(days: 7))) &&
+            end.isAfter(now.subtract(const Duration(days: 7)));
       }).toList();
-
       activeMenuPlansCount.value = activeMenuPlans.length;
     } catch (e) {
-      print('Error fetching active menu plans: $e');
+      Get.log('Error fetching active menu plans: $e');
+      activeMenuPlans.clear();
+      activeMenuPlansCount.value = 0;
     }
   }
 
-  /// Fetch today's menus and their checkpoints
-  Future<void> fetchTodaysMenus() async {
+  Future<void> fetchTodaysMenus(String dapurId) async {
     try {
       todaysMenus.clear();
       todaysCheckpoints.clear();
 
-      final today = DateFormat('yyyy-MM-dd').format(DateTime.now());
+      final formatter = DateFormat('yyyy-MM-dd');
+      final todayDate = DateTime.now();
+      final today = formatter.format(todayDate);
 
-      for (var planning in activeMenuPlans) {
+      for (final planning in activeMenuPlans) {
+        if (planning.dapurId != dapurId) continue;
         final menus = await _dapurService.getMenuHarianByPlanning(planning.id);
 
-        // Filter for today
         final todayMenus = menus.where((menu) {
-          final menuDate = DateFormat('yyyy-MM-dd').format(menu.tanggal);
+          final menuDate = formatter.format(menu.tanggal.toLocal());
           return menuDate == today;
         }).toList();
 
         todaysMenus.addAll(todayMenus);
 
-        // Fetch checkpoints for today's menus
-        for (var menu in todayMenus) {
-          await fetchCheckpointsForMenu(menu.id);
+        for (final menu in todayMenus) {
+          await fetchCheckpointsForMenu(menu.id, todayDate);
         }
       }
 
       completedCheckpointsToday.value = todaysCheckpoints.length;
     } catch (e) {
-      print('Error fetching today\'s menus: $e');
+      Get.log('Error fetching today\'s menus: $e');
+      todaysMenus.clear();
+      todaysCheckpoints.clear();
+      completedCheckpointsToday.value = 0;
     }
   }
 
-  /// Fetch checkpoints for a menu
-  Future<void> fetchCheckpointsForMenu(String menuHarianId) async {
+  Future<void> fetchCheckpointsForMenu(
+    String menuHarianId,
+    DateTime targetDate,
+  ) async {
     try {
       final checkpoints = await _dapurService.getCheckpointsByMenuHarian(
         menuHarianId,
       );
-      todaysCheckpoints.addAll(checkpoints);
+      for (final checkpoint in checkpoints) {
+        if (_isSameDay(checkpoint.waktu.toLocal(), targetDate)) {
+          todaysCheckpoints.add(checkpoint);
+        }
+      }
     } catch (e) {
-      print('Error fetching checkpoints: $e');
+      Get.log('Error fetching checkpoints: $e');
     }
   }
 
-  /// Fetch pending deliveries
-  Future<void> fetchPendingDeliveries() async {
+  Future<void> fetchPendingDeliveries(String dapurId) async {
     try {
       final deliveries = await _dapurService.getAllPengiriman();
 
-      // Filter for pending and in-transit
+      const pendingStatuses = {
+        'PENDING',
+        'IN_TRANSIT',
+        'MENUNGGU_PENGIRIMAN',
+        'SEDANG_DIJEMPUT',
+      };
+
       pendingDeliveries.value = deliveries.where((delivery) {
-        return delivery.status == 'PENDING' || delivery.status == 'IN_TRANSIT';
+        final statusMatch = pendingStatuses.contains(delivery.status);
+        return statusMatch && delivery.dapurId == dapurId;
       }).toList();
 
       pendingDeliveriesCount.value = pendingDeliveries.length;
     } catch (e) {
-      print('Error fetching pending deliveries: $e');
+      Get.log('Error fetching pending deliveries: $e');
+      pendingDeliveries.clear();
+      pendingDeliveriesCount.value = 0;
     }
   }
 
-  /// Fetch low stock items (stock < 10kg)
-  Future<void> fetchLowStockItems() async {
+  Future<void> fetchLowStockItems(String dapurId) async {
     try {
       final stokItems = await _dapurService.getAllStok();
 
-      // Filter for low stock
       lowStockItems.value = stokItems
-          .where((item) => item.stokKg < 10)
+          .where((item) => item.stokKg < 10 && item.dapurId == dapurId)
           .toList();
       lowStockCount.value = lowStockItems.length;
     } catch (e) {
-      print('Error fetching low stock items: $e');
+      Get.log('Error fetching low stock items: $e');
+      lowStockItems.clear();
+      lowStockCount.value = 0;
     }
   }
 
-  /// Get cooking progress percentage for today
   double getCookingProgress() {
     if (todaysMenus.isEmpty) return 0.0;
 
-    // Expected checkpoints per menu: at least MULAI_MEMASAK and SELESAI_MEMASAK
     final expectedCheckpoints = todaysMenus.length * 2;
     if (expectedCheckpoints == 0) return 0.0;
 
     final progress = (todaysCheckpoints.length / expectedCheckpoints) * 100;
-    return progress > 100 ? 100 : progress;
+    return progress.clamp(0, 100).toDouble();
   }
 
-  /// Refresh dashboard data
   Future<void> refreshDashboard() async {
-    await fetchDashboardData();
+    await _dapurController.loadAssignedDapur(forceRefresh: true);
+  }
+
+  void _resetDashboardState() {
+    activeMenuPlans.clear();
+    todaysMenus.clear();
+    todaysCheckpoints.clear();
+    pendingDeliveries.clear();
+    lowStockItems.clear();
+    activeMenuPlansCount.value = 0;
+    completedCheckpointsToday.value = 0;
+    pendingDeliveriesCount.value = 0;
+    lowStockCount.value = 0;
+  }
+
+  bool _isSameDay(DateTime a, DateTime b) {
+    return a.year == b.year && a.month == b.month && a.day == b.day;
   }
 }

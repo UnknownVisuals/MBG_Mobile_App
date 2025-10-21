@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:mbg_mobile_app/features/dapur/controllers/dapur_controller.dart';
 import '../../../utils/http/dapur_service.dart';
 import '../../../utils/http/sekolah_service.dart';
 import '../../../utils/popups/loaders.dart';
@@ -13,6 +14,9 @@ class PengirimanController extends GetxController {
 
   final DapurService _dapurService = Get.find<DapurService>();
   final SekolahService _sekolahService = Get.find<SekolahService>();
+  final DapurController _dapurController = Get.find<DapurController>();
+
+  Worker? _dapurSelectionWorker;
 
   // Observable lists
   final RxList<PengirimanModel> allPengiriman = <PengirimanModel>[].obs;
@@ -33,43 +37,36 @@ class PengirimanController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    _dapurSelectionWorker = ever(
+      _dapurController.selectedDapur,
+      (_) => fetchPengiriman(),
+    );
     fetchPengiriman();
     fetchSekolahList();
+  }
+
+  @override
+  void onClose() {
+    _dapurSelectionWorker?.dispose();
+    super.onClose();
   }
 
   /// Fetch all pengiriman and categorize them
   Future<void> fetchPengiriman() async {
     try {
+      final selectedDapur = _dapurController.selectedDapur.value;
+
+      if (selectedDapur == null) {
+        _applyPengirimanData(const <PengirimanModel>[]);
+        isLoading.value = false;
+        return;
+      }
+
       isLoading.value = true;
-      final pengirimanList = await _dapurService.getAllPengiriman();
-      allPengiriman.value = pengirimanList;
-
-      // Categorize by status
-      pendingPengiriman.value = pengirimanList
-          .where((p) => p.status == 'PENDING')
-          .toList();
-      inTransitPengiriman.value = pengirimanList
-          .where((p) => p.status == 'DIAMBIL')
-          .toList();
-      completedPengiriman.value = pengirimanList
-          .where((p) => p.status == 'DITERIMA')
-          .toList();
-
-      // Update counts
-      pendingCount.value = pendingPengiriman.length;
-      inTransitCount.value = inTransitPengiriman.length;
-
-      // Count completed today
-      final today = DateTime.now();
-      completedTodayCount.value = completedPengiriman
-          .where(
-            (p) =>
-                p.waktuDiterima != null &&
-                p.waktuDiterima!.year == today.year &&
-                p.waktuDiterima!.month == today.month &&
-                p.waktuDiterima!.day == today.day,
-          )
-          .length;
+      final pengirimanList = await _dapurService.getAllPengiriman(
+        dapurId: selectedDapur.id,
+      );
+      _applyPengirimanData(pengirimanList);
     } catch (e) {
       MBGLoaders.errorSnackBar(
         title: 'Error',
@@ -103,12 +100,22 @@ class PengirimanController extends GetxController {
     required int jumlahKeranjang,
   }) async {
     try {
+      final selectedDapur = _dapurController.selectedDapur.value;
+      if (selectedDapur == null) {
+        MBGLoaders.warningSnackBar(
+          title: 'Peringatan',
+          message: 'Silakan pilih dapur terlebih dahulu.',
+        );
+        return false;
+      }
+
       MBGFullScreenLoader.openLoadingDialog(
         'Membuat pengiriman...',
         MBGImages.onBoardingImage1,
       );
 
       await _dapurService.createPengiriman({
+        'dapurId': selectedDapur.id,
         'sekolahId': sekolahId,
         'jumlahTray': jumlahTray,
         'jumlahKeranjang': jumlahKeranjang,
@@ -186,6 +193,34 @@ class PengirimanController extends GetxController {
   /// Refresh all data
   Future<void> refreshData() async {
     await Future.wait([fetchPengiriman(), fetchSekolahList()]);
+  }
+
+  void _applyPengirimanData(List<PengirimanModel> pengirimanList) {
+    allPengiriman.value = pengirimanList;
+
+    pendingPengiriman.value = pengirimanList
+        .where((p) => p.status == 'PENDING')
+        .toList();
+    inTransitPengiriman.value = pengirimanList
+        .where((p) => p.status == 'DIAMBIL')
+        .toList();
+    completedPengiriman.value = pengirimanList
+        .where((p) => p.status == 'DITERIMA')
+        .toList();
+
+    pendingCount.value = pendingPengiriman.length;
+    inTransitCount.value = inTransitPengiriman.length;
+
+    final today = DateTime.now();
+    completedTodayCount.value = completedPengiriman
+        .where(
+          (p) =>
+              p.waktuDiterima != null &&
+              p.waktuDiterima!.year == today.year &&
+              p.waktuDiterima!.month == today.month &&
+              p.waktuDiterima!.day == today.day,
+        )
+        .length;
   }
 
   /// Get status color

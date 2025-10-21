@@ -20,12 +20,6 @@ class AbsensiController extends GetxController {
   final RxInt totalPresent = 0.obs;
   final RxInt totalClasses = 0.obs;
 
-  @override
-  void onInit() {
-    super.onInit();
-    // Classes will be loaded from parent controller
-  }
-
   /// Set available classes
   void setKelasList(List<KelasModel> classes) {
     kelasList.value = classes;

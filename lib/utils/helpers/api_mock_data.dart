@@ -1,6 +1,7 @@
 /// Mock API Response Data for Testing
 /// Use this file when backend API is not available
 /// All data structures match the expected API responses
+library;
 
 class ApiMockData {
   // ==================== Authentication ====================
