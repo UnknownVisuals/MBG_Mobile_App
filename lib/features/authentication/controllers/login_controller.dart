@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:mbg_mobile_app/features/authentication/controllers/user_controller.dart';
 import 'package:mbg_mobile_app/features/authentication/models/login_model.dart';
 import 'package:mbg_mobile_app/features/dapur/screens/dapur.dart';
+import 'package:mbg_mobile_app/features/dapur/screens/dapur_dashboard_screen.dart';
 import 'package:mbg_mobile_app/features/driver/screens/driver.dart';
 import 'package:mbg_mobile_app/features/sekolah/screens/sekolah.dart';
 import 'package:mbg_mobile_app/navigation_menu.dart';
@@ -72,7 +73,8 @@ class LoginController extends GetxController {
           final userRole = userController.user.value?.role;
 
           if (userRole == 'PIC_DAPUR') {
-            Get.offAll(() => const DapurScreen());
+            // Get.offAll(() => const DapurScreen());
+            Get.offAll(() => const DapurDashboardScreen());
           } else if (userRole == 'DRIVER') {
             Get.offAll(() => const DriverScreen());
           } else if (userRole == 'PIC_SEKOLAH') {

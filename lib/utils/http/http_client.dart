@@ -47,6 +47,11 @@ class MBGHttpHelper extends GetConnect {
     return _sessionToken;
   }
 
+  // Method to get base URL
+  static String? getBaseUrl() {
+    return _baseUrl;
+  }
+
   // Setter headers for HTTP requests
   static Map<String, String> _getHeaders() {
     final headers = <String, String>{'Content-Type': 'application/json'};

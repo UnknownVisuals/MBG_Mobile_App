@@ -14,6 +14,9 @@ import 'package:mbg_mobile_app/utils/constants/text_strings.dart';
 import 'package:mbg_mobile_app/utils/local_storage/storage_utility.dart';
 import 'package:mbg_mobile_app/utils/theme/theme.dart';
 import 'package:mbg_mobile_app/utils/http/http_client.dart';
+import 'package:mbg_mobile_app/utils/http/dapur_service.dart';
+import 'package:mbg_mobile_app/utils/http/driver_service.dart';
+import 'package:mbg_mobile_app/utils/http/sekolah_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,7 +24,14 @@ Future<void> main() async {
   await dotenv.load(fileName: ".env");
   await GetStorage.init();
 
+  // Initialize HTTP helper first
+  Get.put(MBGHttpHelper());
   MBGHttpHelper.loadSessionToken();
+
+  // Initialize services (they depend on MBGHttpHelper)
+  Get.put(DapurService());
+  Get.put(DriverService());
+  Get.put(SekolahService());
 
   runApp(const App());
 }
@@ -92,7 +102,7 @@ class App extends StatelessWidget {
         builder: (context, snapshot) {
           // Show splash screen while determining initial screen
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const SplashScreen();
+            return const MBGSplashScreen();
           }
 
           // Return the determined screen

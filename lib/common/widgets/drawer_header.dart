@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:mbg_mobile_app/features/authentication/controllers/user_controller.dart';
+import 'package:mbg_mobile_app/features/authentication/screens/profile/profile.dart';
 import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
 
@@ -79,9 +80,7 @@ class MBGDrawerHeader extends StatelessWidget {
               color: MBGColors.white,
               iconSize: MBGSizes.iconLg,
               tooltip: 'Profile',
-              onPressed: () {
-                // TODO: Handle tap (e.g., navigate to profile)
-              },
+              onPressed: () => Get.to(const ProfileScreen()),
             ),
           ],
         ),

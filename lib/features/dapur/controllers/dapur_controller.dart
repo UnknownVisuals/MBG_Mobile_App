@@ -15,6 +15,9 @@ class DapurController extends GetxController {
   final RxInt completedCount = 0.obs;
   final RxInt totalCount = 0.obs;
 
+  // Drawer navigation index
+  final RxInt drawerSelectedIndex = 0.obs;
+
   @override
   void onInit() {
     super.onInit();
