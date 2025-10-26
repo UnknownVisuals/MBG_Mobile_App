@@ -15,6 +15,7 @@ class OnBoardingDotIndicator extends StatelessWidget {
     final OnBoardingController onBoardingController = Get.put(
       OnBoardingController(),
     );
+
     final bool dark = MBGHelperFunctions.isDarkMode(context);
 
     return Positioned(

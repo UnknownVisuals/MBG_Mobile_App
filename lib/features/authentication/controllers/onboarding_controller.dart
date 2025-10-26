@@ -5,7 +5,7 @@ import 'package:mbg_mobile_app/utils/local_storage/storage_utility.dart';
 
 class OnBoardingController extends GetxController {
   // Dependencies
-  final MBGLocalStorage storage = MBGLocalStorage();
+  final MBGLocalStorage localStorage = MBGLocalStorage();
   final PageController pageController = PageController();
 
   // State Variables
@@ -29,7 +29,7 @@ class OnBoardingController extends GetxController {
   //  Update Current Index & Jump to Next Page
   void nextPage() {
     if (currentPageIndex.value == 2) {
-      storage.saveData('hasSeenOnboarding', true);
+      localStorage.saveData('hasSeenOnboarding', true);
       Get.offAll(() => const LoginScreen());
     } else {
       int page = currentPageIndex.value + 1;
