@@ -6,15 +6,25 @@ import 'package:get/get.dart';
 import 'package:mbg_mobile_app/utils/local_storage/storage_utility.dart';
 
 class MBGHttpHelper extends GetConnect {
+  // Default Configurations
   static String? _baseUrl = dotenv.env['API_BASE_URL'];
   static String _sessionToken = '';
+
+  // Dependencies
   static final _localStorage = MBGLocalStorage();
-  static Future<void> Function({String? message})? _unauthorizedHandler;
+
+  // State Variables
   static bool _isHandlingUnauthorized = false;
+  static Future<void> Function({String? message})? _unauthorizedHandler;
 
   // Setter method to change the base URL
   static void setBaseUrl(String url) {
     _baseUrl = url;
+  }
+
+  // Method to get base URL
+  static String? getBaseUrl() {
+    return _baseUrl;
   }
 
   // Setter method to set session token
@@ -52,14 +62,9 @@ class MBGHttpHelper extends GetConnect {
     return _sessionToken;
   }
 
-  // Method to get base URL
-  static String? getBaseUrl() {
-    return _baseUrl;
-  }
-
   // Setter headers for HTTP requests
   static Map<String, String> _getHeaders() {
-    final headers = <String, String>{'Content-Type': 'application/json'};
+    final Map<String, String> headers = {'Content-Type': 'application/json'};
     if (_sessionToken.isNotEmpty) {
       headers['Authorization'] = 'Bearer $_sessionToken';
     }
@@ -153,6 +158,7 @@ class MBGHttpHelper extends GetConnect {
     }
   }
 
+  // Private method to handle responses
   Response _handleResponse(
     Response response, {
     bool handleUnauthorized = true,

@@ -67,6 +67,7 @@ class UserModel {
   }
 }
 
+/// Model for AssignedDapur
 class AssignedDapur {
   AssignedDapur({
     required this.id,
@@ -94,6 +95,7 @@ class AssignedDapur {
   }
 }
 
+/// Model for AssignedSekolah
 class AssignedSekolah {
   AssignedSekolah({required this.id, required this.nama, this.alamat});
 

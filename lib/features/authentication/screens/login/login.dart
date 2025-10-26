@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:mbg_mobile_app/common/styles/spacing_styles.dart';
-import 'package:mbg_mobile_app/common/widgets/form_divider.dart';
-import 'package:mbg_mobile_app/common/widgets/social_button.dart';
 import 'package:mbg_mobile_app/features/authentication/screens/login/widgets/login_form.dart';
 import 'package:mbg_mobile_app/features/authentication/screens/login/widgets/login_header.dart';
-import 'package:mbg_mobile_app/utils/constants/sizes.dart';
-import 'package:mbg_mobile_app/utils/constants/text_strings.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -25,11 +20,11 @@ class LoginScreen extends StatelessWidget {
             const LoginForm(),
 
             // Divider
-            MBGFormDivider(dividerText: MBGTexts.orSignInWith.capitalize!),
-            const SizedBox(height: MBGSizes.spaceBtwSections),
+            // MBGFormDivider(dividerText: MBGTexts.orSignInWith.capitalize!),
+            // const SizedBox(height: MBGSizes.spaceBtwSections),
 
             // Signin with Socials
-            const MBGSocialButtons(),
+            // const MBGSocialButtons(),
           ],
         ),
       ),

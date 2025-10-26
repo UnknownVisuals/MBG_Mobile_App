@@ -5,8 +5,6 @@ import 'package:mbg_mobile_app/utils/http/http_client.dart';
 import 'package:mbg_mobile_app/utils/popups/loaders.dart';
 
 class UserController extends GetxController {
-  UserController();
-
   // Dependencies
   final MBGHttpHelper httpHelper = Get.find<MBGHttpHelper>();
 
@@ -35,7 +33,6 @@ class UserController extends GetxController {
     try {
       isLoading.value = true;
 
-      // Load session token first
       MBGHttpHelper.loadSessionToken();
 
       final response = await httpHelper.getRequest('auth/me');
@@ -43,13 +40,15 @@ class UserController extends GetxController {
       if (response.statusCode == 200) {
         final responseData = response.body;
 
-        if (responseData is Map<String, dynamic> &&
-            responseData['success'] == true) {
+        if (responseData['success'] == true) {
           user.value = UserModel.fromJson(responseData['data']);
         }
       }
-    } catch (_) {
-      user.value = null;
+    } catch (e) {
+      MBGLoaders.errorSnackBar(
+        title: 'Gagal memuat profil pengguna',
+        message: e.toString(),
+      );
     } finally {
       isLoading.value = false;
     }
@@ -59,8 +58,11 @@ class UserController extends GetxController {
   Future<void> logout() async {
     try {
       await MBGHttpHelper.clearSessionToken();
+
       user.value = null;
+
       Get.offAll(() => const LoginScreen());
+
       MBGLoaders.successSnackBar(
         title: 'Logout Berhasil',
         message: 'Sampai jumpa lagi!',
@@ -70,30 +72,18 @@ class UserController extends GetxController {
     }
   }
 
-  /// Check if user is authenticated
-  bool get isAuthenticated => user.value != null;
-
-  /// Get user role
-  String? get userRole => user.value?.role;
-
-  /// Get user name
-  String? get userName => user.value?.name;
-
-  /// Get user email
-  String? get userEmail => user.value?.email;
-
+  /// Handle session expiration
   Future<void> _handleSessionExpired({String? message}) async {
     if (_isHandlingSessionExpired) return;
+
     _isHandlingSessionExpired = true;
 
     user.value = null;
 
-    MBGLoaders.warningSnackBar(
-      title: 'Sesi berakhir',
-      message: message ?? 'Silakan login kembali.',
-    );
+    MBGLoaders.warningSnackBar(title: 'Sesi berakhir', message: message);
 
     Get.offAll(() => const LoginScreen());
+
     _isHandlingSessionExpired = false;
   }
 }
