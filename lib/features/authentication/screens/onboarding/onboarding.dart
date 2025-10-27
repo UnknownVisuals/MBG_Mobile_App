@@ -26,17 +26,17 @@ class OnBoardingScreen extends StatelessWidget {
             onPageChanged: onBoardingController.updatePageIndicator,
             children: [
               OnBoardingPage(
-                image: MBGImages.logo,
+                image: MBGImages.mbg,
                 title: MBGTexts.onBoardingTitle1,
                 subTitle: MBGTexts.onBoardingSubTitle1,
               ),
               OnBoardingPage(
-                image: MBGImages.logo,
+                image: MBGImages.payment,
                 title: MBGTexts.onBoardingTitle2,
                 subTitle: MBGTexts.onBoardingSubTitle2,
               ),
               OnBoardingPage(
-                image: MBGImages.logo,
+                image: MBGImages.delivery,
                 title: MBGTexts.onBoardingTitle3,
                 subTitle: MBGTexts.onBoardingSubTitle3,
               ),

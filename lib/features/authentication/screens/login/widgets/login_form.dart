@@ -35,7 +35,7 @@ class LoginForm extends StatelessWidget {
                 controller: emailController,
                 decoration: InputDecoration(
                   prefixIcon: const Icon(Iconsax.direct_right),
-                  labelText: 'email'.tr,
+                  labelText: 'Email'.tr,
                 ),
                 validator: (value) => MBGValidator.validateEmail(value),
                 autovalidateMode: AutovalidateMode.onUserInteraction,

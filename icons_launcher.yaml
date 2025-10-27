@@ -1,0 +1,14 @@
+icons_launcher:
+  image_path: "assets/logos/mbg.png"
+  platforms:
+    android:
+      enable: true
+    ios:
+      enable: true
+    web:
+      enable: true
+      favicon_path: "assets/logos/mbg.png"
+    windows:
+      enable: true
+    macos:
+      enable: true
