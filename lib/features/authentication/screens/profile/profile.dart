@@ -14,7 +14,7 @@ class ProfileScreen extends StatelessWidget {
     UserController userController = Get.find<UserController>();
 
     return Scaffold(
-      appBar: MBGAppBar(title: const Text('Profile'), showBackArrow: true),
+      appBar: MBGAppBar(title: const Text('Profil'), showBackArrow: true),
       body: Padding(
         padding: const EdgeInsets.all(MBGSizes.defaultSpace),
         child: Obx(() {
@@ -24,39 +24,39 @@ class ProfileScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Personal Information Section
-                const MBGSectionHeading(title: 'Personal Information'),
+                const MBGSectionHeading(title: 'Informasi Pribadi'),
                 const SizedBox(height: MBGSizes.spaceBtwItems),
-                MBGInfoRow(title: 'Name', value: user?.name ?? 'N/A'),
-                MBGInfoRow(title: 'Email', value: user?.email ?? 'N/A'),
-                MBGInfoRow(title: 'Phone', value: user?.phone ?? 'N/A'),
+                MBGInfoRow(title: 'Nama', value: user?.name ?? 'Belum diisi'),
+                MBGInfoRow(title: 'Email', value: user?.email ?? 'Belum diisi'),
+                MBGInfoRow(title: 'Telepon', value: user?.phone ?? 'Belum diisi'),
 
                 const SizedBox(height: MBGSizes.spaceBtwSections),
 
                 // Role & Work Information Section
-                const MBGSectionHeading(title: 'Role & Work Information'),
+                const MBGSectionHeading(title: 'Peran & Informasi Pekerjaan'),
                 const SizedBox(height: MBGSizes.spaceBtwItems),
-                MBGInfoRow(title: 'Role', value: user?.role ?? 'N/A'),
+                MBGInfoRow(title: 'Peran', value: user?.role ?? 'Belum diisi'),
                 if (user?.nomorKendaraan != null)
                   MBGInfoRow(
                     title: 'Nomor Kendaraan',
-                    value: user?.nomorKendaraan ?? 'N/A',
+                    value: user?.nomorKendaraan ?? 'Belum diisi',
                   ),
 
                 const SizedBox(height: MBGSizes.spaceBtwSections),
 
                 // Assignment Information Section
-                const MBGSectionHeading(title: 'Assignments'),
+                const MBGSectionHeading(title: 'Tugas'),
                 const SizedBox(height: MBGSizes.spaceBtwItems),
                 MBGInfoRow(
-                  title: 'Dapur as PIC',
+                  title: 'Dapur sebagai PIC',
                   value: user?.dapurAsPIC.isEmpty ?? true
-                      ? 'None'
+                      ? 'Tidak Ada'
                       : user!.dapurAsPIC.map((dapur) => dapur.nama).join(', '),
                 ),
                 MBGInfoRow(
-                  title: 'Sekolah as PIC',
+                  title: 'Sekolah sebagai PIC',
                   value: user?.sekolahAsPIC.isEmpty ?? true
-                      ? 'None'
+                      ? 'Tidak Ada'
                       : user!.sekolahAsPIC
                             .map((sekolah) => sekolah.nama)
                             .join(', '),
@@ -65,16 +65,16 @@ class ProfileScreen extends StatelessWidget {
                 const SizedBox(height: MBGSizes.spaceBtwSections),
 
                 // Account Information Section
-                const MBGSectionHeading(title: 'Account Information'),
+                const MBGSectionHeading(title: 'Informasi Akun'),
                 const SizedBox(height: MBGSizes.spaceBtwItems),
-                MBGInfoRow(title: 'User ID', value: user?.id ?? 'N/A'),
+                MBGInfoRow(title: 'ID Pengguna', value: user?.id ?? 'Belum diisi'),
                 MBGInfoRow(
-                  title: 'Created At',
-                  value: user?.createdAt.toString().split('.')[0] ?? 'N/A',
+                  title: 'Dibuat pada',
+                  value: user?.createdAt.toString().split('.')[0] ?? 'Belum diisi',
                 ),
                 MBGInfoRow(
-                  title: 'Updated At',
-                  value: user?.updatedAt.toString().split('.')[0] ?? 'N/A',
+                  title: 'Diperbarui pada',
+                  value: user?.updatedAt.toString().split('.')[0] ?? 'Belum diisi',
                 ),
               ],
             ),

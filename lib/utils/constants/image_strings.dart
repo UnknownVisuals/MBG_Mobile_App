@@ -4,10 +4,15 @@
 class MBGImages {
   // -- App Logos
   static const String logo = "assets/logos/logo.png";
+  static const String delivery = "assets/logos/delivery.png";
+  static const String payment = "assets/logos/payment.png";
+  static const String mbg = "assets/logos/mbg.png";
+  static const String login = "assets/logos/login.png";
 
   // -- Social Logos
   static const String google = "assets/logos/google-icon.png";
   static const String facebook = "assets/logos/facebook-icon.png";
+
 
   // -- OnBoarding Texts
   static const String onBoardingImage1 =

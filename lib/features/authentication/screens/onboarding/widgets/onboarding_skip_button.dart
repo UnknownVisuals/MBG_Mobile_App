@@ -20,7 +20,7 @@ class OnBoardingSkipButton extends StatelessWidget {
       child: TextButton(
         onPressed: onBoardingController.skipPage,
         child: Text(
-          'skip'.tr,
+          'Lewati'.tr,
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
             color: MBGColors.primary,
             fontWeight: FontWeight.bold,
