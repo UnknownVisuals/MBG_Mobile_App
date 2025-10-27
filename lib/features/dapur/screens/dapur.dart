@@ -6,7 +6,7 @@ import 'package:mbg_mobile_app/features/authentication/controllers/user_controll
 import 'package:mbg_mobile_app/features/dapur/controllers/dapur_controller.dart';
 import 'package:mbg_mobile_app/features/dapur/screens/checkpoint/checkpoint_screen.dart';
 import 'package:mbg_mobile_app/features/dapur/screens/dapur_dashboard/dapur_dashboard_screen.dart';
-import 'package:mbg_mobile_app/features/dapur/screens/dapur_management_screen.dart';
+import 'package:mbg_mobile_app/features/dapur/screens/dapur_info/dapur_info_screen.dart';
 import 'package:mbg_mobile_app/features/dapur/screens/karyawan_management/karyawan_management_screen.dart';
 import 'package:mbg_mobile_app/features/dapur/screens/menu_planning/menu_planning_screen.dart';
 import 'package:mbg_mobile_app/features/dapur/screens/pengiriman/pengiriman_screen.dart';
@@ -50,8 +50,8 @@ class DapurScreen extends StatelessWidget {
           children: [
             // 0 - Dashboard
             const DapurDashboardScreen(),
-            // 1 - Dapur Management
-            const DapurManagementScreen(),
+            // 1 - Dapur Info
+            const DapurInfoScreen(),
             // 2 - Karyawan
             const KaryawanManagementScreen(),
             // 3 - Stok

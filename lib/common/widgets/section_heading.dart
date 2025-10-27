@@ -29,8 +29,10 @@ class MBGSectionHeading extends StatelessWidget {
       children: [
         Row(
           children: [
-            if (showLeadingIcon) Icon(leadingIcon, color: MBGColors.primary),
-            const SizedBox(width: MBGSizes.spaceBtwItems / 2),
+            if (showLeadingIcon) ...[
+              Icon(leadingIcon, color: MBGColors.primary),
+              const SizedBox(width: MBGSizes.spaceBtwItems / 2),
+            ],
             Text(
               title,
               style: Theme.of(
