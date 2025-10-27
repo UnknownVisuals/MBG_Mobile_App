@@ -49,34 +49,6 @@ class DapurScreen extends StatelessWidget {
           index: dapurController.drawerSelectedIndex.value,
           children: [
             // 0 - Dashboard
-            // Padding(
-            //   padding: MBGSpacingStyles.homeScreenPadding,
-            //   child: Obx(
-            //     () => Column(
-            //       children: [
-            //         // Progress Summary Card
-            //         ProgressSummaryCard(
-            //           completedCount: dapurController.completedCount.value,
-            //           totalCount: dapurController.totalCount.value,
-            //         ),
-            //         const SizedBox(height: MBGSizes.spaceBtwSections),
-
-            //         // Timeline Header
-            //         const TimelineHeader(),
-            //         const SizedBox(height: MBGSizes.spaceBtwItems),
-
-            //         // Timeline List
-            //         Expanded(
-            //           child: TimelineList(
-            //             events: dapurController.events.toList(),
-            //             scrollController: dapurController.scrollController,
-            //             cardKeys: dapurController.cardKeys,
-            //           ),
-            //         ),
-            //       ],
-            //     ),
-            //   ),
-            // ),
             const DapurDashboardScreen(),
             // 1 - Dapur Management
             const DapurManagementScreen(),

@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
-import '../../../../../common/styles/spacing_styles.dart';
-import '../../../../../utils/constants/sizes.dart';
-import '../../../controllers/dapur_dashboard_controller.dart';
+import 'package:mbg_mobile_app/common/styles/spacing_styles.dart';
+import 'package:mbg_mobile_app/features/dapur/controllers/dapur_dashboard_controller.dart';
+import 'package:mbg_mobile_app/utils/constants/sizes.dart';
 
 /// No assigned kitchen widget
-class NoAssignedKitchenWidget extends StatelessWidget {
+class EmptyDapurDashboard extends StatelessWidget {
   final DapurDashboardController controller;
   final String? errorMessage;
 
-  const NoAssignedKitchenWidget({
+  const EmptyDapurDashboard({
     super.key,
     required this.controller,
     this.errorMessage,

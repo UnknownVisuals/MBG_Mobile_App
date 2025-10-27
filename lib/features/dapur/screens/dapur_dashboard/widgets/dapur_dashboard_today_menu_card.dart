@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
-import '../../../../../utils/constants/sizes.dart';
+import 'package:intl/intl.dart';
+import 'package:mbg_mobile_app/utils/constants/colors.dart';
+import 'package:mbg_mobile_app/utils/constants/sizes.dart';
 
-/// Delivery card widget for pending deliveries
-class DapurDashboardDeliveryCardWidget extends StatelessWidget {
-  final dynamic delivery;
+class DapurDashboardTodayMenuCard extends StatelessWidget {
+  const DapurDashboardTodayMenuCard({super.key, required this.menu});
 
-  const DapurDashboardDeliveryCardWidget({super.key, required this.delivery});
+  final dynamic menu;
 
   @override
   Widget build(BuildContext context) {
-    final statusColor = delivery.status == 'PENDING'
-        ? Colors.orange
-        : Colors.blue;
-
     return Container(
       margin: const EdgeInsets.only(bottom: MBGSizes.spaceBtwItems),
       padding: const EdgeInsets.all(MBGSizes.md),
@@ -27,10 +24,10 @@ class DapurDashboardDeliveryCardWidget extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: statusColor.withOpacity(0.1),
+              color: MBGColors.primary.withOpacity(0.1),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(Iconsax.truck, color: statusColor),
+            child: const Icon(Iconsax.note, color: MBGColors.primary),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -38,7 +35,7 @@ class DapurDashboardDeliveryCardWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  delivery.sekolahNama ?? 'Unknown School',
+                  menu.namaMenu,
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
@@ -46,7 +43,7 @@ class DapurDashboardDeliveryCardWidget extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '${delivery.jumlahTray} trays • ${delivery.jumlahKeranjang} baskets',
+                  '${menu.jamMulaiMasak} - ${menu.jamSelesaiMasak}',
                   style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                 ),
               ],
@@ -55,15 +52,15 @@ class DapurDashboardDeliveryCardWidget extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-              color: statusColor.withOpacity(0.1),
+              color: Colors.green.withOpacity(0.1),
               borderRadius: BorderRadius.circular(4),
             ),
             child: Text(
-              delivery.status,
-              style: TextStyle(
+              'Rp ${NumberFormat('#,###').format(menu.biayaPerTray)}',
+              style: const TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.bold,
-                color: statusColor,
+                color: Colors.green,
               ),
             ),
           ),

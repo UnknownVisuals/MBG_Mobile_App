@@ -9,6 +9,8 @@ import 'package:mbg_mobile_app/features/dapur/models/stok_model.dart';
 import 'package:mbg_mobile_app/utils/http/dapur_service.dart';
 
 class DapurDashboardController extends GetxController {
+  final RxList<MenuPlanningModel> activeMenuPlans = <MenuPlanningModel>[].obs;
+
   DapurDashboardController()
     : _dapurService = Get.find<DapurService>(),
       _dapurController = Get.find<DapurController>();
@@ -16,7 +18,6 @@ class DapurDashboardController extends GetxController {
   final DapurService _dapurService;
   final DapurController _dapurController;
 
-  final RxList<MenuPlanningModel> activeMenuPlans = <MenuPlanningModel>[].obs;
   final RxList<MenuHarianModel> todaysMenus = <MenuHarianModel>[].obs;
   final RxList<CheckpointModel> todaysCheckpoints = <CheckpointModel>[].obs;
   final RxList<PengirimanModel> pendingDeliveries = <PengirimanModel>[].obs;
