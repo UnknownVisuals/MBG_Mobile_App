@@ -9,11 +9,13 @@ import 'package:mbg_mobile_app/features/authentication/screens/onboarding/onboar
 import 'package:mbg_mobile_app/features/dapur/screens/dapur.dart';
 import 'package:mbg_mobile_app/features/driver/screens/driver.dart';
 import 'package:mbg_mobile_app/features/sekolah/screens/sekolah.dart';
-import 'package:mbg_mobile_app/navigation_menu.dart';
 import 'package:mbg_mobile_app/utils/constants/text_strings.dart';
+import 'package:mbg_mobile_app/utils/http/dapur_service.dart';
+import 'package:mbg_mobile_app/utils/http/driver_service.dart';
+import 'package:mbg_mobile_app/utils/http/http_client.dart';
+import 'package:mbg_mobile_app/utils/http/sekolah_service.dart';
 import 'package:mbg_mobile_app/utils/local_storage/storage_utility.dart';
 import 'package:mbg_mobile_app/utils/theme/theme.dart';
-import 'package:mbg_mobile_app/utils/http/http_client.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,7 +23,14 @@ Future<void> main() async {
   await dotenv.load(fileName: ".env");
   await GetStorage.init();
 
+  // Initialize HTTP Client
+  Get.put(MBGHttpHelper());
   MBGHttpHelper.loadSessionToken();
+
+  // Initialize Services
+  Get.put(DapurService());
+  Get.put(DriverService());
+  Get.put(SekolahService());
 
   runApp(const App());
 }
@@ -29,35 +38,42 @@ Future<void> main() async {
 class App extends StatelessWidget {
   const App({super.key});
 
-  Future<Widget> _determineInitialScreen() async {
-    final localStorage = MBGLocalStorage();
+  Future<Widget> _initialScreen() async {
+    // =============================
+    // ===== ONBOARDING SCREEN =====
+    // =============================
 
-    // Check if user has seen onboarding
-    final hasSeenOnboarding =
+    // Check if onboarding has been seen
+    final MBGLocalStorage localStorage = MBGLocalStorage();
+
+    // Check if onboarding has been seen
+    final bool hasSeenOnboarding =
         localStorage.readData<bool>('hasSeenOnboarding') ?? false;
 
-    // If haven't seen onboarding, show it
+    // If onboarding not seen, show onboarding screen
     if (!hasSeenOnboarding) {
       return const OnBoardingScreen();
     }
 
-    // Check if there's a saved session token
-    final sessionToken = localStorage.readData<String>('session_token');
+    // ================================
+    // ===== AUTHENTICATION CHECK =====
+    // ================================
 
-    // If no token, go to login
+    // Check for existing session token
+    final String? sessionToken = localStorage.readData<String>('session_token');
+
+    // If no session token, show login screen
     if (sessionToken == null || sessionToken.isEmpty) {
       return const LoginScreen();
     }
 
-    // If token exists, try to fetch user profile
+    // If session token exists, validate and fetch user profile
     try {
-      final userController = Get.put(UserController());
+      final UserController userController = Get.put(UserController());
       await userController.fetchUserProfile();
 
-      // If user data is valid, navigate based on role
       if (userController.user.value != null) {
         final userRole = userController.user.value?.role;
-
         switch (userRole) {
           case 'PIC_DAPUR':
             return const DapurScreen();
@@ -65,18 +81,14 @@ class App extends StatelessWidget {
             return const DriverScreen();
           case 'PIC_SEKOLAH':
             return const SekolahScreen();
-          case 'SUPERADMIN':
-            return const NavigationMenu();
           default:
-            return const NavigationMenu();
+            return const LoginScreen();
         }
       }
     } catch (e) {
-      // If token is invalid or expired, clear it and go to login
       await MBGHttpHelper.clearSessionToken();
     }
 
-    // Default to login screen
     return const LoginScreen();
   }
 
@@ -88,14 +100,14 @@ class App extends StatelessWidget {
       theme: MBGAppTheme.lightTheme,
       darkTheme: MBGAppTheme.darkTheme,
       home: FutureBuilder<Widget>(
-        future: _determineInitialScreen(),
+        future: _initialScreen(),
         builder: (context, snapshot) {
-          // Show splash screen while determining initial screen
+          // While waiting for the future to complete, show splash screen
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const SplashScreen();
+            return const MBGSplashScreen();
           }
 
-          // Return the determined screen
+          // Once complete, show the appropriate initial screen
           return snapshot.data ?? const OnBoardingScreen();
         },
       ),

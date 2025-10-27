@@ -91,11 +91,11 @@ class TimelineEventCard extends StatelessWidget {
                   // TODO: Handle completion action
                 },
                 icon: Icon(
-                  Iconsax.tick_circle,
+                  Iconsax.task,
                   color: event.isActive ? MBGColors.primary : MBGColors.white,
                 ),
                 label: Text(
-                  'Tandai Selesai',
+                  'Mulai Proses',
                   style: TextStyle(
                     color: event.isActive ? MBGColors.primary : MBGColors.white,
                   ),

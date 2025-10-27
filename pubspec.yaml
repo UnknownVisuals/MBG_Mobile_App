@@ -47,6 +47,12 @@ dependencies:
   smooth_page_indicator: ^1.2.1
   timelines_plus: ^1.0.7
   sidebarx: ^0.17.2
+  image_picker: ^1.2.0
+  qr_flutter: ^4.1.0
+  fl_chart: ^1.1.1
+  dio: ^5.9.0
+  mobile_scanner: ^7.1.2
+  table_calendar: ^3.2.0
 
 dev_dependencies:
   flutter_test:

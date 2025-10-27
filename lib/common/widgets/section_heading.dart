@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class REYSectionHeading extends StatelessWidget {
-  const REYSectionHeading({
+class MBGSectionHeading extends StatelessWidget {
+  const MBGSectionHeading({
     super.key,
     this.onPressed,
     this.textColor,

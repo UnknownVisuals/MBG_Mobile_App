@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:mbg_mobile_app/utils/constants/image_strings.dart';
-import 'package:mbg_mobile_app/utils/constants/sizes.dart';
 import 'package:mbg_mobile_app/utils/constants/text_strings.dart';
 
 class LoginHeader extends StatelessWidget {
@@ -13,13 +12,17 @@ class LoginHeader extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          // Logo
           const Image(height: 150, image: AssetImage(MBGImages.logo)),
+
+          // Title
           Text(
             MBGTexts.loginTitle,
             style: Theme.of(context).textTheme.headlineMedium,
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: MBGSizes.sm),
+
+          // Subtitle
           Text(
             MBGTexts.loginSubTitle,
             style: Theme.of(context).textTheme.bodyMedium,

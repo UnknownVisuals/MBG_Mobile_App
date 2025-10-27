@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:mbg_mobile_app/features/authentication/controllers/login_controller.dart';
-import 'package:mbg_mobile_app/features/authentication/screens/password_config/forget_password.dart';
-import 'package:mbg_mobile_app/features/authentication/screens/signup/signup.dart';
-import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
 import 'package:mbg_mobile_app/utils/constants/text_strings.dart';
 import 'package:mbg_mobile_app/utils/validators/validation.dart';
@@ -14,10 +11,15 @@ class LoginForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Dependencies
     final LoginController loginController = Get.put(LoginController());
-    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+    // Inputs Variables
     final TextEditingController emailController = TextEditingController();
     final TextEditingController passwordController = TextEditingController();
+
+    // Form Key
+    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
     return Obx(
       () => Form(
@@ -75,13 +77,13 @@ class LoginForm extends StatelessWidget {
                   ),
 
                   // Forgot Password
-                  TextButton(
-                    onPressed: () => Get.to(const ForgetPasswordScreen()),
-                    child: Text(
-                      MBGTexts.forgetPassword,
-                      style: const TextStyle(color: MBGColors.primary),
-                    ),
-                  ),
+                  // TextButton(
+                  //   onPressed: () => Get.to(const ForgetPasswordScreen()),
+                  //   child: Text(
+                  //     MBGTexts.forgetPassword,
+                  //     style: const TextStyle(color: MBGColors.primary),
+                  //   ),
+                  // ),
                 ],
               ),
               const SizedBox(height: MBGSizes.spaceBtwSections),
@@ -92,7 +94,7 @@ class LoginForm extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () {
                     loginController.login(
-                      username: emailController.text,
+                      email: emailController.text,
                       password: passwordController.text,
                     );
                   },
@@ -102,13 +104,13 @@ class LoginForm extends StatelessWidget {
               const SizedBox(height: MBGSizes.spaceBtwItems),
 
               // Create Account Button
-              SizedBox(
-                width: double.infinity,
-                child: OutlinedButton(
-                  onPressed: () => Get.to(const SignupScreen()),
-                  child: Text(MBGTexts.createAccount),
-                ),
-              ),
+              // SizedBox(
+              //   width: double.infinity,
+              //   child: OutlinedButton(
+              //     onPressed: () => Get.to(const SignupScreen()),
+              //     child: Text(MBGTexts.createAccount),
+              //   ),
+              // ),
             ],
           ),
         ),

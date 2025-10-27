@@ -1,15 +1,30 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:mbg_mobile_app/utils/local_storage/storage_utility.dart';
 
 class MBGHttpHelper extends GetConnect {
+  // Default Configurations
   static String? _baseUrl = dotenv.env['API_BASE_URL'];
   static String _sessionToken = '';
+
+  // Dependencies
   static final _localStorage = MBGLocalStorage();
+
+  // State Variables
+  static bool _isHandlingUnauthorized = false;
+  static Future<void> Function({String? message})? _unauthorizedHandler;
 
   // Setter method to change the base URL
   static void setBaseUrl(String url) {
     _baseUrl = url;
+  }
+
+  // Method to get base URL
+  static String? getBaseUrl() {
+    return _baseUrl;
   }
 
   // Setter method to set session token
@@ -49,7 +64,7 @@ class MBGHttpHelper extends GetConnect {
 
   // Setter headers for HTTP requests
   static Map<String, String> _getHeaders() {
-    final headers = <String, String>{'Content-Type': 'application/json'};
+    final Map<String, String> headers = {'Content-Type': 'application/json'};
     if (_sessionToken.isNotEmpty) {
       headers['Authorization'] = 'Bearer $_sessionToken';
     }
@@ -58,44 +73,132 @@ class MBGHttpHelper extends GetConnect {
 
   // Helper method to make a GET request
   Future<Response> getRequest(String endpoint) async {
-    return await get(
-      '$_baseUrl/$endpoint',
-      headers: _getHeaders(),
-    ).timeout(const Duration(seconds: 10));
+    try {
+      final response = await get(
+        '$_baseUrl/$endpoint',
+        headers: _getHeaders(),
+      ).timeout(const Duration(seconds: 15));
+
+      return _handleResponse(response);
+    } on TimeoutException {
+      throw Exception('Request timeout. Please try again.');
+    } on SocketException {
+      throw Exception('No internet connection.');
+    }
   }
 
   // Helper method to make a POST request
-  Future<Response> postRequest(String endpoint, dynamic data) async {
-    return await post(
-      '$_baseUrl/$endpoint',
-      data,
-      headers: _getHeaders(),
-    ).timeout(const Duration(seconds: 10));
+  Future<Response> postRequest(
+    String endpoint,
+    dynamic data, {
+    bool handleUnauthorized = true,
+  }) async {
+    try {
+      final response = await post(
+        '$_baseUrl/$endpoint',
+        data,
+        headers: _getHeaders(),
+      ).timeout(const Duration(seconds: 15));
+
+      return _handleResponse(response, handleUnauthorized: handleUnauthorized);
+    } on TimeoutException {
+      throw Exception('Request timeout. Please try again.');
+    } on SocketException {
+      throw Exception('No internet connection.');
+    }
   }
 
   // Helper method to make a PUT request
   Future<Response> putRequest(String endpoint, dynamic data) async {
-    return await put(
-      '$_baseUrl/$endpoint',
-      data,
-      headers: _getHeaders(),
-    ).timeout(const Duration(seconds: 10));
+    try {
+      final response = await put(
+        '$_baseUrl/$endpoint',
+        data,
+        headers: _getHeaders(),
+      ).timeout(const Duration(seconds: 15));
+
+      return _handleResponse(response);
+    } on TimeoutException {
+      throw Exception('Request timeout. Please try again.');
+    } on SocketException {
+      throw Exception('No internet connection.');
+    }
   }
 
   // Helper method to make a PATCH request
   Future<Response> patchRequest(String endpoint, dynamic data) async {
-    return await patch(
-      '$_baseUrl/$endpoint',
-      data,
-      headers: _getHeaders(),
-    ).timeout(const Duration(seconds: 10));
+    try {
+      final response = await patch(
+        '$_baseUrl/$endpoint',
+        data,
+        headers: _getHeaders(),
+      ).timeout(const Duration(seconds: 15));
+
+      return _handleResponse(response);
+    } on TimeoutException {
+      throw Exception('Request timeout. Please try again.');
+    } on SocketException {
+      throw Exception('No internet connection.');
+    }
   }
 
   // Helper method to make a DELETE request
   Future<Response> deleteRequest(String endpoint) async {
-    return await delete(
-      '$_baseUrl/$endpoint',
-      headers: _getHeaders(),
-    ).timeout(const Duration(seconds: 10));
+    try {
+      final response = await delete(
+        '$_baseUrl/$endpoint',
+        headers: _getHeaders(),
+      ).timeout(const Duration(seconds: 15));
+
+      return _handleResponse(response);
+    } on TimeoutException {
+      throw Exception('Request timeout. Please try again.');
+    } on SocketException {
+      throw Exception('No internet connection.');
+    }
+  }
+
+  // Private method to handle responses
+  Response _handleResponse(
+    Response response, {
+    bool handleUnauthorized = true,
+  }) {
+    final body = response.body;
+    String? message;
+    if (body is Map<String, dynamic>) {
+      message = body['message'] as String?;
+    }
+
+    if (handleUnauthorized && response.statusCode == 401) {
+      _triggerUnauthorized(message: message);
+      throw Exception(message ?? 'Unauthorized');
+    }
+
+    return response;
+  }
+
+  static void registerUnauthorizedHandler(
+    Future<void> Function({String? message}) handler,
+  ) {
+    _unauthorizedHandler = handler;
+  }
+
+  static void unregisterUnauthorizedHandler(
+    Future<void> Function({String? message}) handler,
+  ) {
+    _unauthorizedHandler = null;
+  }
+
+  static Future<void> _triggerUnauthorized({String? message}) async {
+    if (_isHandlingUnauthorized) return;
+    _isHandlingUnauthorized = true;
+
+    await clearSessionToken();
+
+    if (_unauthorizedHandler != null) {
+      await _unauthorizedHandler!(message: message);
+    }
+
+    _isHandlingUnauthorized = false;
   }
 }

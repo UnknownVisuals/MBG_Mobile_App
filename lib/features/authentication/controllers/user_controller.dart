@@ -6,18 +6,26 @@ import 'package:mbg_mobile_app/utils/popups/loaders.dart';
 
 class UserController extends GetxController {
   // Dependencies
-  MBGHttpHelper httpHelper = Get.put(MBGHttpHelper());
+  final MBGHttpHelper httpHelper = Get.find<MBGHttpHelper>();
 
   // Data Variables
   Rx<UserModel?> user = Rx<UserModel?>(null);
 
   // State Variables
   RxBool isLoading = false.obs;
+  bool _isHandlingSessionExpired = false;
 
   @override
   void onInit() {
     super.onInit();
+    MBGHttpHelper.registerUnauthorizedHandler(_handleSessionExpired);
     fetchUserProfile();
+  }
+
+  @override
+  void onClose() {
+    MBGHttpHelper.unregisterUnauthorizedHandler(_handleSessionExpired);
+    super.onClose();
   }
 
   /// Fetch user profile from API
@@ -25,7 +33,6 @@ class UserController extends GetxController {
     try {
       isLoading.value = true;
 
-      // Load session token first
       MBGHttpHelper.loadSessionToken();
 
       final response = await httpHelper.getRequest('auth/me');
@@ -38,8 +45,10 @@ class UserController extends GetxController {
         }
       }
     } catch (e) {
-      // Silently fail if not authenticated
-      user.value = null;
+      MBGLoaders.errorSnackBar(
+        title: 'Gagal memuat profil pengguna',
+        message: e.toString(),
+      );
     } finally {
       isLoading.value = false;
     }
@@ -49,22 +58,32 @@ class UserController extends GetxController {
   Future<void> logout() async {
     try {
       await MBGHttpHelper.clearSessionToken();
+
       user.value = null;
+
       Get.offAll(() => const LoginScreen());
+
+      MBGLoaders.successSnackBar(
+        title: 'Logout Berhasil',
+        message: 'Sampai jumpa lagi!',
+      );
     } catch (e) {
       MBGLoaders.errorSnackBar(title: 'Logout Failed', message: e.toString());
     }
   }
 
-  /// Check if user is authenticated
-  bool get isAuthenticated => user.value != null;
+  /// Handle session expiration
+  Future<void> _handleSessionExpired({String? message}) async {
+    if (_isHandlingSessionExpired) return;
 
-  /// Get user role
-  String? get userRole => user.value?.role;
+    _isHandlingSessionExpired = true;
 
-  /// Get user name
-  String? get userName => user.value?.name;
+    user.value = null;
 
-  /// Get user email
-  String? get userEmail => user.value?.email;
+    MBGLoaders.warningSnackBar(title: 'Sesi berakhir', message: message);
+
+    Get.offAll(() => const LoginScreen());
+
+    _isHandlingSessionExpired = false;
+  }
 }

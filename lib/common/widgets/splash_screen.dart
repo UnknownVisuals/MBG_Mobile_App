@@ -3,8 +3,8 @@ import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/image_strings.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
 
-class SplashScreen extends StatelessWidget {
-  const SplashScreen({super.key});
+class MBGSplashScreen extends StatelessWidget {
+  const MBGSplashScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
