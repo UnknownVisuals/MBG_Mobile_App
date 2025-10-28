@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
+import 'package:mbg_mobile_app/utils/helpers/file_helper.dart';
 import 'package:mbg_mobile_app/utils/local_storage/storage_utility.dart';
 
 class MBGHttpHelper extends GetConnect {
@@ -101,6 +102,56 @@ class MBGHttpHelper extends GetConnect {
       ).timeout(const Duration(seconds: 15));
 
       return _handleResponse(response, handleUnauthorized: handleUnauthorized);
+    } on TimeoutException {
+      throw Exception('Request timeout. Please try again.');
+    } on SocketException {
+      throw Exception('No internet connection.');
+    }
+  }
+
+  // Helper method to make a multipart/form-data POST request
+  Future<Response> postMultipartRequest(
+    String endpoint, {
+    Map<String, dynamic>? fields,
+    File? file,
+    String fileFieldName = 'file',
+    String? fileName,
+    String? contentType,
+    bool isPutMethod = false,
+  }) async {
+    try {
+      final Map<String, dynamic> formMap = <String, dynamic>{
+        if (fields != null) ...fields,
+      };
+
+      if (file != null) {
+        final resolvedName =
+            fileName ?? file.path.split(Platform.pathSeparator).last;
+        final resolvedContentType =
+            contentType ?? MBGFileHelper.inferImageContentType(file);
+
+        formMap[fileFieldName] = MultipartFile(
+          file,
+          filename: resolvedName,
+          contentType: resolvedContentType,
+        );
+      }
+
+      final headers = <String, String>{};
+      if (_sessionToken.isNotEmpty) {
+        headers['Authorization'] = 'Bearer $_sessionToken';
+      }
+
+      final url = '$_baseUrl/$endpoint';
+      final formData = FormData(formMap);
+
+      final response =
+          await (isPutMethod
+                  ? put(url, formData, headers: headers)
+                  : post(url, formData, headers: headers))
+              .timeout(const Duration(seconds: 30));
+
+      return _handleResponse(response);
     } on TimeoutException {
       throw Exception('Request timeout. Please try again.');
     } on SocketException {

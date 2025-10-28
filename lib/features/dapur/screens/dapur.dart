@@ -7,7 +7,7 @@ import 'package:mbg_mobile_app/features/dapur/controllers/dapur_controller.dart'
 import 'package:mbg_mobile_app/features/dapur/screens/checkpoint/checkpoint_screen.dart';
 import 'package:mbg_mobile_app/features/dapur/screens/dapur_dashboard/dapur_dashboard_screen.dart';
 import 'package:mbg_mobile_app/features/dapur/screens/dapur_info/dapur_info_screen.dart';
-import 'package:mbg_mobile_app/features/dapur/screens/karyawan_management/karyawan_management_screen.dart';
+import 'package:mbg_mobile_app/features/dapur/screens/dapur_karyawan/dapur_karyawan_screen.dart';
 import 'package:mbg_mobile_app/features/dapur/screens/menu_planning/menu_planning_screen.dart';
 import 'package:mbg_mobile_app/features/dapur/screens/pengiriman/pengiriman_screen.dart';
 import 'package:mbg_mobile_app/features/dapur/screens/stok_management/stok_management_screen.dart';
@@ -18,7 +18,7 @@ class DapurScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final userController = Get.find<UserController>();
+    final userController = Get.put(UserController());
     final dapurController = Get.put(DapurController());
 
     return Obx(
@@ -53,7 +53,7 @@ class DapurScreen extends StatelessWidget {
             // 1 - Dapur Info
             const DapurInfoScreen(),
             // 2 - Karyawan
-            const KaryawanManagementScreen(),
+            const DapurKaryawanScreen(),
             // 3 - Stok
             const StokManagementScreen(),
             // 4 - Menu Planning

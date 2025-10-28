@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../../../features/dapur/controllers/dapur_controller.dart';
+import '../../../controllers/dapur_controller.dart';
 
 /// Widget shown when no dapur is selected
-class NoDapurSelectedWidget extends StatelessWidget {
+class EmptyDapurKaryawan extends StatelessWidget {
   final String? errorMessage;
 
-  const NoDapurSelectedWidget({super.key, this.errorMessage});
+  const EmptyDapurKaryawan({super.key, this.errorMessage});
 
   @override
   Widget build(BuildContext context) {

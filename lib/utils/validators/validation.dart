@@ -58,4 +58,11 @@ class MBGValidator {
   }
 
   // Add more custom validators as needed for your specific requirements.
+
+  static String? validateRequired(String? value, {required String fieldName}) {
+    if (value == null || value.trim().isEmpty) {
+      return '$fieldName harus diisi';
+    }
+    return null;
+  }
 }

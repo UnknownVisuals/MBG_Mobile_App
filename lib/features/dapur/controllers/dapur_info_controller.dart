@@ -21,7 +21,6 @@ class DapurInfoController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // Auto-load dapur info when controller is initialized
     if (userModel.dapurAsPIC.isNotEmpty) {
       fetchDapurInfo(dapurId: dapurId);
     }

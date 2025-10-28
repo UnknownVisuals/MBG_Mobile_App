@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:mbg_mobile_app/features/dapur/models/checkpoint_model.dart';
 import 'package:mbg_mobile_app/features/dapur/models/dapur_model.dart';
-import 'package:mbg_mobile_app/features/dapur/models/karyawan_model.dart';
+import 'package:mbg_mobile_app/features/dapur/models/dapur_karyawan_model.dart';
 import 'package:mbg_mobile_app/features/dapur/models/menu_harian_model.dart';
 import 'package:mbg_mobile_app/features/dapur/models/menu_planning_model.dart';
 import 'package:mbg_mobile_app/features/dapur/models/pengiriman_model.dart';

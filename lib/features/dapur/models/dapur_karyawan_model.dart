@@ -3,37 +3,37 @@ class KaryawanModel {
     required this.id,
     required this.nama,
     required this.posisi,
-    required this.dapurId,
+    required this.status,
+    required this.fotoUrl,
     required this.createdAt,
     required this.updatedAt,
-    this.fotoUrl,
-    this.status,
-    this.dapur,
+    required this.dapurId,
+    required this.dapurSummary,
   });
 
   final String id;
   final String nama;
   final String posisi;
-  final String dapurId;
+  final String status;
+  final String fotoUrl;
   final DateTime createdAt;
   final DateTime updatedAt;
-  final String? fotoUrl;
-  final String? status;
-  final SimpleDapurSummary? dapur;
+  final String dapurId;
+  final DapurSummary dapurSummary;
 
   factory KaryawanModel.fromJson(Map<String, dynamic> json) {
     return KaryawanModel(
       id: json['id'] as String,
       nama: json['nama'] as String,
       posisi: json['posisi'] as String,
-      fotoUrl: json['fotoUrl'] as String?,
+      fotoUrl: json['fotoUrl'] as String,
       dapurId: json['dapurId'] as String,
-      status: json['status'] as String?,
-      dapur: json['dapur'] is Map<String, dynamic>
-          ? SimpleDapurSummary.fromJson(json['dapur'] as Map<String, dynamic>)
-          : null,
+      status: json['status'] as String,
       createdAt: DateTime.parse(json['createdAt'] as String),
       updatedAt: DateTime.parse(json['updatedAt'] as String),
+      dapurSummary: DapurSummary.fromJson(
+        json['dapur'] as Map<String, dynamic>,
+      ),
     );
   }
 
@@ -42,27 +42,24 @@ class KaryawanModel {
       'id': id,
       'nama': nama,
       'posisi': posisi,
-      'fotoUrl': fotoUrl,
-      'dapurId': dapurId,
       'status': status,
+      'fotoUrl': fotoUrl,
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
-      if (dapur != null) 'dapur': dapur!.toJson(),
+      'dapurId': dapurId,
+      'dapur': dapurSummary.toJson(),
     };
   }
 }
 
-class SimpleDapurSummary {
-  SimpleDapurSummary({required this.id, required this.nama});
+class DapurSummary {
+  DapurSummary({required this.id, required this.nama});
 
   final String id;
   final String nama;
 
-  factory SimpleDapurSummary.fromJson(Map<String, dynamic> json) {
-    return SimpleDapurSummary(
-      id: json['id'] as String,
-      nama: json['nama'] as String,
-    );
+  factory DapurSummary.fromJson(Map<String, dynamic> json) {
+    return DapurSummary(id: json['id'] as String, nama: json['nama'] as String);
   }
 
   Map<String, dynamic> toJson() {
