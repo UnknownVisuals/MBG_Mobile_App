@@ -7,7 +7,7 @@ import 'package:mbg_mobile_app/features/dapur/models/dapur_karyawan_model.dart';
 import 'package:mbg_mobile_app/features/dapur/models/menu_harian_model.dart';
 import 'package:mbg_mobile_app/features/dapur/models/menu_planning_model.dart';
 import 'package:mbg_mobile_app/features/dapur/models/pengiriman_model.dart';
-import 'package:mbg_mobile_app/features/dapur/models/stok_model.dart';
+import 'package:mbg_mobile_app/features/dapur/models/dapur_stok_model.dart';
 import 'package:mbg_mobile_app/features/dapur/models/kalender_akademik_model.dart';
 import 'package:mbg_mobile_app/utils/http/http_client.dart';
 import 'package:http/http.dart' as http;

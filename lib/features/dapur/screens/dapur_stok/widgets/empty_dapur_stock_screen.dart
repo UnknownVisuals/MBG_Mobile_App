@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../../../features/dapur/controllers/dapur_controller.dart';
+import '../../../controllers/dapur_controller.dart';
 
 /// Widget shown when no dapur is selected for stok management
 class StokNoDapurSelectedWidget extends StatelessWidget {

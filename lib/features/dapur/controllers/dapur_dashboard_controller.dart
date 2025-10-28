@@ -5,7 +5,7 @@ import 'package:mbg_mobile_app/features/dapur/models/checkpoint_model.dart';
 import 'package:mbg_mobile_app/features/dapur/models/menu_harian_model.dart';
 import 'package:mbg_mobile_app/features/dapur/models/menu_planning_model.dart';
 import 'package:mbg_mobile_app/features/dapur/models/pengiriman_model.dart';
-import 'package:mbg_mobile_app/features/dapur/models/stok_model.dart';
+import 'package:mbg_mobile_app/features/dapur/models/dapur_stok_model.dart';
 import 'package:mbg_mobile_app/utils/http/dapur_service.dart';
 
 class DapurDashboardController extends GetxController {

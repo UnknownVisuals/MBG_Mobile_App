@@ -35,9 +35,16 @@ class DapurKaryawanScreen extends StatelessWidget {
                 color: MBGColors.primary,
                 shape: BoxShape.circle,
               ),
-              child: IconButton(
+              child: FloatingActionButton.extended(
                 onPressed: () => Get.to(const DapurKaryawanAdd()),
+                backgroundColor: MBGColors.primary,
                 icon: const Icon(Iconsax.profile_add, color: MBGColors.white),
+                label: Text(
+                  'Tambah Karyawan',
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(color: MBGColors.white),
+                ),
               ),
             ),
           ),

@@ -10,7 +10,7 @@ import 'package:mbg_mobile_app/features/dapur/screens/dapur_info/dapur_info_scre
 import 'package:mbg_mobile_app/features/dapur/screens/dapur_karyawan/dapur_karyawan_screen.dart';
 import 'package:mbg_mobile_app/features/dapur/screens/menu_planning/menu_planning_screen.dart';
 import 'package:mbg_mobile_app/features/dapur/screens/pengiriman/pengiriman_screen.dart';
-import 'package:mbg_mobile_app/features/dapur/screens/stok_management/stok_management_screen.dart';
+import 'package:mbg_mobile_app/features/dapur/screens/dapur_stok/dapur_stock_screen.dart';
 import 'package:mbg_mobile_app/features/setting/sceens/setting.dart';
 
 class DapurScreen extends StatelessWidget {
@@ -55,7 +55,7 @@ class DapurScreen extends StatelessWidget {
             // 2 - Karyawan
             const DapurKaryawanScreen(),
             // 3 - Stok
-            const StokManagementScreen(),
+            DapurStockScreen(),
             // 4 - Menu Planning
             const MenuPlanningScreen(),
             // 5 - Checkpoint
