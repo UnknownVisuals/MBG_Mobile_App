@@ -11,8 +11,10 @@ class CheckpointController extends GetxController {
   final ImagePicker _picker = ImagePicker();
 
   // Observable variables
-  final RxList<MenuHarianModel> todayMenus = <MenuHarianModel>[].obs;
-  final Rx<MenuHarianModel?> selectedMenu = Rx<MenuHarianModel?>(null);
+  final RxList<DapurMenuHarianModel> todayMenus = <DapurMenuHarianModel>[].obs;
+  final Rx<DapurMenuHarianModel?> selectedMenu = Rx<DapurMenuHarianModel?>(
+    null,
+  );
   final RxList<DapurCheckpointModel> checkpoints = <DapurCheckpointModel>[].obs;
   final RxBool isLoading = false.obs;
   final RxBool isLoadingCheckpoints = false.obs;
@@ -109,7 +111,7 @@ class CheckpointController extends GetxController {
   }
 
   /// Select a menu to view its checkpoints
-  void selectMenu(MenuHarianModel menu) {
+  void selectMenu(DapurMenuHarianModel menu) {
     selectedMenu.value = menu;
     fetchCheckpoints(menu.id);
   }
