@@ -3,12 +3,13 @@ import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 import '../../../../../utils/constants/colors.dart';
 import '../../../../../utils/constants/sizes.dart';
-import '../../../models/kelas_model.dart';
+import '../../../models/sekolah_absensi_model.dart';
+import '../../../models/sekolah_kelas_model.dart';
 
 /// Attendance card widget for displaying attendance records
 class AttendanceCardWidget extends StatelessWidget {
-  final dynamic absensi;
-  final KelasModel kelas;
+  final SekolahAbsensiModel absensi;
+  final SekolahKelasModel kelas;
 
   const AttendanceCardWidget({
     super.key,

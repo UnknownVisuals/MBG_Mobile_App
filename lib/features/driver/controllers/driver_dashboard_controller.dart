@@ -1,13 +1,15 @@
 import 'package:get/get.dart';
-import 'package:mbg_mobile_app/features/dapur/models/pengiriman_model.dart';
-import 'package:mbg_mobile_app/utils/http/dapur_service.dart';
+import 'package:mbg_mobile_app/features/driver/models/driver_delivery_model.dart';
+import 'package:mbg_mobile_app/utils/services/driver_service.dart';
 
 class DriverDashboardController extends GetxController {
-  final DapurService _dapurService = Get.find<DapurService>();
+  final DriverService _driverService = Get.find<DriverService>();
 
   // Observable variables
-  final RxList<PengirimanModel> pendingDeliveries = <PengirimanModel>[].obs;
-  final RxList<PengirimanModel> completedDeliveries = <PengirimanModel>[].obs;
+  final RxList<DriverDeliveryModel> pendingDeliveries =
+      <DriverDeliveryModel>[].obs;
+  final RxList<DriverDeliveryModel> completedDeliveries =
+      <DriverDeliveryModel>[].obs;
   final RxBool isLoading = false.obs;
   final RxInt pendingCount = 0.obs;
   final RxInt completedTodayCount = 0.obs;
@@ -25,7 +27,7 @@ class DriverDashboardController extends GetxController {
     try {
       await fetchDeliveries();
     } catch (e) {
-      print('Error fetching dashboard data: $e');
+      Get.log('Error fetching dashboard data: $e');
     } finally {
       isLoading.value = false;
     }
@@ -34,32 +36,36 @@ class DriverDashboardController extends GetxController {
   /// Fetch all deliveries for driver
   Future<void> fetchDeliveries() async {
     try {
-      // TODO: Use getDriverPengiriman() when available in service
-      // For now, using getAllPengiriman() - should be filtered by driver on backend
-      final deliveries = await _dapurService.getAllPengiriman();
+      final deliveries = await _driverService.getMyDeliveries();
 
       // Separate pending and completed deliveries
       pendingDeliveries.value = deliveries
-          .where((d) => d.status == 'PENDING' || d.status == 'IN_TRANSIT')
+          .where(
+            (d) =>
+                d.status == 'PENDING' ||
+                d.status == 'IN_TRANSIT' ||
+                d.status == 'DIAMBIL',
+          )
           .toList();
 
       completedDeliveries.value = deliveries
-          .where((d) => d.status == 'DELIVERED')
+          .where((d) => d.status == 'DITERIMA' || d.status == 'DELIVERED')
           .toList();
 
       // Filter completed today
       final today = DateTime.now();
       final completedToday = completedDeliveries.where((d) {
-        return d.createdAt.year == today.year &&
-            d.createdAt.month == today.month &&
-            d.createdAt.day == today.day;
+        final completionTime = d.waktuDiterima ?? d.updatedAt;
+        return completionTime.year == today.year &&
+            completionTime.month == today.month &&
+            completionTime.day == today.day;
       }).toList();
 
       pendingCount.value = pendingDeliveries.length;
       completedTodayCount.value = completedToday.length;
       totalDeliveriesCount.value = deliveries.length;
     } catch (e) {
-      print('Error fetching deliveries: $e');
+      Get.log('Error fetching deliveries: $e');
     }
   }
 

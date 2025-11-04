@@ -2,15 +2,18 @@ import 'package:get/get.dart';
 import 'package:mbg_mobile_app/features/authentication/controllers/user_controller.dart';
 import 'package:mbg_mobile_app/features/authentication/models/user_model.dart';
 import 'package:mbg_mobile_app/features/dapur/models/dapur_info_model.dart';
-import 'package:mbg_mobile_app/utils/http/http_client.dart';
+import 'package:mbg_mobile_app/utils/services/dapur_service.dart';
 import 'package:mbg_mobile_app/utils/popups/loaders.dart';
 
 class DapurInfoController extends GetxController {
   // Dependencies
-  final MBGHttpHelper httpHelper = Get.put(MBGHttpHelper());
+  final DapurService dapurService = Get.put(DapurService());
 
-  final UserModel userModel = Get.find<UserController>().user.value!;
-  String get dapurId => userModel.dapurAsPIC.first.id;
+  // Getter for dapurId
+  final UserModel userModel = Get.find<UserController>().userModel.value!;
+  String get dapurId {
+    return userModel.dapurAsPIC.first.id;
+  }
 
   // Data Variables
   Rx<DapurInfoModel?> dapurInfo = Rx<DapurInfoModel?>(null);
@@ -21,27 +24,24 @@ class DapurInfoController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    if (userModel.dapurAsPIC.isNotEmpty) {
-      fetchDapurInfo(dapurId: dapurId);
-    }
+    fetchDapurInfo(dapurId: dapurId);
   }
 
-  /// Fetch dapur info from API
+  // =======================
+  // REFRESH DAPUR INFO DATA
+  // =======================
+  Future<void> refreshDapurInfo() async {
+    await fetchDapurInfo(dapurId: dapurId);
+  }
+
+  // ===================
+  // GET DAPUR INFO DATA
+  // ===================
   Future<void> fetchDapurInfo({required String dapurId}) async {
     try {
       isLoading.value = true;
-
-      MBGHttpHelper.loadSessionToken();
-
-      final response = await httpHelper.getRequest('dapur/$dapurId');
-
-      if (response.statusCode == 200) {
-        final responseData = response.body;
-
-        if (responseData['success'] == true) {
-          dapurInfo.value = DapurInfoModel.fromJson(responseData['data']);
-        }
-      }
+      final info = await dapurService.getDapurById(dapurId);
+      dapurInfo.value = info;
     } catch (e) {
       MBGLoaders.errorSnackBar(
         title: 'Gagal memuat profil dapur',

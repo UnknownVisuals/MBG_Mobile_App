@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '../../../models/siswa_model.dart';
+import '../../../models/sekolah_siswa_model.dart';
 
 /// Card widget displaying student information
 class SiswaCardWidget extends StatelessWidget {
-  final SiswaModel siswa;
+  final SekolahSiswaModel siswa;
   final VoidCallback onTap;
   final VoidCallback onDelete;
 

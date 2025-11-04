@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mbg_mobile_app/features/dapur/models/menu_planning_model.dart';
-import 'package:mbg_mobile_app/features/dapur/models/pengiriman_model.dart';
-import 'package:mbg_mobile_app/features/sekolah/models/absensi_model.dart';
-import 'package:mbg_mobile_app/features/sekolah/models/kelas_model.dart';
-import 'package:mbg_mobile_app/utils/http/sekolah_service.dart';
+import 'package:mbg_mobile_app/features/dapur/models/dapur_menu_planning_model.dart';
+import 'package:mbg_mobile_app/features/sekolah/models/sekolah_absensi_model.dart';
+import 'package:mbg_mobile_app/features/sekolah/models/sekolah_kelas_model.dart';
+import 'package:mbg_mobile_app/features/sekolah/models/sekolah_pengiriman_model.dart';
+import 'package:mbg_mobile_app/utils/services/sekolah_service.dart';
 import 'package:intl/intl.dart';
 
 class SekolahDashboardController extends GetxController {
   final SekolahService _sekolahService = Get.find<SekolahService>();
 
   // Observable variables
-  final RxList<AbsensiModel> todaysAbsensi = <AbsensiModel>[].obs;
-  final RxList<KelasModel> classes = <KelasModel>[].obs;
-  final RxList<MenuPlanningModel> todaysMenus = <MenuPlanningModel>[].obs;
-  final RxList<PengirimanModel> pendingDeliveries = <PengirimanModel>[].obs;
+  final RxList<SekolahAbsensiModel> todaysAbsensi = <SekolahAbsensiModel>[].obs;
+  final RxList<SekolahKelasModel> classes = <SekolahKelasModel>[].obs;
+  final RxList<DapurMenuPlanningModel> todaysMenus =
+      <DapurMenuPlanningModel>[].obs;
+  final RxList<SekolahPengirimanModel> pendingDeliveries =
+      <SekolahPengirimanModel>[].obs;
   final RxBool isLoading = false.obs;
   final RxInt totalPresentToday = 0.obs;
   final RxInt totalClassesToday = 0.obs;
@@ -37,7 +39,7 @@ class SekolahDashboardController extends GetxController {
         fetchTodaysMenu(),
       ]);
     } catch (e) {
-      print('Error fetching dashboard data: $e');
+      Get.log('Error fetching dashboard data: $e');
     } finally {
       isLoading.value = false;
     }
@@ -71,7 +73,7 @@ class SekolahDashboardController extends GetxController {
         }
       }
     } catch (e) {
-      print('Error fetching today\'s attendance: $e');
+      Get.log('Error fetching today\'s attendance: $e');
       // If sekolahId not found, skip for now
     }
   }
@@ -93,7 +95,7 @@ class SekolahDashboardController extends GetxController {
 
       pendingDeliveriesCount.value = pendingDeliveries.length;
     } catch (e) {
-      print('Error fetching pending deliveries: $e');
+      Get.log('Error fetching pending deliveries: $e');
     }
   }
 
@@ -112,7 +114,7 @@ class SekolahDashboardController extends GetxController {
             menu.tanggalSelesai.isAfter(today.subtract(Duration(days: 1)));
       }).toList();
     } catch (e) {
-      print('Error fetching today\'s menu: $e');
+      Get.log('Error fetching today\'s menu: $e');
     }
   }
 

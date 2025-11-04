@@ -1,16 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
 
 /// Delivery card widget for pending deliveries
 class DapurDashboardDeliveryCardWidget extends StatelessWidget {
-  final dynamic delivery;
-
-  const DapurDashboardDeliveryCardWidget({super.key, required this.delivery});
+  const DapurDashboardDeliveryCardWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final statusColor = delivery.status == 'PENDING'
+    final delivery = {
+      'sekolahNama': 'SDN 01 Jakarta',
+      'jumlahTray': 10,
+      'jumlahKeranjang': 5,
+      'status': 'PENDING',
+    };
+
+    final statusColor = delivery['status'] == 'PENDING'
         ? Colors.orange
         : Colors.blue;
 
@@ -20,48 +26,57 @@ class DapurDashboardDeliveryCardWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(MBGSizes.cardRadiusMd),
-        border: Border.all(color: Colors.grey[300]!),
+        border: Border.all(color: MBGColors.borderPrimary),
       ),
       child: Row(
         children: [
+          // Icon
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(MBGSizes.md),
             decoration: BoxDecoration(
-              color: statusColor.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
+              color: statusColor.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(MBGSizes.borderRadiusMd),
             ),
             child: Icon(Iconsax.truck, color: statusColor),
           ),
-          const SizedBox(width: 12),
+
+          const SizedBox(width: MBGSizes.spaceBtwItems),
+
+          // Delivery Details
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  delivery.sekolahNama ?? 'Unknown School',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                  ),
+                  delivery['sekolahNama'].toString(),
+                  style: Theme.of(context).textTheme.bodyMedium,
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '${delivery.jumlahTray} trays • ${delivery.jumlahKeranjang} baskets',
-                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                  '${delivery['jumlahTray']} trays • ${delivery['jumlahKeranjang']} baskets',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: MBGColors.textSecondary,
+                  ),
                 ),
               ],
             ),
           ),
+
+          const SizedBox(width: MBGSizes.spaceBtwItems / 2),
+
+          // Status Tag
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            padding: const EdgeInsets.symmetric(
+              horizontal: MBGSizes.md,
+              vertical: MBGSizes.sm,
+            ),
             decoration: BoxDecoration(
-              color: statusColor.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(4),
+              color: statusColor.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(MBGSizes.borderRadiusSm),
             ),
             child: Text(
-              delivery.status,
-              style: TextStyle(
-                fontSize: 11,
+              delivery['status'].toString(),
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: statusColor,
               ),

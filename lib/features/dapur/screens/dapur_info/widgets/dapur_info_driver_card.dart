@@ -28,10 +28,14 @@ class DapurInfoDriverCard extends StatelessWidget {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(MBGSizes.sm),
+                padding: const EdgeInsets.all(MBGSizes.sm + 2),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
+                  color: Colors.white.withValues(alpha: 0.25),
                   borderRadius: BorderRadius.circular(MBGSizes.borderRadiusMd),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.3),
+                    width: 1.5,
+                  ),
                 ),
                 child: const Icon(
                   Iconsax.truck_fast,
@@ -94,21 +98,34 @@ class DapurInfoDriverCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: MBGSizes.spaceBtwItems / 2),
-          Row(
-            children: [
-              const Icon(
-                Iconsax.car,
-                color: MBGColors.white,
-                size: MBGSizes.iconSm,
+          Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: MBGSizes.sm,
+              vertical: MBGSizes.xs,
+            ),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.25),
+              borderRadius: BorderRadius.circular(MBGSizes.borderRadiusSm),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.3),
+                width: 1,
               ),
-              const SizedBox(width: MBGSizes.spaceBtwItems / 2),
-              Text(
-                driver.nomorKendaraan,
-                style: Theme.of(
-                  context,
-                ).textTheme.bodyMedium?.copyWith(color: MBGColors.textWhite),
-              ),
-            ],
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Iconsax.car, color: MBGColors.white, size: 16),
+                const SizedBox(width: MBGSizes.xs),
+                Text(
+                  driver.nomorKendaraan,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: MBGColors.textWhite,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.2,
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),

@@ -13,114 +13,158 @@ import 'package:mbg_mobile_app/features/dapur/controllers/dapur_karyawan_control
 import 'package:mbg_mobile_app/features/dapur/models/dapur_karyawan_model.dart';
 import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
-import 'package:mbg_mobile_app/utils/helpers/helper_functions.dart';
-import 'package:mbg_mobile_app/utils/validators/validation.dart';
 
-class DapurKaryawanEdit extends StatefulWidget {
+class DapurKaryawanEdit extends StatelessWidget {
   const DapurKaryawanEdit({super.key, required this.karyawan});
 
-  final KaryawanModel karyawan;
-
-  @override
-  State<DapurKaryawanEdit> createState() => _DapurKaryawanEditState();
-}
-
-class _DapurKaryawanEditState extends State<DapurKaryawanEdit> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  late final CameraController _cameraController;
-  late final DapurKaryawanController _karyawanController;
-  late final TextEditingController _namaController;
-  late final TextEditingController _posisiController;
-
-  @override
-  void initState() {
-    super.initState();
-    _cameraController = Get.put(CameraController());
-    _karyawanController = Get.find<DapurKaryawanController>();
-
-    _namaController = TextEditingController(text: widget.karyawan.nama);
-    _posisiController = TextEditingController(text: widget.karyawan.posisi);
-
-    // Ensure previous selections don't leak into edit flow
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _cameraController.clearImage();
-    });
-  }
-
-  @override
-  void dispose() {
-    _namaController.dispose();
-    _posisiController.dispose();
-    _cameraController.clearImage();
-    super.dispose();
-  }
+  final DapurKaryawanModel karyawan;
 
   @override
   Widget build(BuildContext context) {
+    // Selected Values for Dropdowns
+    final Rx<KaryawanStatus?> selectedStatus = Rx<KaryawanStatus?>(null);
+    final Rx<JenisKelamin?> selectedGender = Rx<JenisKelamin?>(null);
+    selectedStatus.value = karyawan.status;
+    selectedGender.value = karyawan.jenisKelamin;
+
+    final DapurKaryawanController dapurKaryawanController =
+        Get.find<DapurKaryawanController>();
+
+    // Camera Controller
+    final CameraController cameraController =
+        Get.isRegistered<CameraController>()
+        ? Get.find<CameraController>()
+        : Get.put(CameraController());
+    final Rx<File?> selectedImage = cameraController.selectedImage;
+
+    // Form Key
+    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
     return Scaffold(
       appBar: MBGAppBar(showBackArrow: true),
       body: SingleChildScrollView(
         child: Padding(
           padding: MBGSpacingStyles.homeScreenPadding,
           child: Form(
-            key: _formKey,
+            key: formKey,
             child: Column(
               children: [
+                // Title
                 Text(
                   'Form Edit Karyawan Dapur',
                   style: Theme.of(context).textTheme.headlineMedium,
                   textAlign: TextAlign.start,
                 ),
                 const SizedBox(height: MBGSizes.spaceBtwSections),
+
+                // Data Karyawan Section
                 MBGSectionHeading(title: 'Data Karyawan'),
                 const SizedBox(height: MBGSizes.spaceBtwItems),
+
+                // Nama
                 TextFormField(
-                  controller: _namaController,
+                  initialValue: karyawan.nama,
                   decoration: const InputDecoration(
                     labelText: 'Nama Karyawan',
                     prefixIcon: Icon(Iconsax.user),
                   ),
-                  validator: (value) => MBGValidator.validateRequired(
-                    value,
-                    fieldName: 'Nama karyawan',
-                  ),
                 ),
                 const SizedBox(height: MBGSizes.spaceBtwInputFields),
+
+                // Posisi
                 TextFormField(
-                  controller: _posisiController,
+                  initialValue: karyawan.posisi,
                   decoration: const InputDecoration(
                     labelText: 'Posisi',
                     prefixIcon: Icon(Iconsax.briefcase),
                   ),
-                  validator: (value) =>
-                      MBGValidator.validateRequired(value, fieldName: 'Posisi'),
                 ),
-                const SizedBox(height: MBGSizes.spaceBtwSections),
+                const SizedBox(height: MBGSizes.spaceBtwInputFields),
+
+                // Status
                 Obx(
-                  () => MBGSectionHeading(
-                    title: 'Foto Karyawan',
-                    showActionButton: _cameraController.hasImage,
-                    actionButtonTitle: 'Hapus Foto Baru',
-                    onPressed: () => _cameraController.clearImage(),
+                  () => DropdownButtonFormField<KaryawanStatus>(
+                    initialValue: selectedStatus.value,
+                    decoration: const InputDecoration(
+                      labelText: 'Status',
+                      prefixIcon: Icon(Iconsax.status),
+                    ),
+                    items: KaryawanStatus.values.map((status) {
+                      return DropdownMenuItem(
+                        value: status,
+                        child: Text(status.displayName),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      selectedStatus.value = value;
+                    },
                   ),
                 ),
-                const SizedBox(height: MBGSizes.spaceBtwItems),
-                Obx(() {
-                  final bool dark = MBGHelperFunctions.isDarkMode(context);
-                  final bool hasImage = _cameraController.hasImage;
-                  final File? selectedImage = _cameraController.imageFile;
 
-                  final bool hasExistingPhoto =
-                      widget.karyawan.fotoUrl.isNotEmpty;
+                const SizedBox(height: MBGSizes.spaceBtwInputFields),
+
+                // Jenis Kelamin
+                Obx(
+                  () => DropdownButtonFormField<JenisKelamin>(
+                    initialValue: selectedGender.value,
+                    decoration: const InputDecoration(
+                      labelText: 'Jenis Kelamin',
+                      prefixIcon: Icon(Iconsax.user_tag),
+                    ),
+                    items: JenisKelamin.values.map((gender) {
+                      return DropdownMenuItem(
+                        value: gender,
+                        child: Text(gender.displayName),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      selectedGender.value = value;
+                    },
+                  ),
+                ),
+                const SizedBox(height: MBGSizes.spaceBtwInputFields),
+
+                // Umur
+                TextFormField(
+                  initialValue: karyawan.umur?.toString(),
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: 'Umur',
+                    prefixIcon: Icon(Iconsax.calendar),
+                  ),
+                ),
+                const SizedBox(height: MBGSizes.spaceBtwSections),
+
+                // Foto Karyawan Section
+                const MBGSectionHeading(title: 'Foto Karyawan'),
+                const SizedBox(height: MBGSizes.spaceBtwItems),
+
+                // Image Picker
+                Obx(() {
+                  final File? localImage = selectedImage.value;
+                  final String? remoteImage = karyawan.fotoUrl;
+                  final bool hasLocalImage = localImage != null;
+                  final bool hasRemoteImage =
+                      !hasLocalImage &&
+                      remoteImage != null &&
+                      remoteImage.isNotEmpty;
 
                   return GestureDetector(
-                    onTap: hasImage
-                        ? () => MBGImagePreviewDialog.showFile(
-                            context: context,
-                            imageFile: selectedImage!,
-                          )
-                        : () =>
-                              MBGImagePickerBottomSheet.show(context: context),
+                    onTap: () {
+                      if (hasLocalImage) {
+                        MBGImagePreviewDialog.showFile(
+                          context: context,
+                          imageFile: localImage,
+                        );
+                      } else if (hasRemoteImage) {
+                        MBGImagePreviewDialog.showData(
+                          context: context,
+                          imageData: remoteImage,
+                        );
+                      } else {
+                        MBGImagePickerBottomSheet.show(context: context);
+                      }
+                    },
                     child: AspectRatio(
                       aspectRatio: 5 / 4,
                       child: Container(
@@ -129,153 +173,120 @@ class _DapurKaryawanEditState extends State<DapurKaryawanEdit> {
                           borderRadius: BorderRadius.circular(
                             MBGSizes.borderRadiusMd,
                           ),
-                          border: Border.all(
-                            color: dark
-                                ? MBGColors.darkGrey
-                                : MBGColors.borderPrimary,
-                          ),
-                          color: dark
-                              ? MBGColors.darkContainer
-                              : MBGColors.lightContainer,
+                          border: Border.all(color: MBGColors.borderPrimary),
+                          color: MBGColors.lightContainer,
                         ),
-                        child: hasImage
+                        child: hasLocalImage
                             ? ClipRRect(
                                 borderRadius: BorderRadius.circular(
                                   MBGSizes.borderRadiusMd,
                                 ),
                                 child: Image.file(
-                                  selectedImage!,
+                                  localImage,
                                   fit: BoxFit.cover,
                                 ),
                               )
-                            : hasExistingPhoto
+                            : hasRemoteImage
                             ? ClipRRect(
                                 borderRadius: BorderRadius.circular(
                                   MBGSizes.borderRadiusMd,
                                 ),
                                 child: Image.network(
-                                  widget.karyawan.fotoUrl,
+                                  remoteImage,
                                   fit: BoxFit.cover,
                                   errorBuilder: (context, error, stackTrace) {
-                                    return Container(
-                                      color: MBGColors.grey.withValues(
-                                        alpha: 0.3,
-                                      ),
-                                      child: const Icon(
-                                        Iconsax.image,
-                                        size: MBGSizes.iconLg,
-                                        color: MBGColors.grey,
-                                      ),
+                                    return Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Iconsax.image,
+                                          size: MBGSizes.iconLg * 1.5,
+                                          color: MBGColors.darkGrey,
+                                        ),
+                                        const SizedBox(height: MBGSizes.sm),
+                                        Text(
+                                          'Gagal memuat gambar',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall
+                                              ?.copyWith(
+                                                color: MBGColors.darkGrey,
+                                              ),
+                                        ),
+                                      ],
                                     );
                                   },
                                 ),
                               )
-                            : Container(
-                                alignment: Alignment.center,
-                                padding: const EdgeInsets.all(MBGSizes.md),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const Icon(
-                                      Iconsax.image,
-                                      size: MBGSizes.iconLg,
-                                      color: MBGColors.grey,
-                                    ),
-                                    const SizedBox(height: MBGSizes.sm),
-                                    Text(
-                                      'Belum ada foto tersimpan',
-                                      style: Theme.of(
-                                        context,
-                                      ).textTheme.bodySmall,
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ],
-                                ),
+                            : Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Iconsax.image,
+                                    size: MBGSizes.iconLg * 1.5,
+                                    color: MBGColors.darkGrey,
+                                  ),
+                                  const SizedBox(height: MBGSizes.sm),
+                                  Text(
+                                    'Ketuk untuk mengunggah foto',
+                                    style: Theme.of(context).textTheme.bodySmall
+                                        ?.copyWith(color: MBGColors.darkGrey),
+                                  ),
+                                ],
                               ),
                       ),
                     ),
-                  );
-                }),
-                const SizedBox(height: MBGSizes.sm),
-                Text(
-                  'Jika tidak memilih foto baru, foto saat ini akan tetap digunakan.',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: MBGColors.textSecondary,
-                  ),
-                ),
-                const SizedBox(height: MBGSizes.spaceBtwItems),
-                Obx(() {
-                  final bool hasImage = _cameraController.hasImage;
-                  final bool hasExistingPhoto =
-                      widget.karyawan.fotoUrl.isNotEmpty;
-                  return Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton(
-                          onPressed: () =>
-                              MBGImagePickerBottomSheet.show(context: context),
-                          child: Text(
-                            hasImage ? 'Pilih Ulang Foto' : 'Pilih Foto Baru',
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: MBGSizes.spaceBtwItems),
-                      Expanded(
-                        child: OutlinedButton(
-                          onPressed: hasImage
-                              ? () => _cameraController.clearImage()
-                              : hasExistingPhoto
-                              ? () => MBGImagePreviewDialog.showData(
-                                  context: context,
-                                  imageData: widget.karyawan.fotoUrl,
-                                )
-                              : null,
-                          child: Text(
-                            hasImage
-                                ? 'Batalkan Foto Baru'
-                                : 'Lihat Foto Saat Ini',
-                          ),
-                        ),
-                      ),
-                    ],
                   );
                 }),
                 const SizedBox(height: MBGSizes.spaceBtwSections),
-                Obx(
-                  () => SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: _karyawanController.isLoading.value
-                          ? null
-                          : () async {
-                              if (!_formKey.currentState!.validate()) {
-                                return;
-                              }
 
-                              await _karyawanController.updateKaryawan(
-                                karyawanId: widget.karyawan.id,
-                                nama: _namaController.text.trim(),
-                                posisi: _posisiController.text.trim(),
-                                foto: _cameraController.hasImage
-                                    ? _cameraController.imageFile!
-                                    : null,
-                              );
-                            },
-                      child: _karyawanController.isLoading.value
-                          ? const SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  Colors.white,
-                                ),
-                              ),
-                            )
-                          : const Text('Simpan Perubahan'),
-                    ),
+                // Action Buttons
+                Obx(
+                  () => Row(
+                    children: [
+                      // Ubah Gambar Button
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed:
+                              (selectedImage.value != null ||
+                                  (karyawan.fotoUrl != null &&
+                                      karyawan.fotoUrl!.isNotEmpty))
+                              ? () => MBGImagePickerBottomSheet.show(
+                                  context: context,
+                                )
+                              : null,
+                          child: const Text('Ubah Fotor'),
+                        ),
+                      ),
+                      const SizedBox(width: MBGSizes.spaceBtwItems),
+
+                      // Simpan Perubahan Button
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            // Validate Form
+                            if (!formKey.currentState!.validate()) {
+                              return;
+                            }
+
+                            // Process the form data
+                            await dapurKaryawanController.updateKaryawan(
+                              karyawanId: karyawan.id,
+                              nama: karyawan.nama,
+                              posisi: karyawan.posisi,
+                              status: selectedStatus.value,
+                              jenisKelamin: selectedGender.value,
+                              foto: selectedImage.value,
+                            );
+                          },
+                          child: const Text('Simpan'),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
+                const SizedBox(height: MBGSizes.spaceBtwSections * 2),
               ],
             ),
           ),

@@ -13,7 +13,6 @@ class DapurInfoPicCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: 280,
-      height: 160,
       padding: const EdgeInsets.all(MBGSizes.defaultSpace),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
@@ -29,13 +28,17 @@ class DapurInfoPicCard extends StatelessWidget {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(MBGSizes.sm),
+                padding: const EdgeInsets.all(MBGSizes.sm + 2),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
+                  color: Colors.white.withValues(alpha: 0.25),
                   borderRadius: BorderRadius.circular(MBGSizes.borderRadiusMd),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.3),
+                    width: 1.5,
+                  ),
                 ),
                 child: const Icon(
-                  Iconsax.profile_circle,
+                  Iconsax.profile_circle5,
                   color: MBGColors.white,
                   size: MBGSizes.iconMd,
                 ),

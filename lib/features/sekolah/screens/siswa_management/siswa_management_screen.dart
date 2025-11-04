@@ -1,56 +1,19 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:iconsax/iconsax.dart';
-import '../../../../utils/http/sekolah_service.dart';
+
 import '../../../../utils/popups/loaders.dart';
-import '../../../authentication/controllers/user_controller.dart';
-import '../../models/alergi_model.dart';
-import '../../models/kelas_model.dart';
-import '../../models/siswa_model.dart';
+import '../../controllers/sekolah_siswa_management_controller.dart';
+import '../../models/sekolah_alergi_model.dart';
+import '../../models/sekolah_kelas_model.dart';
+import '../../models/sekolah_siswa_model.dart';
 import 'widgets/siswa_card_widget.dart';
 
-/// Main siswa management screen
-class SiswaManagementScreen extends StatefulWidget {
+class SiswaManagementScreen extends GetView<SekolahSiswaManagementController> {
   const SiswaManagementScreen({super.key});
-
-  @override
-  State<SiswaManagementScreen> createState() => _SiswaManagementScreenState();
-}
-
-class _SiswaManagementScreenState extends State<SiswaManagementScreen> {
-  final SekolahService _sekolahService = Get.find<SekolahService>();
-  final UserController _userController = Get.find<UserController>();
-  List<SiswaModel> _siswaList = [];
-  List<KelasModel> _kelasList = [];
-  bool _isLoading = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadData();
-  }
-
-  Future<void> _loadData() async {
-    setState(() => _isLoading = true);
-    try {
-      final sekolahAsPIC = _userController.user.value?.sekolahAsPIC;
-      if (sekolahAsPIC != null && sekolahAsPIC.isNotEmpty) {
-        final sekolahId = sekolahAsPIC[0].id;
-        final students = await _sekolahService.getSiswaBySekolah(sekolahId);
-        final classes = await _sekolahService.getKelasBySekolah(sekolahId);
-        setState(() {
-          _siswaList = students;
-          _kelasList = classes;
-        });
-      }
-    } catch (e) {
-      Get.snackbar('Error', 'Failed to load data: $e');
-    } finally {
-      setState(() => _isLoading = false);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,25 +21,38 @@ class _SiswaManagementScreenState extends State<SiswaManagementScreen> {
       appBar: AppBar(
         title: const Text('Siswa Management'),
         actions: [
-          IconButton(icon: const Icon(Icons.refresh), onPressed: _loadData),
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: controller.refreshData,
+          ),
         ],
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _siswaList.isEmpty
-          ? const Center(child: Text('No students found'))
-          : ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: _siswaList.length,
-              itemBuilder: (context, index) {
-                final siswa = _siswaList[index];
-                return SiswaCardWidget(
-                  siswa: siswa,
-                  onTap: () => _showAlergiDialog(siswa),
-                  onDelete: () => _confirmDelete(siswa),
-                );
-              },
-            ),
+      body: Obx(() {
+        if (controller.isLoading.value) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        final siswaList = controller.siswaList;
+        if (siswaList.isEmpty) {
+          return const Center(child: Text('No students found'));
+        }
+
+        return RefreshIndicator(
+          onRefresh: controller.refreshData,
+          child: ListView.builder(
+            padding: const EdgeInsets.all(16),
+            itemCount: siswaList.length,
+            itemBuilder: (context, index) {
+              final siswa = siswaList[index];
+              return SiswaCardWidget(
+                siswa: siswa,
+                onTap: () => _showAlergiDialog(context, siswa),
+                onDelete: () => _confirmDelete(context, siswa),
+              );
+            },
+          ),
+        );
+      }),
       floatingActionButton: FloatingActionButton(
         onPressed: _showCreateDialog,
         child: const Icon(Icons.add),
@@ -84,8 +60,10 @@ class _SiswaManagementScreenState extends State<SiswaManagementScreen> {
     );
   }
 
-  /// Confirm delete dialog
-  Future<void> _confirmDelete(SiswaModel siswa) async {
+  Future<void> _confirmDelete(
+    BuildContext context,
+    SekolahSiswaModel siswa,
+  ) async {
     final confirm = await Get.dialog<bool>(
       AlertDialog(
         title: const Text('Delete Student'),
@@ -105,35 +83,23 @@ class _SiswaManagementScreenState extends State<SiswaManagementScreen> {
     );
 
     if (confirm == true) {
-      try {
-        await _sekolahService.deleteSiswa(siswa.id);
-        Get.snackbar('Success', 'Student deleted');
-        _loadData();
-      } catch (e) {
-        Get.snackbar('Error', 'Failed to delete: $e');
-      }
+      await controller.deleteSiswa(siswa);
     }
   }
 
-  /// Show allergy dialog
-  void _showAlergiDialog(SiswaModel siswa) {
-    final RxList<AlergiModel> alergies = <AlergiModel>[].obs;
+  Future<void> _showAlergiDialog(
+    BuildContext context,
+    SekolahSiswaModel siswa,
+  ) async {
+    final RxList<SekolahAlergiModel> alergies = <SekolahAlergiModel>[].obs;
     final TextEditingController alergiController = TextEditingController();
 
-    // Load allergies
     Future<void> loadAlergi() async {
-      try {
-        final result = await _sekolahService.getAlergiBySiswa(siswa.id);
-        alergies.value = result;
-      } catch (e) {
-        MBGLoaders.errorSnackBar(
-          title: 'Error',
-          message: 'Failed to load allergies: $e',
-        );
-      }
+      final result = await controller.fetchAlergi(siswa.id);
+      alergies.assignAll(result);
     }
 
-    loadAlergi();
+    await loadAlergi();
 
     Get.dialog(
       Dialog(
@@ -162,55 +128,50 @@ class _SiswaManagementScreenState extends State<SiswaManagementScreen> {
               ),
               const SizedBox(height: 16),
               Obx(
-                () => Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: alergies.map((alergi) {
-                    return Chip(
-                      label: Text(alergi.namaAlergi),
-                      deleteIcon: const Icon(Icons.close, size: 18),
-                      onDeleted: () async {
-                        final confirm = await Get.dialog<bool>(
-                          AlertDialog(
-                            title: const Text('Hapus Alergi'),
-                            content: Text(
-                              'Hapus alergi "${alergi.namaAlergi}"?',
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Get.back(result: false),
-                                child: const Text('Batal'),
-                              ),
-                              ElevatedButton(
-                                onPressed: () => Get.back(result: true),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.red,
+                () => alergies.isEmpty
+                    ? const Text('Belum ada alergi')
+                    : Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: alergies.map((alergi) {
+                          return Chip(
+                            label: Text(alergi.namaAlergi),
+                            deleteIcon: const Icon(Icons.close, size: 18),
+                            onDeleted: () async {
+                              final confirm = await Get.dialog<bool>(
+                                AlertDialog(
+                                  title: const Text('Hapus Alergi'),
+                                  content: Text(
+                                    'Hapus alergi "${alergi.namaAlergi}"?',
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Get.back(result: false),
+                                      child: const Text('Batal'),
+                                    ),
+                                    ElevatedButton(
+                                      onPressed: () => Get.back(result: true),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.red,
+                                      ),
+                                      child: const Text('Hapus'),
+                                    ),
+                                  ],
                                 ),
-                                child: const Text('Hapus'),
-                              ),
-                            ],
-                          ),
-                        );
+                              );
 
-                        if (confirm == true) {
-                          try {
-                            await _sekolahService.deleteAlergi(alergi.id);
-                            MBGLoaders.successSnackBar(
-                              title: 'Berhasil',
-                              message: 'Alergi berhasil dihapus',
-                            );
-                            loadAlergi();
-                          } catch (e) {
-                            MBGLoaders.errorSnackBar(
-                              title: 'Error',
-                              message: 'Gagal menghapus alergi: $e',
-                            );
-                          }
-                        }
-                      },
-                    );
-                  }).toList(),
-                ),
+                              if (confirm == true) {
+                                final success = await controller.deleteAlergi(
+                                  alergi.id,
+                                );
+                                if (success) {
+                                  await loadAlergi();
+                                }
+                              }
+                            },
+                          );
+                        }).toList(),
+                      ),
               ),
               const SizedBox(height: 16),
               Row(
@@ -230,7 +191,8 @@ class _SiswaManagementScreenState extends State<SiswaManagementScreen> {
                     color: Colors.blue,
                     iconSize: 36,
                     onPressed: () async {
-                      if (alergiController.text.trim().isEmpty) {
+                      final namaAlergi = alergiController.text.trim();
+                      if (namaAlergi.isEmpty) {
                         MBGLoaders.warningSnackBar(
                           title: 'Peringatan',
                           message: 'Nama alergi tidak boleh kosong',
@@ -238,22 +200,13 @@ class _SiswaManagementScreenState extends State<SiswaManagementScreen> {
                         return;
                       }
 
-                      try {
-                        await _sekolahService.addAlergi(
-                          siswa.id,
-                          alergiController.text.trim(),
-                        );
-                        MBGLoaders.successSnackBar(
-                          title: 'Berhasil',
-                          message: 'Alergi berhasil ditambahkan',
-                        );
+                      final success = await controller.addAlergi(
+                        siswa.id,
+                        namaAlergi,
+                      );
+                      if (success) {
                         alergiController.clear();
-                        loadAlergi();
-                      } catch (e) {
-                        MBGLoaders.errorSnackBar(
-                          title: 'Error',
-                          message: 'Gagal menambah alergi: $e',
-                        );
+                        await loadAlergi();
                       }
                     },
                   ),
@@ -266,8 +219,7 @@ class _SiswaManagementScreenState extends State<SiswaManagementScreen> {
     );
   }
 
-  /// Show create student dialog
-  void _showCreateDialog() {
+  Future<void> _showCreateDialog() async {
     final namaController = TextEditingController();
     final nisController = TextEditingController();
     final umurController = TextEditingController();
@@ -280,13 +232,15 @@ class _SiswaManagementScreenState extends State<SiswaManagementScreen> {
     Get.dialog(
       StatefulBuilder(
         builder: (context, setDialogState) {
+          final List<SekolahKelasModel> kelasList = controller.kelasList
+              .toList();
+
           return AlertDialog(
             title: const Text('Add Student'),
             content: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Photo picker
                   GestureDetector(
                     onTap: () async {
                       final picker = ImagePicker();
@@ -344,7 +298,7 @@ class _SiswaManagementScreenState extends State<SiswaManagementScreen> {
                       labelText: 'Kelas',
                       border: OutlineInputBorder(),
                     ),
-                    items: _kelasList.map((kelas) {
+                    items: kelasList.map((kelas) {
                       return DropdownMenuItem(
                         value: kelas.id,
                         child: Text('${kelas.tingkat} ${kelas.nama}'),
@@ -414,36 +368,49 @@ class _SiswaManagementScreenState extends State<SiswaManagementScreen> {
               ),
               ElevatedButton(
                 onPressed: () async {
-                  if (selectedKelasId == null) {
-                    Get.snackbar('Error', 'Please select a class');
+                  final nama = namaController.text.trim();
+                  final nis = nisController.text.trim();
+                  final umur = int.tryParse(umurController.text.trim());
+                  final tinggi = double.tryParse(tinggiController.text.trim());
+                  final berat = double.tryParse(beratController.text.trim());
+
+                  if (nama.isEmpty || nis.isEmpty) {
+                    MBGLoaders.warningSnackBar(
+                      title: 'Peringatan',
+                      message: 'Nama dan NIS wajib diisi',
+                    );
                     return;
                   }
 
-                  try {
-                    final sekolahAsPIC =
-                        _userController.user.value?.sekolahAsPIC;
-                    if (sekolahAsPIC == null || sekolahAsPIC.isEmpty) {
-                      Get.snackbar('Error', 'Sekolah ID not found');
-                      return;
-                    }
-                    final sekolahId = sekolahAsPIC[0].id;
-
-                    await _sekolahService.createSiswa(
-                      sekolahId: sekolahId,
-                      kelasId: selectedKelasId!,
-                      nama: namaController.text,
-                      nis: nisController.text,
-                      umur: int.parse(umurController.text),
-                      jenisKelamin: selectedJenisKelamin,
-                      tinggiBadan: double.parse(tinggiController.text),
-                      beratBadan: double.parse(beratController.text),
-                      foto: selectedImage,
+                  if (selectedKelasId == null) {
+                    MBGLoaders.warningSnackBar(
+                      title: 'Peringatan',
+                      message: 'Harap memilih kelas siswa',
                     );
+                    return;
+                  }
+
+                  if (umur == null || tinggi == null || berat == null) {
+                    MBGLoaders.warningSnackBar(
+                      title: 'Peringatan',
+                      message: 'Umur, tinggi, dan berat harus berupa angka',
+                    );
+                    return;
+                  }
+
+                  final success = await controller.createSiswa(
+                    kelasId: selectedKelasId!,
+                    nama: nama,
+                    nis: nis,
+                    umur: umur,
+                    jenisKelamin: selectedJenisKelamin,
+                    tinggiBadan: tinggi,
+                    beratBadan: berat,
+                    foto: selectedImage,
+                  );
+
+                  if (success && Get.isDialogOpen == true) {
                     Get.back();
-                    Get.snackbar('Success', 'Student added successfully');
-                    _loadData();
-                  } catch (e) {
-                    Get.snackbar('Error', 'Failed to add student: $e');
                   }
                 },
                 child: const Text('Add'),

@@ -6,6 +6,8 @@ import 'package:mbg_mobile_app/common/styles/spacing_styles.dart';
 import 'package:mbg_mobile_app/common/widgets/info_row.dart';
 import 'package:mbg_mobile_app/common/widgets/section_heading.dart';
 import 'package:mbg_mobile_app/features/dapur/controllers/dapur_info_controller.dart';
+import 'package:mbg_mobile_app/features/dapur/models/dapur_info_model.dart';
+import 'package:mbg_mobile_app/features/dapur/screens/dapur_info/dapur_info_horizontal_card_list.dart';
 import 'package:mbg_mobile_app/features/dapur/screens/dapur_info/widgets/dapur_info_map_preview.dart';
 import 'package:mbg_mobile_app/features/dapur/screens/dapur_info/widgets/dapur_info_driver_card.dart';
 import 'package:mbg_mobile_app/features/dapur/screens/dapur_info/widgets/dapur_info_karyawan_card.dart';
@@ -24,313 +26,167 @@ class DapurInfoScreen extends StatelessWidget {
       DapurInfoController(),
     );
 
-    return Obx(
-      () => dapurInfoController.isLoading.value
-          ? const Center(
-              child: CircularProgressIndicator(color: MBGColors.primary),
-            )
-          : SingleChildScrollView(
-              padding: MBGSpacingStyles.homeScreenPadding,
-              clipBehavior: Clip.none,
-              child: Column(
-                children: [
-                  // Dapur Information Section
-                  MBGSectionHeading(
-                    showLeadingIcon: true,
-                    leadingIcon: Iconsax.information,
-                    title: 'Informasi Dapur',
-                  ),
-                  const SizedBox(height: MBGSizes.spaceBtwItems),
-                  MBGInfoRow(
-                    title: 'Nama Dapur',
-                    value:
-                        dapurInfoController.dapurInfo.value?.nama ??
-                        'Belum diisi',
-                  ),
-                  MBGInfoRow(
-                    title: 'Alamat',
-                    value:
-                        dapurInfoController.dapurInfo.value?.alamat ??
-                        'Belum diisi',
-                  ),
-                  MBGInfoRow(
-                    title: 'Status',
-                    value:
-                        dapurInfoController.dapurInfo.value?.status ??
-                        'Belum diisi',
-                  ),
-                  MBGInfoRow(
-                    title: 'Koordinat',
-                    value: dapurInfoController.dapurInfo.value != null
-                        ? '${dapurInfoController.dapurInfo.value!.latitude.toStringAsFixed(6)}, ${dapurInfoController.dapurInfo.value!.longitude.toStringAsFixed(6)}'
-                        : 'Belum diisi',
-                  ),
-                  MBGInfoRow(
-                    title: 'Dibuat Pada',
-                    value:
-                        dapurInfoController.dapurInfo.value?.createdAt != null
-                        ? DateFormat('dd MMMM yyyy, HH:mm').format(
-                            dapurInfoController.dapurInfo.value!.createdAt
-                                .toLocal(),
-                          )
-                        : 'Belum diisi',
-                  ),
-                  MBGInfoRow(
-                    title: 'Diperbarui Pada',
-                    value:
-                        dapurInfoController.dapurInfo.value?.updatedAt != null
-                        ? DateFormat('dd MMMM yyyy, HH:mm').format(
-                            dapurInfoController.dapurInfo.value!.updatedAt
-                                .toLocal(),
-                          )
-                        : 'Belum diisi',
-                  ),
-                  const SizedBox(height: MBGSizes.spaceBtwSections),
+    return Obx(() {
+      final dapur = dapurInfoController.dapurInfo.value;
+      final picDapur = dapur?.picDapur ?? [];
+      final drivers = dapur?.drivers ?? [];
+      final karyawan = dapur?.karyawan ?? [];
+      final stokBahanBaku = dapur?.stokBahanBaku ?? [];
+      final sekolahDilayani = dapur?.sekolahDilayani ?? [];
 
-                  // Map Preview
-                  MBGSectionHeading(
-                    showLeadingIcon: true,
-                    leadingIcon: Iconsax.location,
-                    title: 'Lokasi Dapur',
-                  ),
-                  const SizedBox(height: MBGSizes.spaceBtwItems),
-                  DapurInfoMapPreview(),
-                  const SizedBox(height: MBGSizes.spaceBtwSections),
+      if (dapurInfoController.isLoading.value) {
+        return const Center(
+          child: CircularProgressIndicator(color: MBGColors.primary),
+        );
+      }
 
-                  // PIC Dapur Section
-                  MBGSectionHeading(
-                    showLeadingIcon: true,
-                    leadingIcon: Iconsax.profile_2user,
-                    title:
-                        'PIC Dapur (${dapurInfoController.dapurInfo.value?.picDapur.length ?? 0})',
-                  ),
-                  const SizedBox(height: MBGSizes.spaceBtwItems),
-                  if (dapurInfoController.dapurInfo.value?.picDapur.isEmpty ??
-                      true)
-                    Center(
-                      child: Text(
-                        'Tidak ada PIC yang ditugaskan',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: MBGColors.textSecondary,
-                        ),
-                      ),
-                    )
-                  else
-                    SizedBox(
-                      height: 170,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: dapurInfoController
-                            .dapurInfo
-                            .value!
-                            .picDapur
-                            .length,
-                        itemBuilder: (context, index) {
-                          final pic = dapurInfoController
-                              .dapurInfo
-                              .value!
-                              .picDapur[index];
-                          return Padding(
-                            padding: EdgeInsets.only(
-                              right: MBGSizes.spaceBtwItems,
-                              left: index == 0 ? 0 : 0,
-                            ),
-                            child: DapurInfoPicCard(pic: pic),
-                          );
-                        },
-                      ),
-                    ),
-                  const SizedBox(height: MBGSizes.spaceBtwSections),
-
-                  // Drivers Section
-                  MBGSectionHeading(
-                    showLeadingIcon: true,
-                    leadingIcon: Iconsax.truck,
-                    title:
-                        'Driver (${dapurInfoController.dapurInfo.value?.drivers.length ?? 0})',
-                  ),
-                  const SizedBox(height: MBGSizes.spaceBtwItems),
-                  if (dapurInfoController.dapurInfo.value?.drivers.isEmpty ??
-                      true)
-                    Center(
-                      child: Text(
-                        'Tidak ada driver yang ditugaskan',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: MBGColors.darkGrey,
-                        ),
-                      ),
-                    )
-                  else
-                    SizedBox(
-                      height: 200,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount:
-                            dapurInfoController.dapurInfo.value!.drivers.length,
-                        itemBuilder: (context, index) {
-                          final driver = dapurInfoController
-                              .dapurInfo
-                              .value!
-                              .drivers[index];
-                          return Padding(
-                            padding: EdgeInsets.only(
-                              right: MBGSizes.spaceBtwItems,
-                              left: index == 0 ? 0 : 0,
-                            ),
-                            child: DapurInfoDriverCard(driver: driver),
-                          );
-                        },
-                      ),
-                    ),
-                  const SizedBox(height: MBGSizes.spaceBtwSections),
-
-                  // Karyawan Section
-                  MBGSectionHeading(
-                    showLeadingIcon: true,
-                    leadingIcon: Iconsax.people,
-                    title:
-                        'Karyawan (${dapurInfoController.dapurInfo.value?.karyawan.length ?? 0})',
-                  ),
-                  const SizedBox(height: MBGSizes.spaceBtwItems),
-                  if (dapurInfoController.dapurInfo.value?.karyawan.isEmpty ??
-                      true)
-                    Center(
-                      child: Text(
-                        'Tidak ada karyawan terdaftar',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: MBGColors.darkGrey,
-                        ),
-                      ),
-                    )
-                  else
-                    SizedBox(
-                      height: 180,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: dapurInfoController
-                            .dapurInfo
-                            .value!
-                            .karyawan
-                            .length,
-                        itemBuilder: (context, index) {
-                          final karyawan = dapurInfoController
-                              .dapurInfo
-                              .value!
-                              .karyawan[index];
-                          return Padding(
-                            padding: EdgeInsets.only(
-                              right: MBGSizes.spaceBtwItems,
-                              left: index == 0 ? 0 : 0,
-                            ),
-                            child: DapurInfoKaryawanCard(karyawan: karyawan),
-                          );
-                        },
-                      ),
-                    ),
-                  const SizedBox(height: MBGSizes.spaceBtwSections),
-
-                  // Stok Bahan Baku Section
-                  MBGSectionHeading(
-                    showLeadingIcon: true,
-                    leadingIcon: Iconsax.box,
-                    title:
-                        'Stok Bahan Baku (${dapurInfoController.dapurInfo.value?.stokBahanBaku.length ?? 0})',
-                  ),
-                  const SizedBox(height: MBGSizes.spaceBtwItems),
-                  if (dapurInfoController
-                          .dapurInfo
-                          .value
-                          ?.stokBahanBaku
-                          .isEmpty ??
-                      true)
-                    Center(
-                      child: Text(
-                        'Tidak ada stok bahan baku',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: MBGColors.darkGrey,
-                        ),
-                      ),
-                    )
-                  else
-                    SizedBox(
-                      height: 180,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: dapurInfoController
-                            .dapurInfo
-                            .value!
-                            .stokBahanBaku
-                            .length,
-                        itemBuilder: (context, index) {
-                          final stok = dapurInfoController
-                              .dapurInfo
-                              .value!
-                              .stokBahanBaku[index];
-                          return Padding(
-                            padding: EdgeInsets.only(
-                              right: MBGSizes.spaceBtwItems,
-                              left: index == 0 ? 0 : 0,
-                            ),
-                            child: DapurInfoStokCard(stok: stok),
-                          );
-                        },
-                      ),
-                    ),
-                  const SizedBox(height: MBGSizes.spaceBtwSections),
-
-                  // Sekolah Dilayani Section
-                  MBGSectionHeading(
-                    showLeadingIcon: true,
-                    leadingIcon: Iconsax.building_3,
-                    title:
-                        'Sekolah Dilayani (${dapurInfoController.dapurInfo.value?.sekolahDilayani.length ?? 0})',
-                  ),
-                  const SizedBox(height: MBGSizes.spaceBtwItems),
-                  if (dapurInfoController
-                          .dapurInfo
-                          .value
-                          ?.sekolahDilayani
-                          .isEmpty ??
-                      true)
-                    Center(
-                      child: Text(
-                        'Tidak ada sekolah yang dilayani',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: MBGColors.darkGrey,
-                        ),
-                      ),
-                    )
-                  else
-                    SizedBox(
-                      height: 220,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: dapurInfoController
-                            .dapurInfo
-                            .value!
-                            .sekolahDilayani
-                            .length,
-                        itemBuilder: (context, index) {
-                          final sekolahDilayani = dapurInfoController
-                              .dapurInfo
-                              .value!
-                              .sekolahDilayani[index];
-                          return Padding(
-                            padding: EdgeInsets.only(
-                              right: MBGSizes.spaceBtwItems,
-                              left: index == 0 ? 0 : 0,
-                            ),
-                            child: DapurInfoSekolahCard(
-                              sekolahDilayani: sekolahDilayani,
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  const SizedBox(height: MBGSizes.spaceBtwSections),
-                ],
+      return RefreshIndicator(
+        color: MBGColors.primary,
+        onRefresh: dapurInfoController.refreshDapurInfo,
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: MBGSpacingStyles.homeScreenPadding,
+          child: Column(
+            children: [
+              // =========================
+              // DAPUR INFORMATION SECTION
+              // =========================
+              MBGSectionHeading(
+                showLeadingIcon: true,
+                leadingIcon: Iconsax.information,
+                title: 'Informasi Dapur',
               ),
-            ),
-    );
+              const SizedBox(height: MBGSizes.spaceBtwItems),
+              MBGInfoRow(title: 'Nama Dapur', value: "${dapur?.nama}"),
+              MBGInfoRow(title: 'Alamat', value: "${dapur?.alamat}"),
+              MBGInfoRow(title: 'Status', value: "${dapur?.status}"),
+              MBGInfoRow(
+                title: 'Koordinat',
+                value: "${dapur?.latitude}, ${dapur?.longitude}",
+              ),
+              MBGInfoRow(
+                title: 'Dibuat Pada',
+                value: dapur?.createdAt != null
+                    ? DateFormat(
+                        'dd MMMM yyyy, HH:mm',
+                      ).format(dapur!.createdAt.toLocal())
+                    : '-',
+              ),
+              MBGInfoRow(
+                title: 'Diperbarui Pada',
+                value: dapur?.updatedAt != null
+                    ? DateFormat(
+                        'dd MMMM yyyy, HH:mm',
+                      ).format(dapur!.updatedAt.toLocal())
+                    : '-',
+              ),
+              const SizedBox(height: MBGSizes.spaceBtwSections),
+
+              // ===================
+              // MAP PREVIEW SECTION
+              // ===================
+              MBGSectionHeading(
+                showLeadingIcon: true,
+                leadingIcon: Iconsax.location,
+                title: 'Lokasi Dapur',
+              ),
+              const SizedBox(height: MBGSizes.spaceBtwItems),
+              DapurInfoMapPreview(),
+              const SizedBox(height: MBGSizes.spaceBtwSections),
+
+              // =================
+              // PIC DAPUR SECTION
+              // =================
+              MBGSectionHeading(
+                showLeadingIcon: true,
+                leadingIcon: Iconsax.profile_2user,
+                title: 'PIC Dapur (${picDapur.length})',
+              ),
+              const SizedBox(height: MBGSizes.spaceBtwItems),
+              DapurInfoHorizontalCardList<PICDapurSummary>(
+                items: picDapur,
+                emptyMessage: 'Tidak ada PIC yang ditugaskan',
+                listHeight: 180,
+                itemBuilder: (context, item, index) =>
+                    DapurInfoPicCard(pic: item),
+              ),
+              const SizedBox(height: MBGSizes.spaceBtwSections),
+
+              // ===============
+              // DRIVERS SECTION
+              // ===============
+              MBGSectionHeading(
+                showLeadingIcon: true,
+                leadingIcon: Iconsax.truck,
+                title: 'Driver (${drivers.length})',
+              ),
+              const SizedBox(height: MBGSizes.spaceBtwItems),
+              DapurInfoHorizontalCardList<DriversSummary>(
+                items: drivers,
+                emptyMessage: 'Tidak ada driver yang ditugaskan',
+                listHeight: 215,
+                itemBuilder: (context, item, index) =>
+                    DapurInfoDriverCard(driver: item),
+              ),
+              const SizedBox(height: MBGSizes.spaceBtwSections),
+
+              // ================
+              // KARYAWAN SECTION
+              // ================
+              MBGSectionHeading(
+                showLeadingIcon: true,
+                leadingIcon: Iconsax.people,
+                title: 'Karyawan (${karyawan.length})',
+              ),
+              const SizedBox(height: MBGSizes.spaceBtwItems),
+              DapurInfoHorizontalCardList<KaryawanSummary>(
+                items: karyawan,
+                emptyMessage: 'Tidak ada karyawan terdaftar',
+                listHeight: 190,
+                itemBuilder: (context, item, index) =>
+                    DapurInfoKaryawanCard(karyawan: item),
+              ),
+              const SizedBox(height: MBGSizes.spaceBtwSections),
+
+              // =======================
+              // STOK BAHAN BAKU SECTION
+              // =======================
+              MBGSectionHeading(
+                showLeadingIcon: true,
+                leadingIcon: Iconsax.box,
+                title: 'Stok Bahan Baku (${stokBahanBaku.length})',
+              ),
+              const SizedBox(height: MBGSizes.spaceBtwItems),
+              DapurInfoHorizontalCardList<StockSummary>(
+                items: stokBahanBaku,
+                emptyMessage: 'Tidak ada stok bahan baku',
+                listHeight: 190,
+                itemBuilder: (context, item, index) =>
+                    DapurInfoStokCard(stok: item),
+              ),
+              const SizedBox(height: MBGSizes.spaceBtwSections),
+
+              // ========================
+              // SEKOLAH DILAYANI SECTION
+              // ========================
+              MBGSectionHeading(
+                showLeadingIcon: true,
+                leadingIcon: Iconsax.building_3,
+                title: 'Sekolah Dilayani (${sekolahDilayani.length})',
+              ),
+              const SizedBox(height: MBGSizes.spaceBtwItems),
+              DapurInfoHorizontalCardList<SekolahDilayaniSummary>(
+                items: sekolahDilayani,
+                emptyMessage: 'Tidak ada sekolah yang dilayani',
+                listHeight: 235,
+                itemBuilder: (context, item, index) =>
+                    DapurInfoSekolahCard(sekolahDilayani: item),
+              ),
+              const SizedBox(height: MBGSizes.spaceBtwSections * 2),
+            ],
+          ),
+        ),
+      );
+    });
   }
 }

@@ -3,9 +3,9 @@ class DapurInfoModel {
     required this.id,
     required this.nama,
     required this.alamat,
-    required this.status,
     required this.latitude,
     required this.longitude,
+    required this.status,
     required this.createdAt,
     required this.updatedAt,
     this.picDapur = const [],
@@ -18,9 +18,9 @@ class DapurInfoModel {
   final String id;
   final String nama;
   final String alamat;
-  final String status;
   final double latitude;
   final double longitude;
+  final String status;
   final DateTime createdAt;
   final DateTime updatedAt;
   final List<PICDapurSummary> picDapur;
@@ -34,9 +34,9 @@ class DapurInfoModel {
       id: json['id'] as String,
       nama: json['nama'] as String,
       alamat: json['alamat'] as String,
-      status: json['status'] as String,
       latitude: (json['latitude'] as num).toDouble(),
       longitude: (json['longitude'] as num).toDouble(),
+      status: json['status'] as String,
       createdAt: DateTime.parse(json['createdAt'] as String),
       updatedAt: DateTime.parse(json['updatedAt'] as String),
       picDapur:
@@ -77,9 +77,9 @@ class DapurInfoModel {
       'id': id,
       'nama': nama,
       'alamat': alamat,
-      'status': status,
       'latitude': latitude,
       'longitude': longitude,
+      'status': status,
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
       'picDapur': picDapur.map((pic) => pic.toJson()).toList(),
@@ -192,14 +192,14 @@ class StockSummary {
   final String id;
   final String nama;
   final String kategori;
-  final int stokKg;
+  final double stokKg;
 
   factory StockSummary.fromJson(Map<String, dynamic> json) {
     return StockSummary(
       id: json['id'] as String,
       nama: json['nama'] as String,
       kategori: json['kategori'] as String,
-      stokKg: (json['stokKg'] as num).toInt(),
+      stokKg: (json['stokKg'] as num).toDouble(),
     );
   }
 
@@ -211,21 +211,24 @@ class StockSummary {
 class SekolahDilayaniSummary {
   SekolahDilayaniSummary({
     required this.id,
-    required this.sekolahId,
     required this.createdAt,
+    required this.sekolahId,
+    required this.dapurId,
     required this.sekolah,
   });
 
   final String id;
-  final String sekolahId;
   final DateTime createdAt;
+  final String sekolahId;
+  final String dapurId;
   final SekolahSummary sekolah;
 
   factory SekolahDilayaniSummary.fromJson(Map<String, dynamic> json) {
     return SekolahDilayaniSummary(
       id: json['id'] as String,
-      sekolahId: json['sekolahId'] as String,
       createdAt: DateTime.parse(json['createdAt'] as String),
+      sekolahId: json['sekolahId'] as String,
+      dapurId: json['dapurId'] as String,
       sekolah: SekolahSummary.fromJson(json['sekolah'] as Map<String, dynamic>),
     );
   }
@@ -233,8 +236,10 @@ class SekolahDilayaniSummary {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'sekolahId': sekolahId,
       'createdAt': createdAt.toIso8601String(),
+      'sekolahId': sekolahId,
+      'dapurId': dapurId,
+      'sekolah': sekolah.toJson(),
     };
   }
 }

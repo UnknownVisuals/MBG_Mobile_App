@@ -5,10 +5,10 @@ import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/helpers/helper_functions.dart';
 
 class MBGLoaders {
-  static hideSnackBar() =>
+  static void hideSnackBar() =>
       ScaffoldMessenger.of(Get.context!).hideCurrentSnackBar();
 
-  static customToast({required message}) {
+  static void customToast({required String message}) {
     ScaffoldMessenger.of(Get.context!).showSnackBar(
       SnackBar(
         elevation: 0,
@@ -34,29 +34,29 @@ class MBGLoaders {
     );
   }
 
-  static successSnackBar({required title, message = '', duration = 3}) {
+  static void successSnackBar({required String title, String message = ''}) {
     Get.snackbar(
       title,
       message,
       isDismissible: true,
       shouldIconPulse: true,
       colorText: Colors.white,
-      backgroundColor: MBGColors.primary,
+      backgroundColor: MBGColors.success,
       snackPosition: SnackPosition.BOTTOM,
-      duration: Duration(seconds: duration),
-      margin: const EdgeInsets.all(10),
+      duration: Duration(seconds: 3),
+      margin: const EdgeInsets.all(20),
       icon: const Icon(Iconsax.check, color: MBGColors.white),
     );
   }
 
-  static warningSnackBar({required title, message = ''}) {
+  static void warningSnackBar({required String title, String message = ''}) {
     Get.snackbar(
       title,
       message,
       isDismissible: true,
       shouldIconPulse: true,
       colorText: MBGColors.white,
-      backgroundColor: Colors.orange,
+      backgroundColor: MBGColors.warning,
       snackPosition: SnackPosition.BOTTOM,
       duration: const Duration(seconds: 3),
       margin: const EdgeInsets.all(20),
@@ -64,14 +64,14 @@ class MBGLoaders {
     );
   }
 
-  static errorSnackBar({required title, message = ''}) {
+  static void errorSnackBar({required String title, String message = ''}) {
     Get.snackbar(
       title,
       message,
       isDismissible: true,
       shouldIconPulse: true,
       colorText: MBGColors.white,
-      backgroundColor: Colors.red.shade600,
+      backgroundColor: MBGColors.error,
       snackPosition: SnackPosition.BOTTOM,
       duration: const Duration(seconds: 3),
       margin: const EdgeInsets.all(20),

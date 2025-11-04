@@ -5,51 +5,49 @@ import 'package:mbg_mobile_app/common/controllers/camera_controller.dart';
 import 'package:mbg_mobile_app/features/authentication/controllers/user_controller.dart';
 import 'package:mbg_mobile_app/features/authentication/models/user_model.dart';
 import 'package:mbg_mobile_app/features/dapur/models/dapur_karyawan_model.dart';
-import 'package:mbg_mobile_app/utils/http/http_client.dart';
+import 'package:mbg_mobile_app/utils/services/dapur_service.dart';
 import 'package:mbg_mobile_app/utils/popups/loaders.dart';
 
 class DapurKaryawanController extends GetxController {
   // Dependencies
-  final MBGHttpHelper httpHelper = Get.put(MBGHttpHelper());
+  final DapurService _dapurService = Get.find<DapurService>();
 
-  final UserModel userModel = Get.find<UserController>().user.value!;
-  String get dapurId => userModel.dapurAsPIC.first.id;
+  // Getter for dapurId
+  final UserModel userModel = Get.find<UserController>().userModel.value!;
+  String get dapurId {
+    return userModel.dapurAsPIC.first.id;
+  }
 
   // Data Variables
-  RxList<KaryawanModel> karyawanList = <KaryawanModel>[].obs;
+  RxList<DapurKaryawanModel> karyawanList = <DapurKaryawanModel>[].obs;
 
   // State Variables
   RxBool isLoading = false.obs;
-  RxnString deletingKaryawanId = RxnString();
 
   @override
   void onInit() {
     super.onInit();
-    if (userModel.dapurAsPIC.isNotEmpty) {}
     fetchKaryawan(dapurId: dapurId);
   }
 
+  // =====================
+  // REFRESH KARYAWAN DATA
+  // =====================
+  Future<void> refreshKaryawan() async {
+    await fetchKaryawan(dapurId: dapurId);
+  }
+
+  // =================
+  // GET KARYAWAN DATA
+  // =================
   Future<void> fetchKaryawan({required String dapurId}) async {
     try {
       isLoading.value = true;
-
-      MBGHttpHelper.loadSessionToken();
-
-      final response = await httpHelper.getRequest('dapur/$dapurId/karyawan');
-
-      if (response.statusCode == 200) {
-        final responseData = response.body;
-
-        if (responseData['success'] == true) {
-          final List<dynamic> karyawanJsonList = responseData['data']['data'];
-          karyawanList.value = karyawanJsonList
-              .map((json) => KaryawanModel.fromJson(json))
-              .toList();
-        }
-      }
+      final data = await _dapurService.getAllKaryawanByDapur(dapurId);
+      karyawanList.assignAll(data);
     } catch (e) {
       MBGLoaders.errorSnackBar(
-        title: 'Gagal memuat karyawan dapur',
+        title: 'Gagal memuat data karyawan',
         message: e.toString(),
       );
     } finally {
@@ -57,47 +55,38 @@ class DapurKaryawanController extends GetxController {
     }
   }
 
+  // =================
+  // ADD KARYAWAN DATA
+  // =================
   Future<void> addKaryawan({
     required String nama,
     required String posisi,
+    required String jenisKelamin,
+    required int umur,
     required File foto,
   }) async {
     try {
       isLoading.value = true;
 
-      MBGHttpHelper.loadSessionToken();
-
-      final response = await httpHelper.postMultipartRequest(
-        'karyawan',
-        fields: {'nama': nama, 'posisi': posisi},
-        file: foto,
-        fileFieldName: 'foto',
+      await _dapurService.createKaryawan(
+        nama: nama,
+        posisi: posisi,
+        jenisKelamin: jenisKelamin,
+        umur: umur,
+        foto: foto,
+        dapurId: dapurId,
       );
 
-      if (response.statusCode != 201) {
-        throw Exception(
-          response.body?['message'] ?? 'Gagal menambahkan karyawan',
-        );
-      }
-
-      final responseData = response.body;
-      if (responseData == null || responseData['success'] != true) {
-        throw Exception('Invalid response format');
-      }
-
-      isLoading.value = false;
+      Get.back();
 
       MBGLoaders.successSnackBar(
         title: 'Karyawan Ditambahkan',
-        message: 'Karyawan baru berhasil ditambahkan ke dapur.',
+        message: 'Karyawan baru berhasil ditambahkan ke dapur',
       );
 
       if (Get.isRegistered<CameraController>()) {
         Get.find<CameraController>().clearImage();
       }
-
-      await Future.delayed(const Duration(milliseconds: 400));
-      Get.back(closeOverlays: true);
 
       await fetchKaryawan(dapurId: dapurId);
     } catch (e) {
@@ -110,27 +99,61 @@ class DapurKaryawanController extends GetxController {
     }
   }
 
+  // ====================
+  // UPDATE KARYAWAN DATA
+  // ====================
+  Future<void> updateKaryawan({
+    required String karyawanId,
+    String? nama,
+    String? posisi,
+    KaryawanStatus? status,
+    JenisKelamin? jenisKelamin,
+    int? umur,
+    File? foto,
+  }) async {
+    try {
+      isLoading.value = true;
+
+      await _dapurService.updateKaryawan(
+        karyawanId: karyawanId,
+        nama: nama,
+        posisi: posisi,
+        status: status,
+        jenisKelamin: jenisKelamin,
+        umur: umur,
+        foto: foto,
+      );
+
+      Get.back();
+
+      MBGLoaders.successSnackBar(
+        title: 'Karyawan Diperbarui',
+        message: 'Data karyawan berhasil diperbarui.',
+      );
+
+      if (Get.isRegistered<CameraController>()) {
+        Get.find<CameraController>().clearImage();
+      }
+
+      await fetchKaryawan(dapurId: dapurId);
+    } catch (e) {
+      MBGLoaders.errorSnackBar(
+        title: 'Gagal memperbarui karyawan',
+        message: e.toString(),
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  // ====================
+  // DELETE KARYAWAN DATA
+  // ====================
   Future<void> deleteKaryawan({required String karyawanId}) async {
     try {
       isLoading.value = true;
-      deletingKaryawanId.value = karyawanId;
 
-      MBGHttpHelper.loadSessionToken();
-
-      final response = await httpHelper.deleteRequest('karyawan/$karyawanId');
-
-      if (response.statusCode != 200) {
-        throw Exception(
-          response.body?['message'] ?? 'Gagal menghapus karyawan',
-        );
-      }
-
-      final responseData = response.body;
-      if (responseData == null || responseData['success'] != true) {
-        throw Exception('Invalid response format');
-      }
-
-      isLoading.value = false;
+      await _dapurService.deleteKaryawan(karyawanId);
 
       await fetchKaryawan(dapurId: dapurId);
 
@@ -145,65 +168,6 @@ class DapurKaryawanController extends GetxController {
     } catch (e) {
       MBGLoaders.errorSnackBar(
         title: 'Gagal menghapus karyawan',
-        message: e.toString(),
-      );
-    } finally {
-      deletingKaryawanId.value = null;
-      isLoading.value = false;
-    }
-  }
-
-  Future<void> updateKaryawan({
-    required String karyawanId,
-    String? nama,
-    String? posisi,
-    File? foto,
-  }) async {
-    try {
-      isLoading.value = true;
-
-      MBGHttpHelper.loadSessionToken();
-
-      final response = await httpHelper.postMultipartRequest(
-        'karyawan/$karyawanId',
-        fields: {
-          if (nama != null) 'nama': nama,
-          if (posisi != null) 'posisi': posisi,
-        },
-        file: foto,
-        fileFieldName: 'foto',
-        isPutMethod: true,
-      );
-
-      if (response.statusCode != 200) {
-        throw Exception(
-          response.body?['message'] ?? 'Gagal memperbarui karyawan',
-        );
-      }
-
-      final responseData = response.body;
-      if (responseData == null || responseData['success'] != true) {
-        throw Exception('Invalid response format');
-      }
-
-      isLoading.value = false;
-
-      MBGLoaders.successSnackBar(
-        title: 'Karyawan Diperbarui',
-        message: 'Data karyawan berhasil diperbarui.',
-      );
-
-      if (Get.isRegistered<CameraController>()) {
-        Get.find<CameraController>().clearImage();
-      }
-
-      await Future.delayed(const Duration(milliseconds: 400));
-      Get.back(closeOverlays: true);
-
-      await fetchKaryawan(dapurId: dapurId);
-    } catch (e) {
-      MBGLoaders.errorSnackBar(
-        title: 'Gagal memperbarui karyawan',
         message: e.toString(),
       );
     } finally {

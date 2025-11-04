@@ -10,10 +10,10 @@ import 'package:mbg_mobile_app/features/dapur/screens/dapur.dart';
 import 'package:mbg_mobile_app/features/driver/screens/driver.dart';
 import 'package:mbg_mobile_app/features/sekolah/screens/sekolah.dart';
 import 'package:mbg_mobile_app/utils/constants/text_strings.dart';
-import 'package:mbg_mobile_app/utils/http/dapur_service.dart';
-import 'package:mbg_mobile_app/utils/http/driver_service.dart';
+import 'package:mbg_mobile_app/utils/services/dapur_service.dart';
+import 'package:mbg_mobile_app/utils/services/driver_service.dart';
 import 'package:mbg_mobile_app/utils/http/http_client.dart';
-import 'package:mbg_mobile_app/utils/http/sekolah_service.dart';
+import 'package:mbg_mobile_app/utils/services/sekolah_service.dart';
 import 'package:mbg_mobile_app/utils/local_storage/storage_utility.dart';
 import 'package:mbg_mobile_app/utils/theme/theme.dart';
 
@@ -25,12 +25,10 @@ Future<void> main() async {
 
   // Initialize HTTP Client
   Get.put(MBGHttpHelper());
-  MBGHttpHelper.loadSessionToken();
-
-  // Initialize Services
   Get.put(DapurService());
   Get.put(DriverService());
   Get.put(SekolahService());
+  MBGHttpHelper.loadSessionToken();
 
   runApp(const App());
 }
@@ -72,8 +70,8 @@ class App extends StatelessWidget {
       final UserController userController = Get.put(UserController());
       await userController.fetchUserProfile();
 
-      if (userController.user.value != null) {
-        final userRole = userController.user.value?.role;
+      if (userController.userModel.value != null) {
+        final userRole = userController.userModel.value?.role;
         switch (userRole) {
           case 'PIC_DAPUR':
             return const DapurScreen();

@@ -9,10 +9,35 @@ class DapurInfoStokCard extends StatelessWidget {
 
   final StockSummary stok;
 
+  IconData _getCategoryIcon() {
+    switch (stok.kategori.toUpperCase()) {
+      case 'SAYURAN':
+        return Iconsax.tree;
+      case 'PROTEIN':
+        return Iconsax.health;
+      case 'KARBOHIDRAT':
+        return Iconsax.menu_board;
+      case 'BUMBU':
+        return Iconsax.magic_star;
+      default:
+        return Iconsax.box;
+    }
+  }
+
+  Color _getStockLevelColor() {
+    if (stok.stokKg < 5) {
+      return Colors.red.shade400;
+    } else if (stok.stokKg < 20) {
+      return Colors.orange.shade400;
+    } else {
+      return Colors.green.shade400;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 200,
+      width: 240,
       padding: const EdgeInsets.all(MBGSizes.defaultSpace),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
@@ -28,13 +53,17 @@ class DapurInfoStokCard extends StatelessWidget {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(MBGSizes.sm),
+                padding: const EdgeInsets.all(MBGSizes.sm + 2),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
+                  color: Colors.white.withValues(alpha: 0.25),
                   borderRadius: BorderRadius.circular(MBGSizes.borderRadiusMd),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.3),
+                    width: 1.5,
+                  ),
                 ),
-                child: const Icon(
-                  Iconsax.box,
+                child: Icon(
+                  _getCategoryIcon(),
                   color: MBGColors.white,
                   size: MBGSizes.iconMd,
                 ),
@@ -83,19 +112,24 @@ class DapurInfoStokCard extends StatelessWidget {
               vertical: MBGSizes.xs,
             ),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.2),
+              color: _getStockLevelColor(),
               borderRadius: BorderRadius.circular(MBGSizes.borderRadiusSm),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.4),
+                width: 1,
+              ),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Iconsax.weight, color: MBGColors.white, size: 14),
+                const Icon(Iconsax.weight_1, color: MBGColors.white, size: 14),
                 const SizedBox(width: MBGSizes.xs),
                 Text(
-                  '${stok.stokKg} kg',
+                  '${stok.stokKg.toStringAsFixed(1)} kg',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: MBGColors.textWhite,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
                   ),
                 ),
               ],

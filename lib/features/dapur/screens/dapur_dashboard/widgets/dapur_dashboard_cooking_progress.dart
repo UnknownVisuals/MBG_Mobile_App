@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:mbg_mobile_app/features/dapur/controllers/dapur_dashboard_controller.dart';
 import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
 
@@ -10,11 +8,7 @@ class DapurDashboardCookingProgress extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final DapurDashboardController controller = Get.put(
-      DapurDashboardController(),
-    );
-
-    final progress = controller.getCookingProgress();
+    final int progress = 85;
 
     return Container(
       padding: const EdgeInsets.all(MBGSizes.defaultSpace),
@@ -47,7 +41,7 @@ class DapurDashboardCookingProgress extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(MBGSizes.borderRadiusMd),
                   child: LinearProgressIndicator(
-                    value: progress / 100,
+                    value: (progress / 100).clamp(0.0, 1.0),
                     minHeight: MBGSizes.md,
                     backgroundColor: MBGColors.grey,
                     valueColor: AlwaysStoppedAnimation<Color>(
@@ -61,23 +55,20 @@ class DapurDashboardCookingProgress extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: MBGSizes.spaceBtwItems),
-              Text(
-                '${progress.toStringAsFixed(0)}%',
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
+              Text('$progress%', style: Theme.of(context).textTheme.bodyMedium),
             ],
           ),
 
           const SizedBox(height: MBGSizes.spaceBtwItems),
 
           Text(
-            '✓ ${controller.todaysMenus.length} menus today',
+            '✓ 2 menus today',
             style: Theme.of(
               context,
             ).textTheme.bodySmall?.copyWith(color: MBGColors.textSecondary),
           ),
           Text(
-            '✓ ${controller.completedCheckpointsToday.value} checkpoints completed',
+            '✓ 2 checkpoints completed',
             style: Theme.of(
               context,
             ).textTheme.bodySmall?.copyWith(color: MBGColors.textSecondary),

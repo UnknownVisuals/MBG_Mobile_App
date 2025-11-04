@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mbg_mobile_app/common/widgets/appbar.dart';
-import 'package:mbg_mobile_app/common/widgets/drawer_driver.dart';
+import 'package:mbg_mobile_app/features/driver/screens/driver_drawer.dart';
+import 'package:mbg_mobile_app/features/authentication/controllers/logout_controller.dart';
 import 'package:mbg_mobile_app/features/authentication/controllers/user_controller.dart';
 import 'package:mbg_mobile_app/features/driver/controllers/driver_controller.dart';
-import 'package:mbg_mobile_app/features/driver/screens/delivery_history/delivery_history_screen.dart';
+import 'package:mbg_mobile_app/features/driver/controllers/driver_dashboard_controller.dart';
+import 'package:mbg_mobile_app/features/driver/controllers/driver_delivery_history_controller.dart';
+import 'package:mbg_mobile_app/features/driver/controllers/driver_my_deliveries_controller.dart';
+import 'package:mbg_mobile_app/features/driver/controllers/driver_qr_scanner_controller.dart';
+import 'package:mbg_mobile_app/features/driver/screens/driver_delivery_history/driver_delivery_history_screen.dart';
 import 'package:mbg_mobile_app/features/driver/screens/driver_dashboard/driver_dashboard_screen.dart';
-import 'package:mbg_mobile_app/features/driver/screens/my_deliveries_screen.dart';
-import 'package:mbg_mobile_app/features/driver/screens/qr_scanner/qr_scanner_screen.dart';
-import 'package:mbg_mobile_app/features/setting/sceens/setting.dart';
+import 'package:mbg_mobile_app/features/driver/screens/driver_my_deliveries/driver_my_deliveries_screen.dart';
+import 'package:mbg_mobile_app/features/driver/screens/driver_qr_scanner/driver_qr_scanner_screen.dart';
 
 class DriverScreen extends StatelessWidget {
   const DriverScreen({super.key});
@@ -16,7 +20,22 @@ class DriverScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final userController = Get.find<UserController>();
+    final logoutController = Get.find<LogoutController>();
     final driverController = Get.put(DriverController());
+
+    // Ensure per-screen controllers are available while the driver shell is active
+    if (!Get.isRegistered<DriverDashboardController>()) {
+      Get.put(DriverDashboardController());
+    }
+    if (!Get.isRegistered<DriverMyDeliveriesController>()) {
+      Get.put(DriverMyDeliveriesController());
+    }
+    if (!Get.isRegistered<DriverQrScannerController>()) {
+      Get.put(DriverQrScannerController());
+    }
+    if (!Get.isRegistered<DriverDeliveryHistoryController>()) {
+      Get.put(DriverDeliveryHistoryController());
+    }
 
     return Obx(
       () => Scaffold(
@@ -30,7 +49,7 @@ class DriverScreen extends StatelessWidget {
                 style: Theme.of(context).textTheme.labelMedium,
               ),
               Text(
-                "Halo, ${userController.user.value?.name ?? ''}!",
+                "Halo, ${userController.userModel.value?.name ?? ''}!",
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -38,8 +57,9 @@ class DriverScreen extends StatelessWidget {
             ],
           ),
         ),
-        drawer: MBGDrawerDriver(
+        drawer: DriverDrawer(
           userController: userController,
+          logoutController: logoutController,
           driverController: driverController,
         ),
         body: IndexedStack(
@@ -48,13 +68,11 @@ class DriverScreen extends StatelessWidget {
             // 0 - Dashboard
             DriverDashboardScreen(),
             // 1 - My Deliveries
-            MyDeliveriesScreen(),
+            DriverMyDeliveriesScreen(),
             // 2 - QR Scanner
-            QRScannerScreen(),
+            DriverQrScannerScreen(),
             // 3 - History
-            DeliveryHistoryScreen(),
-            // 4 - Setting
-            SettingScreen(),
+            DriverDeliveryHistoryScreen(),
           ],
         ),
       ),

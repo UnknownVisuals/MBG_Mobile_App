@@ -9,10 +9,16 @@ class DapurInfoKaryawanCard extends StatelessWidget {
 
   final KaryawanSummary karyawan;
 
+  Color _getStatusColor() {
+    return karyawan.status == 'AKTIF'
+        ? Colors.green.shade400
+        : Colors.red.shade400;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 240,
+      width: 280,
       padding: const EdgeInsets.all(MBGSizes.defaultSpace),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
@@ -28,10 +34,14 @@ class DapurInfoKaryawanCard extends StatelessWidget {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(MBGSizes.sm),
+                padding: const EdgeInsets.all(MBGSizes.sm + 2),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
+                  color: Colors.white.withValues(alpha: 0.25),
                   borderRadius: BorderRadius.circular(MBGSizes.borderRadiusMd),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.3),
+                    width: 1.5,
+                  ),
                 ),
                 child: const Icon(
                   Iconsax.user,
@@ -83,15 +93,32 @@ class DapurInfoKaryawanCard extends StatelessWidget {
               vertical: MBGSizes.xs,
             ),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.2),
+              color: _getStatusColor(),
               borderRadius: BorderRadius.circular(MBGSizes.borderRadiusSm),
-            ),
-            child: Text(
-              karyawan.status,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: MBGColors.textWhite,
-                fontWeight: FontWeight.w500,
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.4),
+                width: 1,
               ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  karyawan.status == 'AKTIF'
+                      ? Iconsax.tick_circle
+                      : Iconsax.close_circle,
+                  size: 14,
+                  color: MBGColors.white,
+                ),
+                const SizedBox(width: MBGSizes.xs),
+                Text(
+                  karyawan.status == 'AKTIF' ? 'Aktif' : 'Tidak Aktif',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: MBGColors.textWhite,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
             ),
           ),
         ],

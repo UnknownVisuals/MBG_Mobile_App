@@ -3,8 +3,7 @@ import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:mbg_mobile_app/common/styles/spacing_styles.dart';
 import 'package:mbg_mobile_app/features/sekolah/controllers/absensi_controller.dart';
-import 'package:mbg_mobile_app/features/sekolah/controllers/sekolah_controller.dart';
-import 'package:mbg_mobile_app/features/sekolah/models/kelas_model.dart';
+import 'package:mbg_mobile_app/features/sekolah/models/sekolah_kelas_model.dart';
 import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
 import 'package:intl/intl.dart';
@@ -13,19 +12,17 @@ import 'widgets/absensi_empty_state_widget.dart';
 import 'widgets/absensi_class_list_widget.dart';
 import 'widgets/absensi_attendance_view_widget.dart';
 
-class AbsensiScreen extends StatelessWidget {
+class AbsensiScreen extends GetView<AbsensiController> {
   const AbsensiScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(AbsensiController());
-    final sekolahController = Get.find<SekolahController>();
-
-    // Set classes from sekolah controller
-    controller.setKelasList(sekolahController.classes);
-
     return Scaffold(
       body: Obx(() {
+        if (controller.isLoading.value && controller.kelasList.isEmpty) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
         return Column(
           children: [
             // Header with Date Selector
@@ -57,18 +54,28 @@ class AbsensiScreen extends StatelessWidget {
                         ],
                       ),
                       // Date Selector
-                      OutlinedButton.icon(
-                        onPressed: () => _showDatePicker(context, controller),
-                        icon: const Icon(Iconsax.calendar),
-                        label: Text(
-                          DateFormat(
-                            'dd MMM yyyy',
-                          ).format(controller.selectedDate.value),
-                        ),
-                        style: OutlinedButton.styleFrom(
-                          side: BorderSide(color: MBGColors.primary),
-                          foregroundColor: MBGColors.primary,
-                        ),
+                      Row(
+                        children: [
+                          OutlinedButton.icon(
+                            onPressed: () => _showDatePicker(context),
+                            icon: const Icon(Iconsax.calendar),
+                            label: Text(
+                              DateFormat(
+                                'dd MMM yyyy',
+                              ).format(controller.selectedDate.value),
+                            ),
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(color: MBGColors.primary),
+                              foregroundColor: MBGColors.primary,
+                            ),
+                          ),
+                          const SizedBox(width: MBGSizes.sm),
+                          IconButton(
+                            tooltip: 'Refresh data',
+                            onPressed: () => controller.refreshAll(),
+                            icon: const Icon(Icons.refresh),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -135,10 +142,7 @@ class AbsensiScreen extends StatelessWidget {
     );
   }
 
-  void _showDatePicker(
-    BuildContext context,
-    AbsensiController controller,
-  ) async {
+  void _showDatePicker(BuildContext context) async {
     final date = await showDatePicker(
       context: context,
       initialDate: controller.selectedDate.value,
@@ -147,14 +151,14 @@ class AbsensiScreen extends StatelessWidget {
     );
 
     if (date != null) {
-      controller.setSelectedDate(date);
+      await controller.setSelectedDate(date);
     }
   }
 
   void _showRecordAttendanceDialog(
     BuildContext context,
     AbsensiController controller,
-    KelasModel kelas,
+    SekolahKelasModel kelas,
   ) {
     final formKey = GlobalKey<FormState>();
     final jumlahHadirController = TextEditingController();

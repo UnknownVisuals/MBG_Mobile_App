@@ -1,47 +1,58 @@
+import 'dart:async';
+
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:mbg_mobile_app/features/dapur/controllers/dapur_controller.dart';
-import 'package:mbg_mobile_app/features/dapur/models/checkpoint_model.dart';
-import 'package:mbg_mobile_app/features/dapur/models/menu_harian_model.dart';
-import 'package:mbg_mobile_app/features/dapur/models/menu_planning_model.dart';
-import 'package:mbg_mobile_app/features/dapur/models/pengiriman_model.dart';
-import 'package:mbg_mobile_app/features/dapur/models/dapur_stok_model.dart';
-import 'package:mbg_mobile_app/utils/http/dapur_service.dart';
+import 'package:mbg_mobile_app/features/dapur/models/dapur_checkpoint_model.dart';
+import 'package:mbg_mobile_app/features/dapur/models/dapur_menu_harian_model.dart';
+import 'package:mbg_mobile_app/features/dapur/models/dapur_menu_planning_model.dart';
+import 'package:mbg_mobile_app/features/dapur/models/dapur_pengiriman_model.dart';
+import 'package:mbg_mobile_app/features/dapur/models/dapur_stock_model.dart';
+import 'package:mbg_mobile_app/utils/services/dapur_service.dart';
 
 class DapurDashboardController extends GetxController {
+  DapurService dapurService = Get.put(DapurService());
+  DapurController dapurController = Get.put(DapurController());
+  Timer? _clockTimer;
+
   final RxList<MenuPlanningModel> activeMenuPlans = <MenuPlanningModel>[].obs;
-
-  DapurDashboardController()
-    : _dapurService = Get.find<DapurService>(),
-      _dapurController = Get.find<DapurController>();
-
-  final DapurService _dapurService;
-  final DapurController _dapurController;
-
   final RxList<MenuHarianModel> todaysMenus = <MenuHarianModel>[].obs;
-  final RxList<CheckpointModel> todaysCheckpoints = <CheckpointModel>[].obs;
+  final RxList<DapurCheckpointModel> todaysCheckpoints =
+      <DapurCheckpointModel>[].obs;
   final RxList<PengirimanModel> pendingDeliveries = <PengirimanModel>[].obs;
-  final RxList<StokModel> lowStockItems = <StokModel>[].obs;
+  final RxList<DapurStokModel> lowStockItems = <DapurStokModel>[].obs;
+
   final RxBool isLoading = false.obs;
   final RxInt activeMenuPlansCount = 0.obs;
   final RxInt completedCheckpointsToday = 0.obs;
   final RxInt pendingDeliveriesCount = 0.obs;
   final RxInt lowStockCount = 0.obs;
+  final Rx<DateTime> currentTime = DateTime.now().obs;
 
   @override
   void onInit() {
     super.onInit();
-    ever(_dapurController.selectedDapur, (_) => fetchDashboardData());
+    ever(dapurController.selectedDapur, (_) => fetchDashboardData());
 
-    if (_dapurController.assignedDapur.isEmpty) {
-      _dapurController.loadAssignedDapur();
+    _clockTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+      currentTime.value = DateTime.now();
+    });
+
+    if (dapurController.assignedDapur.isEmpty) {
+      dapurController.loadAssignedDapur();
     } else {
       fetchDashboardData();
     }
   }
 
+  @override
+  void onClose() {
+    _clockTimer?.cancel();
+    super.onClose();
+  }
+
   Future<void> fetchDashboardData() async {
-    final dapurId = _dapurController.selectedDapur.value?.id;
+    final dapurId = dapurController.selectedDapur.value?.id;
 
     if (dapurId == null) {
       _resetDashboardState();
@@ -65,7 +76,7 @@ class DapurDashboardController extends GetxController {
 
   Future<void> fetchActiveMenuPlans(String dapurId) async {
     try {
-      final plannings = await _dapurService.getAllMenuPlanning();
+      final plannings = await dapurService.getAllMenuPlanning();
       final now = DateTime.now();
       activeMenuPlans.value = plannings.where((plan) {
         if (plan.dapurId != dapurId) return false;
@@ -93,10 +104,14 @@ class DapurDashboardController extends GetxController {
 
       for (final planning in activeMenuPlans) {
         if (planning.dapurId != dapurId) continue;
-        final menus = await _dapurService.getMenuHarianByPlanning(planning.id);
+        final menus = await dapurService.getMenuHarianByPlanning(planning.id);
 
         final todayMenus = menus.where((menu) {
-          final menuDate = formatter.format(menu.tanggal.toLocal());
+          final DateTime? parsed = DateTime.tryParse(menu.tanggal);
+          if (parsed == null) {
+            return false;
+          }
+          final menuDate = formatter.format(parsed.toLocal());
           return menuDate == today;
         }).toList();
 
@@ -121,7 +136,7 @@ class DapurDashboardController extends GetxController {
     DateTime targetDate,
   ) async {
     try {
-      final checkpoints = await _dapurService.getCheckpointsByMenuHarian(
+      final checkpoints = await dapurService.getCheckpointsByMenuHarian(
         menuHarianId,
       );
       for (final checkpoint in checkpoints) {
@@ -136,7 +151,7 @@ class DapurDashboardController extends GetxController {
 
   Future<void> fetchPendingDeliveries(String dapurId) async {
     try {
-      final deliveries = await _dapurService.getAllPengiriman();
+      final deliveries = await dapurService.getAllPengiriman();
 
       const pendingStatuses = {
         'PENDING',
@@ -160,7 +175,7 @@ class DapurDashboardController extends GetxController {
 
   Future<void> fetchLowStockItems(String dapurId) async {
     try {
-      final stokItems = await _dapurService.getAllStok();
+      final stokItems = await dapurService.getAllStok(dapurId: dapurId);
 
       lowStockItems.value = stokItems
           .where((item) => item.stokKg < 10 && item.dapurId == dapurId)
@@ -184,7 +199,7 @@ class DapurDashboardController extends GetxController {
   }
 
   Future<void> refreshDashboard() async {
-    await _dapurController.loadAssignedDapur(forceRefresh: true);
+    await dapurController.loadAssignedDapur(forceRefresh: true);
   }
 
   void _resetDashboardState() {

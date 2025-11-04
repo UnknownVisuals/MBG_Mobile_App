@@ -29,10 +29,14 @@ class DapurInfoSekolahCard extends StatelessWidget {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(MBGSizes.sm),
+                padding: const EdgeInsets.all(MBGSizes.sm + 2),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
+                  color: Colors.white.withValues(alpha: 0.25),
                   borderRadius: BorderRadius.circular(MBGSizes.borderRadiusMd),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.3),
+                    width: 1.5,
+                  ),
                 ),
                 child: const Icon(
                   Iconsax.building_4,

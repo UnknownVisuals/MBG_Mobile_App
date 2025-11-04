@@ -1,287 +1,80 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mbg_mobile_app/features/dapur/controllers/dapur_controller.dart';
-import 'package:mbg_mobile_app/features/dapur/models/dapur_model.dart';
-import 'package:mbg_mobile_app/features/dapur/models/dapur_stok_model.dart';
-import 'package:mbg_mobile_app/utils/http/http_client.dart';
+import 'package:iconsax/iconsax.dart';
+import 'package:mbg_mobile_app/features/authentication/controllers/user_controller.dart';
+import 'package:mbg_mobile_app/features/authentication/models/user_model.dart';
+import 'package:mbg_mobile_app/features/dapur/models/dapur_stock_model.dart';
+import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/popups/loaders.dart';
+import 'package:mbg_mobile_app/utils/services/dapur_service.dart';
 
-class DapurStockController extends GetxController {
-  DapurStockController() : _httpHelper = Get.put(MBGHttpHelper());
+class DapurStokController extends GetxController {
+  // Dependencies
+  final DapurService _dapurService = Get.find<DapurService>();
 
-  final MBGHttpHelper _httpHelper;
-  late final DapurController _dapurController;
+  // Getter for dapurId
+  final UserModel userModel = Get.find<UserController>().userModel.value!;
+  String get dapurId {
+    return userModel.dapurAsPIC.first.id;
+  }
 
-  // Data
-  final RxList<StokModel> stokList = <StokModel>[].obs;
-  final RxList<StokModel> filteredStokList = <StokModel>[].obs;
+  // Data Variables
+  RxList<DapurStokModel> stokList = <DapurStokModel>[].obs;
+  RxList<DapurStokModel> filteredStokList = <DapurStokModel>[].obs;
 
-  // State
-  final RxBool isLoading = false.obs;
-  final RxBool isSaving = false.obs;
-  final RxnString deletingStockId = RxnString();
-  final RxnString adjustingStockId = RxnString();
-  final Rxn<KategoriStok> selectedCategory = Rxn<KategoriStok>();
+  // State Variables
+  RxBool isLoading = false.obs;
+  RxnString deletingStokId = RxnString();
+  RxnString adjustingStokId = RxnString();
+  Rxn<KategoriStok> selectedCategory = Rxn<KategoriStok>();
 
   List<KategoriStok> get kategoriOptions => KategoriStok.values;
 
-  Worker? _dapurSubscription;
+  // =====================
+  // CATEGORY HELPER METHODS
+  // =====================
+  Color getCategoryColor(KategoriStok kategori) {
+    switch (kategori) {
+      case KategoriStok.SAYURAN:
+        return MBGColors.success;
+      case KategoriStok.BUMBU:
+        return MBGColors.warning;
+      case KategoriStok.PROTEIN:
+        return MBGColors.error;
+      case KategoriStok.KARBOHIDRAT:
+        return MBGColors.info;
+      case KategoriStok.LAINNYA:
+        return MBGColors.darkGrey;
+    }
+  }
+
+  IconData getCategoryIcon(KategoriStok kategori) {
+    switch (kategori) {
+      case KategoriStok.SAYURAN:
+        return Iconsax.shopping_bag;
+      case KategoriStok.BUMBU:
+        return Iconsax.tag;
+      case KategoriStok.PROTEIN:
+        return Iconsax.activity;
+      case KategoriStok.KARBOHIDRAT:
+        return Iconsax.box;
+      case KategoriStok.LAINNYA:
+        return Iconsax.category;
+    }
+  }
 
   @override
   void onInit() {
     super.onInit();
-    _dapurController = Get.find<DapurController>();
-    _dapurSubscription = ever<DapurModel?>(_dapurController.selectedDapur, (
-      dapur,
-    ) {
-      if (dapur == null) {
-        stokList.clear();
-        filteredStokList.clear();
-      } else {
-        fetchStok(dapurId: dapur.id);
-      }
-    });
-
-    final initialDapur = _dapurController.selectedDapur.value;
-    if (initialDapur != null) {
-      fetchStok(dapurId: initialDapur.id);
-    }
+    fetchStok(dapurId: dapurId);
   }
 
-  @override
-  void onClose() {
-    _dapurSubscription?.dispose();
-    super.onClose();
-  }
-
+  // =================
+  // FILTER MANAGEMENT
+  // =================
   void selectCategory(KategoriStok? category) {
     selectedCategory.value = category;
     _applyFilter();
-  }
-
-  Future<void> fetchStok({String? dapurId}) async {
-    final String? effectiveDapurId =
-        dapurId ?? _dapurController.selectedDapur.value?.id;
-
-    if (effectiveDapurId == null) {
-      stokList.clear();
-      filteredStokList.clear();
-      return;
-    }
-
-    try {
-      isLoading.value = true;
-      MBGHttpHelper.loadSessionToken();
-
-      final response = await _httpHelper.getRequest(
-        'dapur/$effectiveDapurId/stok',
-      );
-
-      if (response.statusCode == 200) {
-        final body = response.body;
-        if (body is Map<String, dynamic> && body['success'] == true) {
-          final dataWrapper = body['data'] as Map<String, dynamic>;
-          final List<dynamic> dataList = dataWrapper['data'] as List<dynamic>;
-
-          final items = dataList
-              .map((json) => StokModel.fromJson(json as Map<String, dynamic>))
-              .toList();
-
-          stokList.assignAll(items);
-          _applyFilter();
-          return;
-        }
-      }
-
-      throw Exception(response.body?['message'] ?? 'Gagal memuat stok dapur');
-    } catch (e) {
-      MBGLoaders.errorSnackBar(
-        title: 'Gagal Memuat Stok',
-        message: e.toString(),
-      );
-    } finally {
-      isLoading.value = false;
-    }
-  }
-
-  Future<void> addStok({
-    required String nama,
-    required KategoriStok kategori,
-    required double stokKg,
-  }) async {
-    final String? dapurId = _dapurController.selectedDapur.value?.id;
-    if (dapurId == null) {
-      MBGLoaders.warningSnackBar(
-        title: 'Pilih Dapur',
-        message: 'Silakan pilih dapur sebelum menambahkan stok.',
-      );
-      return;
-    }
-
-    try {
-      isSaving.value = true;
-      MBGHttpHelper.loadSessionToken();
-
-      final response = await _httpHelper.postRequest('stok', {
-        'nama': nama,
-        'kategori': kategori.apiValue,
-        'stokKg': stokKg,
-        'dapurId': dapurId,
-      });
-
-      if (response.statusCode != 201) {
-        throw Exception(response.body?['message'] ?? 'Gagal menambahkan stok');
-      }
-
-      final responseData = response.body;
-      if (responseData == null || responseData['success'] != true) {
-        throw Exception('Format respons tidak valid');
-      }
-
-      final StokModel newStok = StokModel.fromJson(
-        responseData['data'] as Map<String, dynamic>,
-      );
-
-      stokList.insert(0, newStok);
-      _applyFilter();
-
-      MBGLoaders.successSnackBar(
-        title: 'Stok Ditambahkan',
-        message: 'Data stok baru berhasil ditambahkan.',
-      );
-
-      await Future.delayed(const Duration(milliseconds: 300));
-      Get.back(closeOverlays: true);
-    } catch (e) {
-      MBGLoaders.errorSnackBar(
-        title: 'Gagal Menambahkan Stok',
-        message: e.toString(),
-      );
-    } finally {
-      isSaving.value = false;
-    }
-  }
-
-  Future<void> updateStok({
-    required String stokId,
-    required String nama,
-    required KategoriStok kategori,
-    required double stokKg,
-  }) async {
-    try {
-      isSaving.value = true;
-      MBGHttpHelper.loadSessionToken();
-
-      final response = await _httpHelper.putRequest('stok/$stokId', {
-        'nama': nama,
-        'kategori': kategori.apiValue,
-        'stokKg': stokKg,
-      });
-
-      if (response.statusCode != 200) {
-        throw Exception(response.body?['message'] ?? 'Gagal memperbarui stok');
-      }
-
-      final responseData = response.body;
-      if (responseData == null || responseData['success'] != true) {
-        throw Exception('Format respons tidak valid');
-      }
-
-      final updatedStok = StokModel.fromJson(
-        responseData['data'] as Map<String, dynamic>,
-      );
-      _replaceStok(updatedStok);
-
-      MBGLoaders.successSnackBar(
-        title: 'Stok Diperbarui',
-        message: 'Data stok berhasil diperbarui.',
-      );
-
-      await Future.delayed(const Duration(milliseconds: 300));
-      Get.back(closeOverlays: true);
-    } catch (e) {
-      MBGLoaders.errorSnackBar(
-        title: 'Gagal Memperbarui Stok',
-        message: e.toString(),
-      );
-    } finally {
-      isSaving.value = false;
-    }
-  }
-
-  Future<void> adjustStok({
-    required String stokId,
-    required double adjustment,
-  }) async {
-    if (adjustment == 0) {
-      MBGLoaders.warningSnackBar(
-        title: 'Penyesuaian Tidak Valid',
-        message: 'Nilai penyesuaian tidak boleh nol.',
-      );
-      return;
-    }
-
-    try {
-      adjustingStockId.value = stokId;
-      MBGHttpHelper.loadSessionToken();
-
-      final response = await _httpHelper.patchRequest('stok/$stokId/adjust', {
-        'adjustment': adjustment,
-      });
-
-      if (response.statusCode != 200) {
-        throw Exception(response.body?['message'] ?? 'Gagal menyesuaikan stok');
-      }
-
-      final responseData = response.body;
-      if (responseData == null || responseData['success'] != true) {
-        throw Exception('Format respons tidak valid');
-      }
-
-      final adjustedStok = StokModel.fromJson(
-        responseData['data'] as Map<String, dynamic>,
-      );
-      _replaceStok(adjustedStok);
-
-      MBGLoaders.successSnackBar(
-        title: 'Stok Disesuaikan',
-        message: 'Penyesuaian stok berhasil disimpan.',
-      );
-    } catch (e) {
-      MBGLoaders.errorSnackBar(
-        title: 'Gagal Menyesuaikan Stok',
-        message: e.toString(),
-      );
-    } finally {
-      adjustingStockId.value = null;
-    }
-  }
-
-  Future<void> deleteStok(String stokId) async {
-    try {
-      deletingStockId.value = stokId;
-      MBGHttpHelper.loadSessionToken();
-
-      final response = await _httpHelper.deleteRequest('stok/$stokId');
-
-      if (response.statusCode != 200) {
-        throw Exception(response.body?['message'] ?? 'Gagal menghapus stok');
-      }
-
-      stokList.removeWhere((stok) => stok.id == stokId);
-      _applyFilter();
-
-      MBGLoaders.successSnackBar(
-        title: 'Stok Dihapus',
-        message: 'Data stok berhasil dihapus.',
-      );
-    } catch (e) {
-      MBGLoaders.errorSnackBar(
-        title: 'Gagal Menghapus Stok',
-        message: e.toString(),
-      );
-    } finally {
-      deletingStockId.value = null;
-    }
   }
 
   void _applyFilter() {
@@ -296,12 +89,178 @@ class DapurStockController extends GetxController {
     );
   }
 
-  void _replaceStok(StokModel updatedStok) {
+  // =====================
+  // REFRESH STOK DATA
+  // =====================
+  Future<void> refreshStok() async {
+    await fetchStok(dapurId: dapurId);
+  }
+
+  // =================
+  // GET STOK DATA
+  // =================
+  Future<void> fetchStok({required String dapurId}) async {
+    try {
+      isLoading.value = true;
+      final stok = await _dapurService.getAllStok(dapurId: dapurId);
+      stokList.assignAll(stok);
+      _applyFilter();
+    } catch (e) {
+      MBGLoaders.errorSnackBar(
+        title: 'Gagal Memuat Stok',
+        message: e.toString(),
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  // =================
+  // ADD STOK DATA
+  // =================
+  Future<void> addStok({
+    required String nama,
+    required KategoriStok kategori,
+    required double stokKg,
+  }) async {
+    try {
+      isLoading.value = true;
+
+      await _dapurService.createStok({
+        'nama': nama,
+        'kategori': kategori.apiValue,
+        'stokKg': stokKg,
+        'dapurId': dapurId,
+      });
+
+      Get.back();
+
+      MBGLoaders.successSnackBar(
+        title: 'Stok Ditambahkan',
+        message: '$nama sebanyak $stokKg kg berhasil ditambahkan',
+      );
+
+      await fetchStok(dapurId: dapurId);
+    } catch (e) {
+      MBGLoaders.errorSnackBar(
+        title: 'Gagal Menambahkan Stok',
+        message: e.toString(),
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  // ==================
+  // UPDATE STOK DATA
+  // ==================
+  Future<void> updateStok({
+    required String stokId,
+    required String nama,
+    required KategoriStok kategori,
+    required double stokKg,
+  }) async {
+    try {
+      isLoading.value = true;
+
+      final updatedStok = await _dapurService.updateStok(stokId, {
+        'nama': nama,
+        'kategori': kategori.apiValue,
+        'stokKg': stokKg,
+      });
+
+      _replaceStok(updatedStok);
+
+      Get.back();
+
+      MBGLoaders.successSnackBar(
+        title: 'Stok Diperbarui',
+        message: 'Data stok berhasil diperbarui.',
+      );
+    } catch (e) {
+      MBGLoaders.errorSnackBar(
+        title: 'Gagal Memperbarui Stok',
+        message: e.toString(),
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  // ===================
+  // ADJUST STOK DATA
+  // ===================
+  Future<void> adjustStok({
+    required String stokId,
+    required double adjustment,
+  }) async {
+    if (adjustment == 0) {
+      MBGLoaders.warningSnackBar(
+        title: 'Penyesuaian Tidak Valid',
+        message: 'Nilai penyesuaian tidak boleh nol.',
+      );
+      return;
+    }
+
+    try {
+      adjustingStokId.value = stokId;
+      final adjustedStok = await _dapurService.adjustStok(stokId, adjustment);
+      _replaceStok(adjustedStok);
+
+      // Close dialog
+      Get.back();
+
+      // If called from edit screen, go back to main stock screen
+      if (Get.currentRoute.contains('DapurStokEdit')) {
+        Get.back();
+      }
+
+      MBGLoaders.successSnackBar(
+        title: 'Stok Disesuaikan',
+        message: 'Penyesuaian stok berhasil disimpan.',
+      );
+    } catch (e) {
+      MBGLoaders.errorSnackBar(
+        title: 'Gagal Menyesuaikan Stok',
+        message: e.toString(),
+      );
+    } finally {
+      adjustingStokId.value = null;
+    }
+  }
+
+  void _replaceStok(DapurStokModel updatedStok) {
     final int index = stokList.indexWhere((stok) => stok.id == updatedStok.id);
     if (index != -1) {
       stokList[index] = updatedStok;
       stokList.refresh();
       _applyFilter();
+    }
+  }
+
+  // ==================
+  // DELETE STOK DATA
+  // ==================
+  Future<void> deleteStok(String stokId) async {
+    try {
+      deletingStokId.value = stokId;
+      await _dapurService.deleteStok(stokId);
+
+      Get.back(); // Close dialog
+
+      MBGLoaders.successSnackBar(
+        title: 'Stok Dihapus',
+        message: 'Data stok berhasil dihapus.',
+      );
+
+      await fetchStok(dapurId: dapurId);
+    } catch (e) {
+      MBGLoaders.errorSnackBar(
+        title: 'Gagal Menghapus Stok',
+        message: e.toString(),
+      );
+    } finally {
+      deletingStokId.value = null;
     }
   }
 }

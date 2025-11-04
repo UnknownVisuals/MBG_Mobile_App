@@ -5,9 +5,7 @@ import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
 
 class DapurDashboardTodayMenuCard extends StatelessWidget {
-  const DapurDashboardTodayMenuCard({super.key, required this.menu});
-
-  final dynamic menu;
+  const DapurDashboardTodayMenuCard({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -17,48 +15,57 @@ class DapurDashboardTodayMenuCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(MBGSizes.cardRadiusMd),
-        border: Border.all(color: Colors.grey[300]!),
+        border: Border.all(color: MBGColors.borderPrimary),
       ),
       child: Row(
         children: [
+          // Icon
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(MBGSizes.md),
             decoration: BoxDecoration(
-              color: MBGColors.primary.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
+              color: MBGColors.primary.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(MBGSizes.borderRadiusMd),
             ),
             child: const Icon(Iconsax.note, color: MBGColors.primary),
           ),
-          const SizedBox(width: 12),
+
+          const SizedBox(width: MBGSizes.spaceBtwItems),
+
+          // Menu Details
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  menu.namaMenu,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                  ),
+                  'Nasi Box Spesial',
+                  style: Theme.of(context).textTheme.bodyMedium,
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '${menu.jamMulaiMasak} - ${menu.jamSelesaiMasak}',
-                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                  '08:00 - 09:00 WIB',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: MBGColors.textSecondary,
+                  ),
                 ),
               ],
             ),
           ),
+
+          const SizedBox(width: MBGSizes.spaceBtwItems / 2),
+
+          // Price Tag
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            padding: const EdgeInsets.symmetric(
+              horizontal: MBGSizes.md,
+              vertical: MBGSizes.sm,
+            ),
             decoration: BoxDecoration(
-              color: Colors.green.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(4),
+              color: Colors.green.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(MBGSizes.borderRadiusSm),
             ),
             child: Text(
-              'Rp ${NumberFormat('#,###').format(menu.biayaPerTray)}',
-              style: const TextStyle(
-                fontSize: 11,
+              'Rp ${NumberFormat('#,###').format(15000)}',
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: Colors.green,
               ),

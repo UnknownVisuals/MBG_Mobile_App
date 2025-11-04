@@ -8,6 +8,13 @@ class MBGFormatter {
     ).format(date); // Customize the date format as needed
   }
 
+  static String formatDateTime(DateTime? dateTime) {
+    dateTime ??= DateTime.now();
+    return DateFormat(
+      'dd-MMM-yyyy HH:mm',
+    ).format(dateTime); // Customize the date-time format as needed
+  }
+
   static String formatCurrency(double amount) {
     return NumberFormat.currency(
       locale: 'en_US',
