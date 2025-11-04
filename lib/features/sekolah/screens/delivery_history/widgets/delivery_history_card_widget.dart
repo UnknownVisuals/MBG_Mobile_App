@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../../../../dapur/models/pengiriman_model.dart';
+import '../../../models/sekolah_pengiriman_model.dart';
 
 /// Delivery history card widget
 class DeliveryHistoryCardWidget extends StatelessWidget {
-  final PengirimanModel delivery;
+  final SekolahPengirimanModel delivery;
   final VoidCallback onTap;
   final Color Function(String) getStatusColor;
   final IconData Function(String) getStatusIcon;

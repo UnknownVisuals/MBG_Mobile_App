@@ -15,7 +15,7 @@ class MBGDrawerHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      final user = userController.user.value;
+      final user = userController.userModel.value;
 
       return Container(
         width: double.infinity,

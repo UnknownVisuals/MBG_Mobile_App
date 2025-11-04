@@ -39,7 +39,7 @@ class MBGFullScreenLoader {
 
   /// Stop the currently open loading dialog.
   /// This method doesn't return anything.
-  static stopLoading() {
+  static void stopLoading() {
     Navigator.of(
       Get.overlayContext!,
     ).pop(); // Close the dialog using the Navigator

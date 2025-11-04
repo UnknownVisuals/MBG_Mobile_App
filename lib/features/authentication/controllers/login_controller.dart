@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import 'package:mbg_mobile_app/features/authentication/controllers/user_controller.dart';
 import 'package:mbg_mobile_app/features/authentication/models/login_model.dart';
-import 'package:mbg_mobile_app/features/dapur/screens/dapur_dashboard/dapur_dashboard_screen.dart';
+import 'package:mbg_mobile_app/features/dapur/screens/dapur.dart';
 import 'package:mbg_mobile_app/features/driver/screens/driver.dart';
 import 'package:mbg_mobile_app/features/sekolah/screens/sekolah.dart';
 import 'package:mbg_mobile_app/utils/http/http_client.dart';
@@ -29,15 +29,6 @@ class LoginController extends GetxController {
 
   /// Perform login action
   Future<void> login({required String email, required String password}) async {
-    // Validate inputs
-    if (email.isEmpty || password.isEmpty) {
-      MBGLoaders.warningSnackBar(
-        title: 'Data tidak lengkap',
-        message: 'Email dan kata sandi wajib diisi!',
-      );
-      return;
-    }
-
     isLoading.value = true;
 
     try {
@@ -51,7 +42,6 @@ class LoginController extends GetxController {
       final loginResponse = await httpHelper.postRequest(
         'auth/login',
         loginModel.toJson(),
-        handleUnauthorized: false,
       );
 
       // Handle response
@@ -72,11 +62,10 @@ class LoginController extends GetxController {
           await userController.fetchUserProfile();
 
           // Navigate based on user role
-          final userRole = userController.user.value?.role;
+          final userRole = userController.userModel.value?.role;
 
           if (userRole == 'PIC_DAPUR') {
-            // Get.offAll(() => const DapurScreen());
-            Get.offAll(() => const DapurDashboardScreen());
+            Get.offAll(() => const DapurScreen());
           } else if (userRole == 'DRIVER') {
             Get.offAll(() => const DriverScreen());
           } else if (userRole == 'PIC_SEKOLAH') {
@@ -84,9 +73,9 @@ class LoginController extends GetxController {
           }
 
           // Show success message
-          await MBGLoaders.successSnackBar(
+          MBGLoaders.successSnackBar(
             title: 'Login Berhasil',
-            message: 'Selamat datang kembali, ${userController.user.value}!',
+            message: 'Selamat datang, ${userController.userModel.value}!',
           );
         } else {
           MBGLoaders.errorSnackBar(

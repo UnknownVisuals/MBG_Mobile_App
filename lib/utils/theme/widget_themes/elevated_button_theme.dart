@@ -15,11 +15,14 @@ class MBGElevatedButtonTheme {
       disabledForegroundColor: MBGColors.darkGrey,
       disabledBackgroundColor: MBGColors.buttonDisabled,
       side: const BorderSide(color: MBGColors.primary),
-      padding: const EdgeInsets.symmetric(vertical: MBGSizes.buttonHeight),
       textStyle: const TextStyle(
         fontSize: 16,
         color: MBGColors.textWhite,
         fontWeight: FontWeight.w600,
+      ),
+      padding: const EdgeInsets.symmetric(
+        vertical: MBGSizes.buttonHeight,
+        horizontal: 20,
       ),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(MBGSizes.buttonRadius),
@@ -36,11 +39,14 @@ class MBGElevatedButtonTheme {
       disabledForegroundColor: MBGColors.darkGrey,
       disabledBackgroundColor: MBGColors.darkerGrey,
       side: const BorderSide(color: MBGColors.primary),
-      padding: const EdgeInsets.symmetric(vertical: MBGSizes.buttonHeight),
       textStyle: const TextStyle(
         fontSize: 16,
         color: MBGColors.textWhite,
         fontWeight: FontWeight.w600,
+      ),
+      padding: const EdgeInsets.symmetric(
+        vertical: MBGSizes.buttonHeight,
+        horizontal: 20,
       ),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(MBGSizes.buttonRadius),

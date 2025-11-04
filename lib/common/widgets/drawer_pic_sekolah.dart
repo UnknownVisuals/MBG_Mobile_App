@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:mbg_mobile_app/common/widgets/drawer_footer.dart';
 import 'package:mbg_mobile_app/common/widgets/drawer_header.dart';
+import 'package:mbg_mobile_app/features/authentication/controllers/logout_controller.dart';
 import 'package:mbg_mobile_app/features/authentication/controllers/user_controller.dart';
 import 'package:mbg_mobile_app/features/sekolah/controllers/sekolah_controller.dart';
 import 'package:mbg_mobile_app/utils/constants/colors.dart';
@@ -14,10 +15,12 @@ class MBGDrawerPicSekolah extends StatelessWidget {
   const MBGDrawerPicSekolah({
     super.key,
     required this.userController,
+    required this.logoutController,
     required this.sekolahController,
   });
 
   final UserController userController;
+  final LogoutController logoutController;
   final SekolahController sekolahController;
 
   @override
@@ -164,7 +167,7 @@ class MBGDrawerPicSekolah extends StatelessWidget {
             ],
             // Drawer Footer
             footerBuilder: (context, extended) =>
-                MBGDrawerFooter(userController: userController),
+                MBGDrawerFooter(logoutController: logoutController),
             showToggleButton: false,
           ),
         ),

@@ -3,19 +3,20 @@ import 'dart:io';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
+import 'package:mbg_mobile_app/utils/helpers/file_helper.dart';
 import 'package:mbg_mobile_app/utils/local_storage/storage_utility.dart';
 
 class MBGHttpHelper extends GetConnect {
+  // Dependencies
+  static final _localStorage = MBGLocalStorage();
+
   // Default Configurations
   static String? _baseUrl = dotenv.env['API_BASE_URL'];
   static String _sessionToken = '';
 
-  // Dependencies
-  static final _localStorage = MBGLocalStorage();
-
-  // State Variables
-  static bool _isHandlingUnauthorized = false;
-  static Future<void> Function({String? message})? _unauthorizedHandler;
+  // ====================
+  // ===== BASE URL =====
+  // ====================
 
   // Setter method to change the base URL
   static void setBaseUrl(String url) {
@@ -26,6 +27,10 @@ class MBGHttpHelper extends GetConnect {
   static String? getBaseUrl() {
     return _baseUrl;
   }
+
+  // =========================
+  // ===== SESSION TOKEN =====
+  // =========================
 
   // Setter method to set session token
   static Future<void> setSessionToken(
@@ -62,6 +67,10 @@ class MBGHttpHelper extends GetConnect {
     return _sessionToken;
   }
 
+  // =================================
+  // ===== HTTP REQUESTS HELPERS =====
+  // =================================
+
   // Setter headers for HTTP requests
   static Map<String, String> _getHeaders() {
     final Map<String, String> headers = {'Content-Type': 'application/json'};
@@ -70,6 +79,30 @@ class MBGHttpHelper extends GetConnect {
     }
     return headers;
   }
+
+  // Private method to handle responses
+  Response _handleResponse(Response response) {
+    final body = response.body;
+    String? message;
+
+    if (body is Map<String, dynamic>) {
+      message = body['message'] as String?;
+    }
+
+    final statusCode = response.statusCode ?? 0;
+
+    if (statusCode == 401) {
+      throw Exception(message ?? 'Unauthorized request.');
+    } else if (statusCode < 200 || statusCode >= 300) {
+      throw Exception(message ?? 'Error: $statusCode');
+    }
+
+    return response;
+  }
+
+  // ========================
+  // ===== HTTP METHODS =====
+  // ========================
 
   // Helper method to make a GET request
   Future<Response> getRequest(String endpoint) async {
@@ -88,11 +121,7 @@ class MBGHttpHelper extends GetConnect {
   }
 
   // Helper method to make a POST request
-  Future<Response> postRequest(
-    String endpoint,
-    dynamic data, {
-    bool handleUnauthorized = true,
-  }) async {
+  Future<Response> postRequest(String endpoint, dynamic data) async {
     try {
       final response = await post(
         '$_baseUrl/$endpoint',
@@ -100,7 +129,57 @@ class MBGHttpHelper extends GetConnect {
         headers: _getHeaders(),
       ).timeout(const Duration(seconds: 15));
 
-      return _handleResponse(response, handleUnauthorized: handleUnauthorized);
+      return _handleResponse(response);
+    } on TimeoutException {
+      throw Exception('Request timeout. Please try again.');
+    } on SocketException {
+      throw Exception('No internet connection.');
+    }
+  }
+
+  // Helper method to make a multipart/form-data POST request
+  Future<Response> postMultipartRequest(
+    String endpoint, {
+    Map<String, dynamic>? fields,
+    File? file,
+    String fileFieldName = 'file',
+    String? fileName,
+    String? contentType,
+    bool isPutMethod = false,
+  }) async {
+    try {
+      final Map<String, dynamic> formMap = <String, dynamic>{
+        if (fields != null) ...fields,
+      };
+
+      if (file != null) {
+        final resolvedName =
+            fileName ?? file.path.split(Platform.pathSeparator).last;
+        final resolvedContentType =
+            contentType ?? MBGFileHelper.inferImageContentType(file);
+
+        formMap[fileFieldName] = MultipartFile(
+          file,
+          filename: resolvedName,
+          contentType: resolvedContentType,
+        );
+      }
+
+      final headers = <String, String>{};
+      if (_sessionToken.isNotEmpty) {
+        headers['Authorization'] = 'Bearer $_sessionToken';
+      }
+
+      final url = '$_baseUrl/$endpoint';
+      final formData = FormData(formMap);
+
+      final response =
+          await (isPutMethod
+                  ? put(url, formData, headers: headers)
+                  : post(url, formData, headers: headers))
+              .timeout(const Duration(seconds: 30));
+
+      return _handleResponse(response);
     } on TimeoutException {
       throw Exception('Request timeout. Please try again.');
     } on SocketException {
@@ -156,49 +235,5 @@ class MBGHttpHelper extends GetConnect {
     } on SocketException {
       throw Exception('No internet connection.');
     }
-  }
-
-  // Private method to handle responses
-  Response _handleResponse(
-    Response response, {
-    bool handleUnauthorized = true,
-  }) {
-    final body = response.body;
-    String? message;
-    if (body is Map<String, dynamic>) {
-      message = body['message'] as String?;
-    }
-
-    if (handleUnauthorized && response.statusCode == 401) {
-      _triggerUnauthorized(message: message);
-      throw Exception(message ?? 'Unauthorized');
-    }
-
-    return response;
-  }
-
-  static void registerUnauthorizedHandler(
-    Future<void> Function({String? message}) handler,
-  ) {
-    _unauthorizedHandler = handler;
-  }
-
-  static void unregisterUnauthorizedHandler(
-    Future<void> Function({String? message}) handler,
-  ) {
-    _unauthorizedHandler = null;
-  }
-
-  static Future<void> _triggerUnauthorized({String? message}) async {
-    if (_isHandlingUnauthorized) return;
-    _isHandlingUnauthorized = true;
-
-    await clearSessionToken();
-
-    if (_unauthorizedHandler != null) {
-      await _unauthorizedHandler!(message: message);
-    }
-
-    _isHandlingUnauthorized = false;
   }
 }

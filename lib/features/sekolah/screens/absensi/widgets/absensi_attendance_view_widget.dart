@@ -4,7 +4,7 @@ import 'package:iconsax/iconsax.dart';
 import '../../../../../utils/constants/colors.dart';
 import '../../../../../utils/constants/sizes.dart';
 import '../../../controllers/absensi_controller.dart';
-import '../../../models/kelas_model.dart';
+import '../../../models/sekolah_kelas_model.dart';
 import '../widgets/select_class_prompt_widget.dart';
 import '../widgets/empty_attendance_history_widget.dart';
 import '../widgets/attendance_card_widget.dart';
@@ -12,7 +12,7 @@ import '../widgets/attendance_card_widget.dart';
 /// Attendance view widget with record button and history
 class AbsensiAttendanceViewWidget extends StatelessWidget {
   final AbsensiController controller;
-  final Function(BuildContext, AbsensiController, KelasModel)
+  final Function(BuildContext, AbsensiController, SekolahKelasModel)
   onRecordAttendance;
 
   const AbsensiAttendanceViewWidget({

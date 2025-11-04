@@ -6,6 +6,13 @@ import 'package:mbg_mobile_app/utils/popups/loaders.dart';
 class CameraController extends GetxController {
   Rx<File?> selectedImage = Rx<File?>(null);
 
+  File? get imageFile => selectedImage.value;
+  bool get hasImage => selectedImage.value != null;
+
+  void clearImage() {
+    selectedImage.value = null;
+  }
+
   // Pick image from gallery
   Future<void> pickImageFromGallery() async {
     try {

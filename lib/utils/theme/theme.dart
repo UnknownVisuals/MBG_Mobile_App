@@ -15,9 +15,16 @@ class MBGAppTheme {
   static ThemeData lightTheme = ThemeData(
     useMaterial3: true,
     fontFamily: 'Poppins',
+    colorScheme:
+        ColorScheme.fromSeed(
+          seedColor: MBGColors.primary,
+          brightness: Brightness.light,
+        ).copyWith(
+          surface: MBGColors.white,
+          onSurface: MBGColors.black,
+          surfaceContainerHigh: MBGColors.white,
+        ),
     disabledColor: MBGColors.grey,
-    brightness: Brightness.light,
-    primaryColor: MBGColors.primary,
     textTheme: MBGTextTheme.lightTextTheme,
     chipTheme: MBGChipTheme.lightChipTheme,
     scaffoldBackgroundColor: MBGColors.white,
@@ -32,9 +39,16 @@ class MBGAppTheme {
   static ThemeData darkTheme = ThemeData(
     useMaterial3: true,
     fontFamily: 'Poppins',
+    colorScheme:
+        ColorScheme.fromSeed(
+          seedColor: MBGColors.primary,
+          brightness: Brightness.dark,
+        ).copyWith(
+          surface: MBGColors.dark,
+          onSurface: MBGColors.white,
+          surfaceContainerHigh: MBGColors.black,
+        ),
     disabledColor: MBGColors.grey,
-    brightness: Brightness.dark,
-    primaryColor: MBGColors.primary,
     textTheme: MBGTextTheme.darkTextTheme,
     chipTheme: MBGChipTheme.darkChipTheme,
     scaffoldBackgroundColor: MBGColors.black,

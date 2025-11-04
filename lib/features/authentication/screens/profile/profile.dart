@@ -18,7 +18,7 @@ class ProfileScreen extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(MBGSizes.defaultSpace),
         child: Obx(() {
-          final user = userController.user.value;
+          final user = userController.userModel.value;
           return SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -28,7 +28,10 @@ class ProfileScreen extends StatelessWidget {
                 const SizedBox(height: MBGSizes.spaceBtwItems),
                 MBGInfoRow(title: 'Nama', value: user?.name ?? 'Belum diisi'),
                 MBGInfoRow(title: 'Email', value: user?.email ?? 'Belum diisi'),
-                MBGInfoRow(title: 'Telepon', value: user?.phone ?? 'Belum diisi'),
+                MBGInfoRow(
+                  title: 'Telepon',
+                  value: user?.phone ?? 'Belum diisi',
+                ),
 
                 const SizedBox(height: MBGSizes.spaceBtwSections),
 
@@ -67,14 +70,19 @@ class ProfileScreen extends StatelessWidget {
                 // Account Information Section
                 const MBGSectionHeading(title: 'Informasi Akun'),
                 const SizedBox(height: MBGSizes.spaceBtwItems),
-                MBGInfoRow(title: 'ID Pengguna', value: user?.id ?? 'Belum diisi'),
+                MBGInfoRow(
+                  title: 'ID Pengguna',
+                  value: user?.id ?? 'Belum diisi',
+                ),
                 MBGInfoRow(
                   title: 'Dibuat pada',
-                  value: user?.createdAt.toString().split('.')[0] ?? 'Belum diisi',
+                  value:
+                      user?.createdAt.toString().split('.')[0] ?? 'Belum diisi',
                 ),
                 MBGInfoRow(
                   title: 'Diperbarui pada',
-                  value: user?.updatedAt.toString().split('.')[0] ?? 'Belum diisi',
+                  value:
+                      user?.updatedAt.toString().split('.')[0] ?? 'Belum diisi',
                 ),
               ],
             ),

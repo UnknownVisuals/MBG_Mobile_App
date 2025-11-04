@@ -5,17 +5,15 @@ import 'package:mbg_mobile_app/common/styles/spacing_styles.dart';
 import 'package:mbg_mobile_app/features/driver/controllers/driver_dashboard_controller.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
 import 'package:intl/intl.dart';
-import 'widgets/driver_delivery_card_widget.dart';
-import 'widgets/driver_quick_action_widget.dart';
-import 'widgets/driver_stats_cards_widget.dart';
+import 'widgets/driver_delivery_card.dart';
+import 'widgets/driver_quick_action.dart';
+import 'widgets/driver_stats_cards.dart';
 
-class DriverDashboardScreen extends StatelessWidget {
+class DriverDashboardScreen extends GetView<DriverDashboardController> {
   const DriverDashboardScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(DriverDashboardController());
-
     return Scaffold(
       body: Obx(() {
         if (controller.isLoading.value &&
@@ -36,11 +34,11 @@ class DriverDashboardScreen extends StatelessWidget {
                 const SizedBox(height: MBGSizes.spaceBtwSections),
 
                 // Stats Cards
-                DriverStatsCardsWidget(controller: controller),
+                DriverStatsCards(controller: controller),
                 const SizedBox(height: MBGSizes.spaceBtwSections),
 
                 // Quick Action - QR Scanner
-                const DriverQuickActionWidget(),
+                const DriverQuickAction(),
                 const SizedBox(height: MBGSizes.spaceBtwSections),
 
                 // Pending Deliveries
@@ -139,7 +137,7 @@ class DriverDashboardScreen extends StatelessWidget {
         else
           ...controller.pendingDeliveries.map(
             (delivery) =>
-                DriverDeliveryCardWidget(delivery: delivery, isPending: true),
+                DriverDeliveryCard(delivery: delivery, isPending: true),
           ),
       ],
     );
@@ -166,10 +164,8 @@ class DriverDashboardScreen extends StatelessWidget {
         ...controller.completedDeliveries
             .take(5)
             .map(
-              (delivery) => DriverDeliveryCardWidget(
-                delivery: delivery,
-                isPending: false,
-              ),
+              (delivery) =>
+                  DriverDeliveryCard(delivery: delivery, isPending: false),
             ),
       ],
     );
