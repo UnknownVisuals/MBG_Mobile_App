@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:intl/intl.dart';
+import 'package:mbg_mobile_app/common/widgets/image_preview_dialog.dart';
+import 'package:mbg_mobile_app/features/dapur/controllers/dapur_pengiriman_controller.dart';
 import 'package:mbg_mobile_app/features/dapur/models/dapur_pengiriman_model.dart';
+import 'package:mbg_mobile_app/features/dapur/screens/dapur_pengiriman/widgets/dapur_pengiriman_delete.dart';
 import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
 
 class DapurPengirimanCard extends StatelessWidget {
   const DapurPengirimanCard({super.key, required this.pengiriman});
 
-  final PengirimanModel pengiriman;
+  final DapurPengirimanModel pengiriman;
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +52,7 @@ class DapurPengirimanCard extends StatelessWidget {
                     const SizedBox(width: MBGSizes.spaceBtwItems / 2),
                     Expanded(
                       child: Text(
-                        pengiriman.sekolahAlamat ?? '-',
+                        pengiriman.sekolahAlamat ?? '---',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: MBGColors.textSecondary,
                         ),
@@ -171,12 +176,43 @@ class DapurPengirimanCard extends StatelessWidget {
 
             const SizedBox(height: MBGSizes.spaceBtwItems),
 
+            Container(
+              padding: const EdgeInsets.all(MBGSizes.defaultSpace / 2),
+              decoration: BoxDecoration(
+                color: MBGColors.primary.withValues(alpha: 0.06),
+                borderRadius: BorderRadius.circular(MBGSizes.borderRadiusMd),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Iconsax.calendar_1, size: MBGSizes.iconSm),
+                  const SizedBox(width: MBGSizes.spaceBtwItems / 2),
+                  Expanded(
+                    child: Text(
+                      DateFormat(
+                        'dd MMM yyyy, HH:mm',
+                      ).format(pengiriman.createdAt.toLocal()),
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: MBGSizes.spaceBtwItems),
+
             // Action buttons
             Row(
               children: [
                 Expanded(
                   child: OutlinedButton.icon(
-                    onPressed: () {},
+                    onPressed: () {
+                      if (pengiriman.qrCodeUrl.isNotEmpty) {
+                        MBGImagePreviewDialog.showData(
+                          context: context,
+                          imageData: pengiriman.qrCodeUrl,
+                        );
+                      }
+                    },
                     icon: const Icon(
                       Iconsax.scan_barcode,
                       size: MBGSizes.iconMd,
@@ -187,10 +223,19 @@ class DapurPengirimanCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                if (pengiriman.status == 'PENDING') ...[
+                if (_isPendingStatus(pengiriman.status)) ...[
                   const SizedBox(width: MBGSizes.spaceBtwItems),
                   IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      final controller = Get.find<DapurPengirimanController>();
+                      showDialog(
+                        context: context,
+                        builder: (context) => DapurPengirimanDelete(
+                          pengirimanId: pengiriman.id,
+                          controller: controller,
+                        ),
+                      );
+                    },
                     icon: const Icon(Iconsax.trash, color: MBGColors.error),
                     tooltip: 'Hapus',
                   ),
@@ -204,14 +249,19 @@ class DapurPengirimanCard extends StatelessWidget {
   }
 
   Color _getStatusColor(String status) {
-    switch (status) {
+    switch (status.toUpperCase()) {
       case 'PENDING':
+      case 'MENUNGGU_PENGIRIMAN':
+      case 'MENUNGGU_PENGAMBILAN':
         return Colors.orange;
       case 'IN_TRANSIT':
       case 'DIAMBIL':
       case 'SEDANG_DIJEMPUT':
+      case 'SEDANG_DIANTAR':
+      case 'DIANTAR':
         return Colors.blue;
       case 'DITERIMA':
+      case 'SELESAI':
         return Colors.green;
       default:
         return Colors.grey;
@@ -219,34 +269,58 @@ class DapurPengirimanCard extends StatelessWidget {
   }
 
   String _getStatusText(String status) {
-    switch (status) {
+    switch (status.toUpperCase()) {
       case 'PENDING':
-        return 'Pending';
+      case 'MENUNGGU_PENGAMBILAN':
+        return 'Menunggu Pengambilan';
+      case 'MENUNGGU_PENGIRIMAN':
+        return 'Menunggu Pengiriman';
       case 'IN_TRANSIT':
         return 'Dalam Perjalanan';
       case 'DIAMBIL':
         return 'Diambil';
       case 'SEDANG_DIJEMPUT':
         return 'Sedang Dijemput';
+      case 'SEDANG_DIANTAR':
+      case 'DIANTAR':
+        return 'Sedang Diantar';
       case 'DITERIMA':
         return 'Diterima';
+      case 'SELESAI':
+        return 'Selesai';
       default:
         return status;
     }
   }
 
   IconData _getStatusIcon(String status) {
-    switch (status) {
+    switch (status.toUpperCase()) {
       case 'PENDING':
+      case 'MENUNGGU_PENGIRIMAN':
+      case 'MENUNGGU_PENGAMBILAN':
         return Iconsax.clock;
       case 'IN_TRANSIT':
       case 'DIAMBIL':
       case 'SEDANG_DIJEMPUT':
+      case 'SEDANG_DIANTAR':
+      case 'DIANTAR':
         return Iconsax.truck_fast;
       case 'DITERIMA':
+      case 'SELESAI':
         return Iconsax.tick_circle;
       default:
         return Iconsax.info_circle;
+    }
+  }
+
+  bool _isPendingStatus(String status) {
+    switch (status.toUpperCase()) {
+      case 'PENDING':
+      case 'MENUNGGU_PENGIRIMAN':
+      case 'MENUNGGU_PENGAMBILAN':
+        return true;
+      default:
+        return false;
     }
   }
 }

@@ -127,6 +127,7 @@ class DapurStokCard extends StatelessWidget {
 
             return ListView.builder(
               padding: const EdgeInsets.all(MBGSizes.md),
+              physics: const AlwaysScrollableScrollPhysics(),
               itemCount: dapurStokController.filteredStokList.length,
               itemBuilder: (context, index) {
                 final stok = dapurStokController.filteredStokList[index];

@@ -3,16 +3,20 @@ import 'package:intl/intl.dart';
 class MBGFormatter {
   static String formatDate(DateTime? date) {
     date ??= DateTime.now();
-    return DateFormat(
-      'dd-MMM-yyyy',
-    ).format(date); // Customize the date format as needed
+    return DateFormat('dd-MMM-yyyy').format(date);
+  }
+
+  static String formatShortDate(DateTime date) {
+    return DateFormat('dd MMM').format(date);
   }
 
   static String formatDateTime(DateTime? dateTime) {
     dateTime ??= DateTime.now();
-    return DateFormat(
-      'dd-MMM-yyyy HH:mm',
-    ).format(dateTime); // Customize the date-time format as needed
+    return DateFormat('dd-MMM-yyyy HH:mm').format(dateTime);
+  }
+
+  static String formatDateRange(DateTime start, DateTime end) {
+    return '${formatShortDate(start)} - ${formatShortDate(end)} ${DateFormat('yyyy').format(end)}';
   }
 
   static String formatCurrency(double amount) {

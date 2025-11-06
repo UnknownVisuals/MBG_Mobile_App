@@ -1,43 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
+import 'package:mbg_mobile_app/features/dapur/models/dapur_menu_harian_model.dart';
+import 'package:mbg_mobile_app/features/dapur/screens/dapur_menu_planning/widgets/dapur_menu_harian_checkpoint_status.dart';
 import 'package:mbg_mobile_app/features/dapur/screens/dapur_menu_planning/widgets/dapur_menu_harian_time_range.dart';
 import 'package:mbg_mobile_app/features/dapur/screens/dapur_menu_planning/widgets/dapur_menu_harian_nutricion_info.dart';
 import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
 
-/// Simple data holder for presenting a daily menu card.
-class MenuHarianCardData {
-  final String title;
-  final DateTime date;
-  final int costPerTray;
-  final String startTime;
-  final String endTime;
-  final double calories;
-  final double protein;
-  final double carbs;
-  final double fat;
-
-  const MenuHarianCardData({
-    required this.title,
-    required this.date,
-    required this.costPerTray,
-    required this.startTime,
-    required this.endTime,
-    required this.calories,
-    required this.protein,
-    required this.carbs,
-    required this.fat,
-  });
-
-  String get formattedDate => DateFormat('EEEE, dd MMM yyyy').format(date);
-}
-
 /// Card widget displaying daily menu details
 class DapurMenuHarianCard extends StatelessWidget {
-  const DapurMenuHarianCard({super.key, required this.data});
+  const DapurMenuHarianCard({super.key, required this.menuHarian});
 
-  final MenuHarianCardData data;
+  final DapurMenuHarianModel menuHarian;
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +21,13 @@ class DapurMenuHarianCard extends StatelessWidget {
       symbol: 'Rp ',
       decimalDigits: 0,
     );
-    final costLabel = '${currencyFormatter.format(data.costPerTray)}/tray';
+
+    final costLabel =
+        '${currencyFormatter.format(menuHarian.biayaPerTray)}/tray';
+
+    final formattedDate = DateFormat(
+      'EEEE, dd MMM yyyy',
+    ).format(menuHarian.tanggal);
 
     return Container(
       padding: const EdgeInsets.all(MBGSizes.defaultSpace),
@@ -60,7 +41,7 @@ class DapurMenuHarianCard extends StatelessWidget {
         children: [
           // Title and Date Row
           Text(
-            'Sate Ayam + Nasi Uduk + Lalapan',
+            menuHarian.namaMenu,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
               overflow: TextOverflow.ellipsis,
@@ -74,18 +55,16 @@ class DapurMenuHarianCard extends StatelessWidget {
                 color: MBGColors.textSecondary,
               ),
               const SizedBox(width: MBGSizes.xs),
-              Text(
-                data.formattedDate,
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
+              Text(formattedDate, style: Theme.of(context).textTheme.bodySmall),
             ],
           ),
 
           const SizedBox(height: MBGSizes.spaceBtwItems),
 
+          // Cost and Target Tray
           Row(
-            mainAxisSize: MainAxisSize.min,
             children: [
+              // Cost per tray
               Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: MBGSizes.md,
@@ -106,17 +85,50 @@ class DapurMenuHarianCard extends StatelessWidget {
                   ),
                 ),
               ),
+              const SizedBox(width: MBGSizes.sm),
+              // Target tray
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: MBGSizes.md,
+                  vertical: MBGSizes.sm,
+                ),
+                decoration: BoxDecoration(
+                  color: MBGColors.primary.withValues(alpha: 0.1),
+                  border: Border.all(
+                    color: MBGColors.primary.withValues(alpha: 0.5),
+                  ),
+                  borderRadius: BorderRadius.circular(MBGSizes.borderRadiusMd),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Iconsax.box,
+                      size: MBGSizes.iconSm,
+                      color: MBGColors.primary,
+                    ),
+                    const SizedBox(width: MBGSizes.xs),
+                    Text(
+                      '${menuHarian.targetTray} Tray',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: MBGColors.primary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               const Spacer(),
-              IconButton(
-                onPressed: () {},
-                tooltip: 'Edit',
-                icon: const Icon(Iconsax.edit_2, color: MBGColors.primary),
-              ),
-              IconButton(
-                onPressed: () {},
-                tooltip: 'Delete',
-                icon: const Icon(Iconsax.trash, color: MBGColors.error),
-              ),
+              // IconButton(
+              //   onPressed: () {},
+              //   tooltip: 'Edit',
+              //   icon: const Icon(Iconsax.edit_2, color: MBGColors.primary),
+              // ),
+              // IconButton(
+              //   onPressed: () {},
+              //   tooltip: 'Delete',
+              //   icon: const Icon(Iconsax.trash, color: MBGColors.error),
+              // ),
             ],
           ),
 
@@ -131,7 +143,7 @@ class DapurMenuHarianCard extends StatelessWidget {
                 child: DapurMenuHarianTimeRange(
                   icon: Iconsax.timer_start,
                   label: 'Start',
-                  value: data.startTime,
+                  value: menuHarian.jamMulaiMasak,
                   color: MBGColors.primary,
                 ),
               ),
@@ -140,7 +152,7 @@ class DapurMenuHarianCard extends StatelessWidget {
                 child: DapurMenuHarianTimeRange(
                   icon: Iconsax.timer_pause,
                   label: 'End',
-                  value: data.endTime,
+                  value: menuHarian.jamSelesaiMasak,
                   color: MBGColors.success,
                 ),
               ),
@@ -155,30 +167,33 @@ class DapurMenuHarianCard extends StatelessWidget {
             children: [
               DapurMenuHarianNutricionInfo(
                 label: 'Kalori',
-                value: data.calories,
+                value: menuHarian.kalori,
                 unit: 'kcal',
                 icon: Icons.local_fire_department,
               ),
               DapurMenuHarianNutricionInfo(
                 label: 'Protein',
-                value: data.protein,
+                value: menuHarian.protein,
                 unit: 'g',
                 icon: Icons.egg,
               ),
               DapurMenuHarianNutricionInfo(
                 label: 'Karbo',
-                value: data.carbs,
+                value: menuHarian.karbohidrat,
                 unit: 'g',
                 icon: Icons.grain,
               ),
               DapurMenuHarianNutricionInfo(
                 label: 'Lemak',
-                value: data.fat,
+                value: menuHarian.lemak,
                 unit: 'g',
                 icon: Icons.water_drop,
               ),
             ],
           ),
+
+          // Checkpoint Status
+          DapurMenuHarianCheckpointStatus(checkpoints: menuHarian.checkpoint),
         ],
       ),
     );

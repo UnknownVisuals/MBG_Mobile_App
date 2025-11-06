@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:mbg_mobile_app/common/styles/spacing_styles.dart';
+import 'package:mbg_mobile_app/features/dapur/controllers/dapur_info_controller.dart';
+import 'package:mbg_mobile_app/features/dapur/controllers/dapur_menu_harian_controller.dart';
 import 'package:mbg_mobile_app/features/dapur/controllers/dapur_menu_planning_controller.dart';
 import 'package:mbg_mobile_app/features/dapur/screens/dapur_menu_planning/widgets/dapur_menu_harian_add.dart';
 import 'package:mbg_mobile_app/features/dapur/screens/dapur_menu_planning/widgets/dapur_menu_harian_list.dart';
@@ -16,15 +18,24 @@ class DapurMenuPlanningScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Ensure DapurInfoController is initialized first
+    Get.put(DapurInfoController());
+
     final DapurMenuPlanningController dapurMenuPlanningController = Get.put(
       DapurMenuPlanningController(),
     );
 
+    // Initialize DapurMenuHarianController after DapurMenuPlanningController
+    Get.put(DapurMenuHarianController());
+
     return Scaffold(
       body: RefreshIndicator(
-        onRefresh: () async {},
+        onRefresh: () async {
+          await dapurMenuPlanningController.refreshMenuPlanning();
+        },
         color: MBGColors.primary,
         child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
           child: Padding(
             padding: MBGSpacingStyles.homeScreenPadding,
             child: Column(

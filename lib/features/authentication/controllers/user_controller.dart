@@ -14,9 +14,9 @@ class UserController extends GetxController {
   RxBool isLoading = false.obs;
 
   @override
-  void onInit() {
+  Future<void> onInit() async {
     super.onInit();
-    fetchUserProfile();
+    await fetchUserProfile();
   }
 
   /// Fetch user profile from API

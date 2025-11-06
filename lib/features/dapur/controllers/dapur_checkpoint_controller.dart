@@ -1,159 +1,265 @@
 import 'dart:io';
+
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:mbg_mobile_app/features/dapur/models/dapur_checkpoint_model.dart';
-import 'package:mbg_mobile_app/features/dapur/models/dapur_menu_harian_model.dart';
-import 'package:mbg_mobile_app/utils/services/dapur_service.dart';
+import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/popups/loaders.dart';
+import 'package:mbg_mobile_app/utils/services/dapur_service.dart';
 
-class CheckpointController extends GetxController {
+class DapurCheckpointController extends GetxController {
+  // Dependencies
   final DapurService _dapurService = Get.find<DapurService>();
-  final ImagePicker _picker = ImagePicker();
 
-  // Observable variables
-  final RxList<DapurMenuHarianModel> todayMenus = <DapurMenuHarianModel>[].obs;
-  final Rx<DapurMenuHarianModel?> selectedMenu = Rx<DapurMenuHarianModel?>(
-    null,
-  );
-  final RxList<DapurCheckpointModel> checkpoints = <DapurCheckpointModel>[].obs;
-  final RxBool isLoading = false.obs;
-  final RxBool isLoadingCheckpoints = false.obs;
+  // Data Variables
+  RxList<DapurCheckpointModel> checkpointList = <DapurCheckpointModel>[].obs;
+  final Rx<String?> currentMenuHarianId = Rx<String?>(null);
 
-  /// Fetch checkpoints for a specific menu harian
-  Future<void> fetchCheckpoints(String menuHarianId) async {
+  // State Variables
+  RxBool isLoading = false.obs;
+
+  // All checkpoint types in order
+  final List<String> allCheckpointTypes = [
+    'MULAI_MEMASAK',
+    'SELESAI_MEMASAK',
+    'SELESAI_PACKING',
+    'SCHOOL_TO_DRIVER_RETURN',
+    'DRIVER_TO_KITCHEN',
+    'KITCHEN_RECEIVED',
+    'WASHING_COMPLETE',
+  ];
+
+  // Computed Properties
+  int get completedCount => checkpointList.length;
+  int get totalCount => allCheckpointTypes.length;
+
+  // Get checkpoint status: 'completed', 'active', 'future'
+  String getCheckpointStatus(String tipe) {
+    final completedTypes = checkpointList.map((c) => c.tipe).toList();
+
+    if (completedTypes.contains(tipe)) {
+      return 'completed';
+    }
+
+    final typeIndex = allCheckpointTypes.indexOf(tipe);
+    final lastCompletedIndex = completedTypes.isEmpty
+        ? -1
+        : allCheckpointTypes.indexOf(completedTypes.last);
+
+    if (typeIndex == lastCompletedIndex + 1) {
+      return 'active';
+    }
+
+    return 'future';
+  }
+
+  // Get checkpoint model if exists
+  DapurCheckpointModel? getCheckpointModel(String tipe) {
     try {
-      isLoadingCheckpoints.value = true;
-      final data = await _dapurService.getCheckpointsByMenuHarian(menuHarianId);
-      checkpoints.value = data;
+      return checkpointList.firstWhere((c) => c.tipe == tipe);
     } catch (e) {
-      MBGLoaders.errorSnackBar(
-        title: 'Error',
-        message: 'Failed to fetch checkpoints: ${e.toString()}',
-      );
-    } finally {
-      isLoadingCheckpoints.value = false;
+      return null;
     }
   }
 
-  /// Create a checkpoint with photo
-  Future<bool> createCheckpoint({
+  // Get checkpoint icon
+  IconData getCheckpointIcon(String tipe) {
+    switch (tipe) {
+      case 'MULAI_MEMASAK':
+        return Iconsax.timer_start;
+      case 'SELESAI_MEMASAK':
+        return Iconsax.tick_circle;
+      case 'SELESAI_PACKING':
+        return Iconsax.box;
+      case 'SCHOOL_TO_DRIVER_RETURN':
+        return Iconsax.truck_fast;
+      case 'DRIVER_TO_KITCHEN':
+        return Iconsax.ship;
+      case 'KITCHEN_RECEIVED':
+        return Iconsax.receipt_square;
+      case 'WASHING_COMPLETE':
+        return Iconsax.tick_square;
+      default:
+        return Iconsax.record_circle;
+    }
+  }
+
+  // Get checkpoint label
+  String getCheckpointLabel(String tipe) {
+    switch (tipe) {
+      case 'MULAI_MEMASAK':
+        return 'Mulai Memasak';
+      case 'SELESAI_MEMASAK':
+        return 'Selesai Memasak';
+      case 'SELESAI_PACKING':
+        return 'Selesai Packing';
+      case 'SCHOOL_TO_DRIVER_RETURN':
+        return 'Sekolah ke Driver (Pulang)';
+      case 'DRIVER_TO_KITCHEN':
+        return 'Driver ke Dapur';
+      case 'KITCHEN_RECEIVED':
+        return 'Diterima Dapur';
+      case 'WASHING_COMPLETE':
+        return 'Selesai Dicuci';
+      default:
+        return tipe;
+    }
+  }
+
+  // Get checkpoint roles
+  List<String> getCheckpointRoles(String tipe) {
+    switch (tipe) {
+      case 'MULAI_MEMASAK':
+      case 'SELESAI_MEMASAK':
+      case 'SELESAI_PACKING':
+        return ['PIC_DAPUR'];
+      case 'SCHOOL_TO_DRIVER_RETURN':
+      case 'DRIVER_TO_KITCHEN':
+        return ['DRIVER'];
+      case 'KITCHEN_RECEIVED':
+      case 'WASHING_COMPLETE':
+        return ['PIC_DAPUR'];
+      default:
+        return [];
+    }
+  }
+
+  // Get role display name
+  String getRoleDisplayName(String role) {
+    switch (role) {
+      case 'PIC_DAPUR':
+        return 'PIC Dapur';
+      case 'DRIVER':
+        return 'Driver';
+      default:
+        return role;
+    }
+  }
+
+  // Get role color
+  Color getRoleColor(String role) {
+    switch (role) {
+      case 'PIC_DAPUR':
+        return MBGColors.primary;
+      case 'DRIVER':
+        return MBGColors.warning;
+      default:
+        return MBGColors.grey;
+    }
+  }
+
+  // Check if user can perform this checkpoint
+  bool canUserPerformCheckpoint(String userRole, String checkpointType) {
+    final requiredRoles = getCheckpointRoles(checkpointType);
+    return requiredRoles.contains(userRole);
+  }
+
+  // =====================
+  // INITIALIZE WITH MENU ID
+  // =====================
+  void initializeWithMenuId(String? menuHarianId) {
+    currentMenuHarianId.value = menuHarianId;
+    if (menuHarianId != null) {
+      fetchCheckpointsByMenuHarian(menuHarianId);
+    }
+  }
+
+  // =====================
+  // CHANGE SELECTED MENU HARIAN
+  // =====================
+  void changeMenuHarian(String menuHarianId) {
+    currentMenuHarianId.value = menuHarianId;
+    fetchCheckpointsByMenuHarian(menuHarianId);
+  }
+
+  // =====================
+  // CREATE NEW CHECKPOINT
+  // =====================
+
+  Future<void> createCheckpoint({
     required String menuHarianId,
     required String tipe,
-    File? foto,
+    required File foto,
+    String? deskripsi,
   }) async {
     try {
       isLoading.value = true;
+      print('🔵 [CHECKPOINT] Starting createCheckpoint...');
+      print('🔵 [CHECKPOINT] menuHarianId: $menuHarianId');
+      print('🔵 [CHECKPOINT] tipe: $tipe');
+      print('🔵 [CHECKPOINT] deskripsi: $deskripsi');
+      print('🔵 [CHECKPOINT] foto path: ${foto.path}');
 
+      print('🔵 [CHECKPOINT] Calling _dapurService.createCheckpoint...');
       await _dapurService.createCheckpoint(
         menuHarianId: menuHarianId,
         tipe: tipe,
         foto: foto,
+        deskripsi: deskripsi,
       );
+      print('✅ [CHECKPOINT] Service call completed successfully');
 
+      // Fetch updated checkpoint list
+      print('🔵 [CHECKPOINT] Fetching updated checkpoint list...');
+      await fetchCheckpointsByMenuHarian(menuHarianId);
+      print('✅ [CHECKPOINT] Checkpoint list refreshed');
+
+      print('✅ [CHECKPOINT] Showing success message');
       MBGLoaders.successSnackBar(
-        title: 'Success',
-        message: 'Checkpoint created successfully',
+        title: 'Berhasil',
+        message: 'Checkpoint berhasil ditambahkan',
       );
 
-      await fetchCheckpoints(menuHarianId);
-      return true;
-    } catch (e) {
+      // Wait briefly for success message to show, then navigate back
+      print('🔵 [CHECKPOINT] Waiting before navigation...');
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      print('🔵 [CHECKPOINT] Navigating back...');
+      Get.back();
+      print('✅ [CHECKPOINT] createCheckpoint completed successfully');
+    } catch (e, stackTrace) {
+      print('❌ [CHECKPOINT] Error in createCheckpoint: $e');
+      print('❌ [CHECKPOINT] Error type: ${e.runtimeType}');
+      print('❌ [CHECKPOINT] Stack trace: $stackTrace');
+
       MBGLoaders.errorSnackBar(
-        title: 'Error',
-        message: 'Failed to create checkpoint: ${e.toString()}',
+        title: 'Gagal menambahkan checkpoint',
+        message: e.toString(),
       );
-      return false;
+      // Don't rethrow - error already handled with snackbar
     } finally {
       isLoading.value = false;
+      print('🔵 [CHECKPOINT] isLoading set to false');
     }
   }
 
-  /// Pick image from camera
-  Future<File?> pickImageFromCamera() async {
+  // ================================
+  // FETCH CHECKPOINTS BY MENU HARIAN
+  // ================================
+  Future<void> fetchCheckpointsByMenuHarian(String menuHarianId) async {
     try {
-      final XFile? image = await _picker.pickImage(
-        source: ImageSource.camera,
-        imageQuality: 70,
-      );
+      isLoading.value = true;
+      print('🔵 [FETCH] Fetching checkpoints for menuHarianId: $menuHarianId');
 
-      if (image != null) {
-        return File(image.path);
-      }
-      return null;
-    } catch (e) {
+      final data = await _dapurService.getCheckpointsByMenuHarian(menuHarianId);
+      print('✅ [FETCH] Received ${data.length} checkpoints');
+
+      checkpointList.assignAll(data);
+      print('✅ [FETCH] Checkpoint list updated');
+    } catch (e, stackTrace) {
+      print('❌ [FETCH] Error fetching checkpoints: $e');
+      print('❌ [FETCH] Error type: ${e.runtimeType}');
+      print('❌ [FETCH] Stack trace: $stackTrace');
+
       MBGLoaders.errorSnackBar(
-        title: 'Error',
-        message: 'Failed to capture photo: ${e.toString()}',
+        title: 'Gagal memuat data checkpoint',
+        message: e.toString(),
       );
-      return null;
-    }
-  }
-
-  /// Pick image from gallery
-  Future<File?> pickImageFromGallery() async {
-    try {
-      final XFile? image = await _picker.pickImage(
-        source: ImageSource.gallery,
-        imageQuality: 70,
-      );
-
-      if (image != null) {
-        return File(image.path);
-      }
-      return null;
-    } catch (e) {
-      MBGLoaders.errorSnackBar(
-        title: 'Error',
-        message: 'Failed to pick photo: ${e.toString()}',
-      );
-      return null;
-    }
-  }
-
-  /// Select a menu to view its checkpoints
-  void selectMenu(DapurMenuHarianModel menu) {
-    selectedMenu.value = menu;
-    fetchCheckpoints(menu.id);
-  }
-
-  /// Clear selected menu
-  void clearSelection() {
-    selectedMenu.value = null;
-    checkpoints.clear();
-  }
-
-  /// Get checkpoint types
-  List<String> getCheckpointTypes() {
-    return [
-      'MULAI_MEMASAK',
-      'SELESAI_MEMASAK',
-      'SELESAI_PACKING',
-      'KITCHEN_RECEIVED',
-      'WASHING_COMPLETE',
-      'SCHOOL_TO_DRIVER_RETURN',
-      'DRIVER_TO_KITCHEN',
-    ];
-  }
-
-  /// Get friendly name for checkpoint type
-  String getCheckpointTypeName(String type) {
-    switch (type) {
-      case 'MULAI_MEMASAK':
-        return 'Start Cooking';
-      case 'SELESAI_MEMASAK':
-        return 'Finished Cooking';
-      case 'SELESAI_PACKING':
-        return 'Finished Packing';
-      case 'KITCHEN_RECEIVED':
-        return 'Kitchen Received';
-      case 'WASHING_COMPLETE':
-        return 'Washing Complete';
-      case 'SCHOOL_TO_DRIVER_RETURN':
-        return 'School to Driver Return';
-      case 'DRIVER_TO_KITCHEN':
-        return 'Driver to Kitchen';
-      default:
-        return type;
+      rethrow; // Rethrow to propagate error
+    } finally {
+      isLoading.value = false;
+      print('🔵 [FETCH] isLoading set to false');
     }
   }
 }

@@ -14,6 +14,12 @@ class MBGHttpHelper extends GetConnect {
   static String? _baseUrl = dotenv.env['API_BASE_URL'];
   static String _sessionToken = '';
 
+  // Constructor to set timeout
+  MBGHttpHelper() {
+    timeout = const Duration(seconds: 60);
+    httpClient.timeout = const Duration(seconds: 60);
+  }
+
   // ====================
   // ===== BASE URL =====
   // ====================
@@ -90,6 +96,14 @@ class MBGHttpHelper extends GetConnect {
     }
 
     final statusCode = response.statusCode ?? 0;
+
+    // Log for debugging
+    if (statusCode == 0 || statusCode < 200 || statusCode >= 300) {
+      print('HTTP Error Debug:');
+      print('Status Code: $statusCode');
+      print('Status Text: ${response.statusText}');
+      print('Body: ${response.bodyString}');
+    }
 
     if (statusCode == 401) {
       throw Exception(message ?? 'Unauthorized request.');
@@ -177,7 +191,7 @@ class MBGHttpHelper extends GetConnect {
           await (isPutMethod
                   ? put(url, formData, headers: headers)
                   : post(url, formData, headers: headers))
-              .timeout(const Duration(seconds: 30));
+              .timeout(const Duration(seconds: 15));
 
       return _handleResponse(response);
     } on TimeoutException {

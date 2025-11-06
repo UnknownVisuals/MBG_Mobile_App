@@ -10,6 +10,16 @@ class DapurMenuHarianAdd extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final dateController = TextEditingController();
+    final nameController = TextEditingController();
+    final costController = TextEditingController();
+    final startTimeController = TextEditingController();
+    final endTimeController = TextEditingController();
+    final caloriesController = TextEditingController();
+    final proteinController = TextEditingController();
+    final carbsController = TextEditingController();
+    final fatController = TextEditingController();
+
     return Scaffold(
       appBar: MBGAppBar(showBackArrow: true),
       body: SingleChildScrollView(
@@ -25,7 +35,7 @@ class DapurMenuHarianAdd extends StatelessWidget {
             const SizedBox(height: MBGSizes.spaceBtwSections),
 
             TextFormField(
-              initialValue: '2025-10-31',
+              controller: dateController,
               decoration: const InputDecoration(
                 labelText: 'Tanggal (YYYY-MM-DD)',
                 prefixIcon: Icon(Iconsax.calendar_1),
@@ -34,7 +44,7 @@ class DapurMenuHarianAdd extends StatelessWidget {
             const SizedBox(height: MBGSizes.spaceBtwInputFields),
 
             TextFormField(
-              initialValue: 'Nasi Goreng Spesial',
+              controller: nameController,
               decoration: const InputDecoration(
                 labelText: 'Nama Menu',
                 prefixIcon: Icon(Iconsax.note_2),
@@ -43,7 +53,7 @@ class DapurMenuHarianAdd extends StatelessWidget {
             const SizedBox(height: MBGSizes.spaceBtwInputFields),
 
             TextFormField(
-              initialValue: '15000.0',
+              controller: costController,
               keyboardType: const TextInputType.numberWithOptions(
                 decimal: true,
               ),
@@ -58,7 +68,7 @@ class DapurMenuHarianAdd extends StatelessWidget {
               children: [
                 Expanded(
                   child: TextFormField(
-                    initialValue: '06:00',
+                    controller: startTimeController,
                     decoration: const InputDecoration(
                       labelText: 'Jam Mulai Masak',
                       prefixIcon: Icon(Iconsax.clock),
@@ -68,7 +78,7 @@ class DapurMenuHarianAdd extends StatelessWidget {
                 const SizedBox(width: MBGSizes.spaceBtwItems),
                 Expanded(
                   child: TextFormField(
-                    initialValue: '08:00',
+                    controller: endTimeController,
                     decoration: const InputDecoration(
                       labelText: 'Jam Selesai Masak',
                       prefixIcon: Icon(Iconsax.clock_1),
@@ -83,7 +93,7 @@ class DapurMenuHarianAdd extends StatelessWidget {
               children: [
                 Expanded(
                   child: TextFormField(
-                    initialValue: '550.5',
+                    controller: caloriesController,
                     keyboardType: const TextInputType.numberWithOptions(
                       decimal: true,
                     ),
@@ -96,7 +106,7 @@ class DapurMenuHarianAdd extends StatelessWidget {
                 const SizedBox(width: MBGSizes.spaceBtwItems),
                 Expanded(
                   child: TextFormField(
-                    initialValue: '25.5',
+                    controller: proteinController,
                     keyboardType: const TextInputType.numberWithOptions(
                       decimal: true,
                     ),
@@ -114,7 +124,7 @@ class DapurMenuHarianAdd extends StatelessWidget {
               children: [
                 Expanded(
                   child: TextFormField(
-                    initialValue: '75.0',
+                    controller: carbsController,
                     keyboardType: const TextInputType.numberWithOptions(
                       decimal: true,
                     ),
@@ -127,7 +137,7 @@ class DapurMenuHarianAdd extends StatelessWidget {
                 const SizedBox(width: MBGSizes.spaceBtwItems),
                 Expanded(
                   child: TextFormField(
-                    initialValue: '15.0',
+                    controller: fatController,
                     keyboardType: const TextInputType.numberWithOptions(
                       decimal: true,
                     ),

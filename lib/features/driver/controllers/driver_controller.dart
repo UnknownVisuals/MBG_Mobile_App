@@ -1,47 +1,105 @@
 import 'package:get/get.dart';
 import 'package:mbg_mobile_app/features/driver/models/driver_delivery_model.dart';
+import 'package:mbg_mobile_app/utils/popups/loaders.dart';
 import 'package:mbg_mobile_app/utils/services/driver_service.dart';
 
 class DriverController extends GetxController {
-  final DriverService _driverService = Get.find<DriverService>();
-  // Drawer navigation index
-  final RxInt drawerSelectedIndex = 0.obs;
+  DriverController({DriverService? driverService})
+    : _driverService = driverService ?? Get.find<DriverService>();
 
-  // Observable variables
+  // Data variables
   final RxList<DriverDeliveryModel> deliveries = <DriverDeliveryModel>[].obs;
-  final RxBool isLoading = false.obs;
 
-  /// Fetch driver's deliveries
+  // State variables
+  final RxInt drawerSelectedIndex = 0.obs;
+  final RxBool isLoading = false.obs;
+  final RxString errorMessage = ''.obs;
+
+  // Data variables
+  final RxString scannedQrCode = ''.obs;
+
+  // State variables
+  final RxBool isScanning = false.obs;
+
+  final DriverService _driverService;
+
+  @override
+  void onInit() {
+    super.onInit();
+    fetchDeliveries();
+  }
+
+  // ========================
+  // Get Pengiriman by Driver
+  // ========================
+
   Future<void> fetchDeliveries() async {
+    if (isLoading.value) return;
+
     try {
       isLoading.value = true;
-      final data = await _driverService.getMyDeliveries();
-      deliveries.assignAll(data);
-    } catch (e) {
-      Get.log('Error fetching deliveries: $e');
+      errorMessage.value = '';
+
+      final results = await _driverService.getMyDeliveries();
+      deliveries.assignAll(results);
+    } catch (error) {
+      errorMessage.value = error.toString();
+      Get.log('DriverController.fetchDeliveries error: $error');
     } finally {
       isLoading.value = false;
     }
   }
 
-  /// Scan QR code for pickup
-  Future<DriverDeliveryModel?> scanDriverQR(String qrCodeId) async {
+  // ===================
+  // QR Code Scan & Post
+  // ===================
+
+  Future<DriverDeliveryModel> scanDriverQrCode(String qrCodeId) async {
     try {
-      isLoading.value = true;
+      isScanning.value = true;
       final delivery = await _driverService.scanDriverQR(qrCodeId);
-      final index = deliveries.indexWhere((item) => item.id == delivery.id);
-      if (index == -1) {
-        deliveries.insert(0, delivery);
-      } else {
+      scannedQrCode.value = qrCodeId;
+      // Update the delivery in the list
+      final index = deliveries.indexWhere((d) => d.id == delivery.id);
+      if (index != -1) {
         deliveries[index] = delivery;
         deliveries.refresh();
+      } else {
+        deliveries.insert(0, delivery);
       }
       return delivery;
-    } catch (e) {
-      Get.log('Error scanning driver QR: $e');
-      return null;
+    } catch (error) {
+      Get.log('DriverController.scanDriverQrCode error: $error');
+      rethrow;
     } finally {
-      isLoading.value = false;
+      isScanning.value = false;
+    }
+  }
+
+  Future<void> handleScannedQrCode(String qrCodeId) async {
+    final normalizedCode = qrCodeId.trim();
+    if (normalizedCode.isEmpty) {
+      MBGLoaders.errorSnackBar(
+        title: 'QR tidak valid',
+        message: 'Kode QR tidak boleh kosong.',
+      );
+      return;
+    }
+
+    try {
+      await scanDriverQrCode(normalizedCode);
+      await fetchDeliveries();
+      Get.back();
+      MBGLoaders.successSnackBar(
+        title: 'Berhasil',
+        message: 'Status pengiriman diperbarui.',
+      );
+    } catch (error) {
+      MBGLoaders.errorSnackBar(
+        title: 'Gagal memindai',
+        message: error.toString(),
+      );
+      rethrow;
     }
   }
 }

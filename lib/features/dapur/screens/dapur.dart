@@ -43,21 +43,21 @@ class DapurScreen extends StatelessWidget {
         drawer: DapurDrawer(),
         body: IndexedStack(
           index: dapurController.drawerSelectedIndex.value,
-          children: [
+          children: const [
             // 0 - Dashboard
-            const DapurDashboardScreen(),
+            DapurDashboardScreen(),
             // 1 - Dapur Info
-            const DapurInfoScreen(),
+            DapurInfoScreen(),
             // 2 - Karyawan
-            const DapurKaryawanScreen(),
+            DapurKaryawanScreen(),
             // 3 - Stok
-            const DapurStokScreen(),
+            DapurStokScreen(),
             // 4 - Menu Planning
-            const DapurMenuPlanningScreen(),
+            DapurMenuPlanningScreen(),
             // 5 - Checkpoint
-            const DapurCheckpointScreen(),
+            DapurCheckpointScreen(),
             // 6 - Pengiriman
-            const DapurPengirimanScreen(),
+            DapurPengirimanScreen(),
           ],
         ),
       ),

@@ -41,7 +41,9 @@ class DapurMenuPlanningModel {
       sekolah: DapurMenuPlanningSekolahSummary.fromJson(
         json['sekolah'] as Map<String, dynamic>,
       ),
-      count: Count.fromJson(json['count'] as Map<String, dynamic>),
+      count: json['_count'] != null
+          ? Count.fromJson(json['_count'] as Map<String, dynamic>)
+          : Count(menuHarian: 0), // Default to 0 if _count is not present
     );
   }
 
@@ -57,7 +59,7 @@ class DapurMenuPlanningModel {
       'sekolahId': sekolahId,
       'dapur': dapur.toJson(),
       'sekolah': sekolah.toJson(),
-      'count': count.toJson(),
+      '_count': count.toJson(),
     };
   }
 }

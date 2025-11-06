@@ -8,6 +8,7 @@ class DapurCheckpointModel {
     this.durasi,
     required this.createdAt,
     required this.menuHarianId,
+    this.menuHarian,
   });
 
   final String id;
@@ -18,6 +19,7 @@ class DapurCheckpointModel {
   int? durasi;
   final DateTime createdAt;
   final String menuHarianId;
+  final Map<String, dynamic>? menuHarian;
 
   factory DapurCheckpointModel.fromJson(Map<String, dynamic> json) {
     return DapurCheckpointModel(
@@ -29,6 +31,7 @@ class DapurCheckpointModel {
       durasi: json['durasi'] as int?,
       createdAt: DateTime.parse(json['createdAt'] as String),
       menuHarianId: json['menuHarianId'] as String,
+      menuHarian: json['menuHarian'] as Map<String, dynamic>?,
     );
   }
 
@@ -42,6 +45,7 @@ class DapurCheckpointModel {
       'durasi': durasi,
       'createdAt': createdAt.toIso8601String(),
       'menuHarianId': menuHarianId,
+      if (menuHarian != null) 'menuHarian': menuHarian,
     };
   }
 }

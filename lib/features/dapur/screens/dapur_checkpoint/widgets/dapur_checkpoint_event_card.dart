@@ -1,191 +1,141 @@
 import 'package:flutter/material.dart';
-import 'package:iconsax/iconsax.dart';
-import 'package:mbg_mobile_app/common/styles/shadow_styles.dart';
-import 'package:mbg_mobile_app/features/dapur/models/dapur_timeline_event_data.dart';
 import 'package:mbg_mobile_app/utils/constants/colors.dart';
+import 'package:mbg_mobile_app/features/dapur/models/dapur_checkpoint_model.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
+import 'package:mbg_mobile_app/features/dapur/screens/dapur_checkpoint/widgets/dapur_checkpoint_event_card_header.dart';
+import 'package:mbg_mobile_app/features/dapur/screens/dapur_checkpoint/widgets/dapur_checkpoint_event_card_image.dart';
+import 'package:mbg_mobile_app/features/dapur/screens/dapur_checkpoint/widgets/dapur_checkpoint_event_card_description.dart';
+import 'package:mbg_mobile_app/features/dapur/screens/dapur_checkpoint/widgets/dapur_checkpoint_event_card_timestamp.dart';
+import 'package:mbg_mobile_app/features/dapur/screens/dapur_checkpoint/widgets/dapur_checkpoint_event_card_action_button.dart';
 
 class DapurCheckpointEventCard extends StatelessWidget {
-  const DapurCheckpointEventCard({super.key, required this.event});
+  const DapurCheckpointEventCard({
+    super.key,
+    required this.tipe,
+    required this.status,
+    this.checkpoint,
+  });
 
-  final TimelineEventData event;
-
-  String _formatTime(DateTime timestamp) {
-    return '${timestamp.hour.toString().padLeft(2, '0')}:${timestamp.minute.toString().padLeft(2, '0')}';
-  }
-
-  Color _getRoleColor() {
-    return event.role == 'DRIVER' ? MBGColors.info : MBGColors.warning;
-  }
-
-  IconData _getRoleIcon() {
-    return event.role == 'DRIVER' ? Iconsax.truck_fast : Iconsax.user_octagon;
-  }
+  final String tipe;
+  final String status; // 'completed', 'active', 'future'
+  final DapurCheckpointModel? checkpoint;
 
   @override
   Widget build(BuildContext context) {
+    // Style based on status
+    Color backgroundColor;
+    Color borderColor;
+    double borderWidth;
+    Color textColor;
+    Color iconColor;
+    Color iconBackgroundColor;
+    bool showButton;
+    bool showShadow;
+
+    switch (status) {
+      case 'completed':
+        // Normal appearance for completed tasks
+        backgroundColor = MBGColors.light;
+        borderColor = MBGColors.borderPrimary;
+        borderWidth = 1;
+        textColor = MBGColors.textPrimary;
+        iconColor = MBGColors.success;
+        iconBackgroundColor = MBGColors.success.withValues(alpha: 0.1);
+        showButton = false;
+        showShadow = false;
+        break;
+      case 'active':
+        // Highlighted appearance for active task
+        backgroundColor = MBGColors.primary.withValues(alpha: 0.08);
+        borderColor = MBGColors.primary;
+        borderWidth = 2;
+        textColor = MBGColors.textPrimary;
+        iconColor = MBGColors.primary;
+        iconBackgroundColor = MBGColors.primary.withValues(alpha: 0.15);
+        showButton = true;
+        showShadow = true;
+        break;
+      case 'future':
+      default:
+        // Greyed out appearance for future tasks
+        backgroundColor = MBGColors.softGrey;
+        borderColor = MBGColors.grey;
+        borderWidth = 1;
+        textColor = MBGColors.darkGrey.withValues(alpha: 0.5);
+        iconColor = MBGColors.grey;
+        iconBackgroundColor = MBGColors.grey.withValues(alpha: 0.1);
+        showButton = false;
+        showShadow = false;
+    }
+
     return Container(
-      padding: const EdgeInsets.all(MBGSizes.md),
       decoration: BoxDecoration(
-        // Active card uses primary gradient like progress card
-        gradient: event.isActive ? MBGColors.primaryGradient : null,
-        color: event.isActive ? null : MBGColors.white,
-        borderRadius: BorderRadius.circular(MBGSizes.cardRadiusLg),
-        border: Border.all(
-          color: event.isActive ? MBGColors.primary : MBGColors.borderPrimary,
-          width: event.isActive ? 2 : 1,
-        ),
-        boxShadow: event.isActive ? [MBGShadowStyles.primaryCardShadow] : null,
+        color: backgroundColor,
+        border: Border.all(color: borderColor, width: borderWidth),
+        borderRadius: BorderRadius.circular(MBGSizes.cardRadiusMd),
+        boxShadow: showShadow
+            ? [
+                BoxShadow(
+                  color: MBGColors.primary.withValues(alpha: 0.1),
+                  blurRadius: MBGSizes.sm,
+                  offset: const Offset(0, 2),
+                ),
+              ]
+            : null,
       ),
+      padding: const EdgeInsets.all(MBGSizes.md),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Role badge
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: MBGSizes.sm,
-              vertical: MBGSizes.xs,
-            ),
-            decoration: BoxDecoration(
-              color: event.isActive
-                  ? MBGColors.white.withValues(alpha: 0.2)
-                  : _getRoleColor().withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(MBGSizes.borderRadiusSm),
-              border: Border.all(
-                color: event.isActive
-                    ? MBGColors.white.withValues(alpha: 0.4)
-                    : _getRoleColor().withValues(alpha: 0.3),
-              ),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  _getRoleIcon(),
-                  size: MBGSizes.iconXs,
-                  color: event.isActive ? MBGColors.white : _getRoleColor(),
-                ),
-                const SizedBox(width: MBGSizes.xs),
-                Text(
-                  event.role.replaceAll('_', ' '),
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: event.isActive ? MBGColors.white : _getRoleColor(),
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
+          // Card Header with icon, title, role badges, and status badge
+          DapurCheckpointEventCardHeader(
+            tipe: tipe,
+            status: status,
+            textColor: textColor,
+            iconColor: iconColor,
+            iconBackgroundColor: iconBackgroundColor,
           ),
-          const SizedBox(height: MBGSizes.sm),
 
-          // Title and time
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Text(
-                  event.title,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: event.isActive
-                        ? MBGColors.white
-                        : MBGColors.textPrimary,
-                  ),
-                ),
-              ),
-              Row(
-                children: [
-                  Icon(
-                    Iconsax.clock,
-                    size: MBGSizes.iconSm,
-                    color: event.isActive
-                        ? MBGColors.white
-                        : MBGColors.darkGrey,
-                  ),
-                  const SizedBox(width: MBGSizes.spaceBtwItems / 2),
-                  Text(
-                    _formatTime(event.timestamp),
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: event.isActive
-                          ? MBGColors.white
-                          : MBGColors.darkGrey,
-                    ),
-                  ),
-                ],
+          // Show details for completed checkpoint
+          if (status == 'completed' && checkpoint != null) ...[
+            const SizedBox(height: MBGSizes.spaceBtwItems / 2),
+            // Photo if available
+            if (checkpoint?.fotoUrl != null) ...[
+              DapurCheckpointEventCardImage(imageUrl: checkpoint!.fotoUrl),
+            ],
+
+            // Description if available
+            if (checkpoint!.deskripsi != null) ...[
+              const SizedBox(height: MBGSizes.spaceBtwItems / 2),
+              DapurCheckpointEventCardDescription(
+                description: checkpoint!.deskripsi!,
+                status: status,
               ),
             ],
-          ),
-          const SizedBox(height: MBGSizes.sm),
 
-          // Description
-          Text(
-            event.description,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: event.isActive
-                  ? MBGColors.white.withValues(alpha: 0.9)
-                  : MBGColors.darkerGrey,
+            // Timestamp and Duration in cards
+            const SizedBox(height: MBGSizes.spaceBtwItems / 2),
+            DapurCheckpointEventCardTimestamp(
+              timestamp: checkpoint!.timestamp,
+              durasi: checkpoint!.durasi,
             ),
-          ),
-          const SizedBox(height: MBGSizes.md),
+          ],
 
-          // Action button (only show if not completed)
-          if (!event.isCompleted)
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  // TODO: Handle completion action
-                },
-                icon: Icon(
-                  Iconsax.task,
-                  color: event.isActive ? MBGColors.primary : MBGColors.white,
-                ),
-                label: Text(
-                  'Mulai Proses',
-                  style: TextStyle(
-                    color: event.isActive ? MBGColors.primary : MBGColors.white,
-                  ),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: event.isActive
-                      ? MBGColors.white
-                      : MBGColors.primary,
-                  foregroundColor: event.isActive
-                      ? MBGColors.primary
-                      : MBGColors.white,
-                ),
-              ),
-            )
-          else
-            // Completed badge
-            Container(
-              padding: const EdgeInsets.all(MBGSizes.xs),
-              decoration: BoxDecoration(
-                color: MBGColors.success.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(MBGSizes.borderRadiusMd),
-                border: Border.all(
-                  color: MBGColors.success.withValues(alpha: 0.4),
-                  width: 1,
-                ),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Iconsax.tick_circle5,
-                    size: MBGSizes.iconSm,
-                    color: MBGColors.success.withValues(alpha: 0.8),
-                  ),
-                  const SizedBox(width: MBGSizes.spaceBtwItems),
-                  Text(
-                    'Selesai   ',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: MBGColors.success.withValues(alpha: 0.8),
-                    ),
-                  ),
-                ],
-              ),
+          // Show description for active and future checkpoints
+          if ((status == 'active' || status == 'future') &&
+              checkpoint?.deskripsi != null) ...[
+            const SizedBox(height: MBGSizes.md),
+            DapurCheckpointEventCardDescription(
+              description: checkpoint!.deskripsi!,
+              status: status,
             ),
+          ],
+
+          // Show button for active checkpoint
+          if (showButton) ...[
+            const SizedBox(height: MBGSizes.md),
+            DapurCheckpointEventCardActionButton(tipe: tipe),
+          ],
         ],
       ),
     );

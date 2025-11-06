@@ -8,6 +8,7 @@ import 'package:mbg_mobile_app/features/dapur/models/dapur_kalender_akademik_mod
 import 'package:mbg_mobile_app/features/dapur/models/dapur_menu_harian_model.dart';
 import 'package:mbg_mobile_app/features/dapur/models/dapur_menu_planning_model.dart';
 import 'package:mbg_mobile_app/features/dapur/models/dapur_pengiriman_model.dart';
+import 'package:mbg_mobile_app/features/dapur/models/dapur_sekolah_model.dart';
 import 'package:mbg_mobile_app/features/dapur/models/dapur_stock_model.dart';
 import 'package:mbg_mobile_app/utils/http/http_client.dart';
 
@@ -326,7 +327,7 @@ class DapurService extends GetxService {
     MBGHttpHelper.loadSessionToken();
     final response = await _httpHelper.postRequest('menu-planning', payload);
 
-    if (response.statusCode != 201 || !_isSuccess(response)) {
+    if (!_isSuccess(response)) {
       throw Exception(
         _responseMessage(response, 'Gagal membuat menu planning'),
       );
@@ -349,13 +350,25 @@ class DapurService extends GetxService {
     return data.map(DapurMenuPlanningModel.fromJson).toList();
   }
 
-  // Get Menu Planning filtered by Dapur
-  Future<List<DapurMenuPlanningModel>> getMenuPlanningByDapur(
-    String dapurId,
+  Future<List<DapurSekolahModel>> getAllSekolah() async {
+    MBGHttpHelper.loadSessionToken();
+    final response = await _httpHelper.getRequest('sekolah');
+
+    if (!_isSuccess(response)) {
+      throw Exception(_responseMessage(response, 'Gagal memuat data sekolah'));
+    }
+
+    final data = _extractDataList(response);
+    return data.map(DapurSekolahModel.fromJson).toList();
+  }
+
+  // Get Menu Planning by Sekolah ID
+  Future<List<DapurMenuPlanningModel>> getMenuPlanningBySekolahId(
+    String sekolahId,
   ) async {
     MBGHttpHelper.loadSessionToken();
     final response = await _httpHelper.getRequest(
-      'menu-planning?dapurId=${Uri.encodeComponent(dapurId)}',
+      'sekolah/$sekolahId/menu-planning',
     );
 
     if (!_isSuccess(response)) {
@@ -482,22 +495,51 @@ class DapurService extends GetxService {
   Future<DapurCheckpointModel> createCheckpoint({
     required String menuHarianId,
     required String tipe,
-    File? foto,
+    required File foto,
+    String? deskripsi,
   }) async {
+    print('🔵 [SERVICE] Starting createCheckpoint...');
+    print('🔵 [SERVICE] menuHarianId: $menuHarianId');
+    print('🔵 [SERVICE] tipe: $tipe');
+    print('🔵 [SERVICE] deskripsi: $deskripsi');
+    print('🔵 [SERVICE] foto path: ${foto.path}');
+
     MBGHttpHelper.loadSessionToken();
+
+    final fields = <String, String>{'tipe': tipe};
+    if (deskripsi != null && deskripsi.isNotEmpty) {
+      fields['deskripsi'] = deskripsi;
+    }
+
+    print('🔵 [SERVICE] Fields prepared: $fields');
+    print('🔵 [SERVICE] Calling postMultipartRequest...');
+
     final response = await _httpHelper.postMultipartRequest(
       'menu-harian/$menuHarianId/checkpoint',
-      fields: {'tipe': tipe},
+      fields: fields,
       file: foto,
       fileFieldName: 'foto',
     );
 
+    print('✅ [SERVICE] Response received');
+    print('🔵 [SERVICE] Status Code: ${response.statusCode}');
+    print('🔵 [SERVICE] Response Body Type: ${response.body.runtimeType}');
+    print('🔵 [SERVICE] Response Body: ${response.body}');
+
     if (response.statusCode != 201 || !_isSuccess(response)) {
+      print('❌ [SERVICE] Invalid response');
       throw Exception(_responseMessage(response, 'Gagal membuat checkpoint'));
     }
 
+    print('🔵 [SERVICE] Extracting data object...');
     final data = _extractDataObject(response);
-    return DapurCheckpointModel.fromJson(data);
+    print('✅ [SERVICE] Data extracted: $data');
+
+    print('🔵 [SERVICE] Parsing to DapurCheckpointModel...');
+    final model = DapurCheckpointModel.fromJson(data);
+    print('✅ [SERVICE] Model created successfully');
+
+    return model;
   }
 
   // Get Checkpoints by Menu Harian
@@ -528,7 +570,9 @@ class DapurService extends GetxService {
   // ====================
 
   // Create Pengiriman
-  Future<PengirimanModel> createPengiriman(Map<String, dynamic> payload) async {
+  Future<DapurPengirimanModel> createPengiriman(
+    Map<String, dynamic> payload,
+  ) async {
     MBGHttpHelper.loadSessionToken();
     final response = await _httpHelper.postRequest('pengiriman', payload);
 
@@ -537,31 +581,42 @@ class DapurService extends GetxService {
     }
 
     final data = _extractDataObject(response);
-    return PengirimanModel.fromJson(data);
+    return DapurPengirimanModel.fromJson(data);
   }
 
-  // Get All Pengiriman
-  Future<List<PengirimanModel>> getAllPengiriman({String? dapurId}) async {
+  Future<List<DapurPengirimanModel>> getPengirimanBySekolah(
+    String sekolahId,
+  ) async {
     MBGHttpHelper.loadSessionToken();
-    final response = await _httpHelper.getRequest('pengiriman');
+    final response = await _httpHelper.getRequest(
+      'sekolah/$sekolahId/pengiriman',
+    );
 
     if (!_isSuccess(response)) {
-      throw Exception(_responseMessage(response, 'Gagal memuat pengiriman'));
+      throw Exception(
+        _responseMessage(response, 'Gagal memuat data pengiriman'),
+      );
     }
 
-    final data = _extractDataList(
-      response,
-    ).map(PengirimanModel.fromJson).toList();
-
-    if (dapurId == null) {
-      return data;
+    final body = response.body;
+    if (body is Map<String, dynamic>) {
+      final data = body['data'];
+      if (data is Map<String, dynamic>) {
+        final items = data['data'];
+        if (items is List) {
+          return items
+              .whereType<Map<String, dynamic>>()
+              .map(DapurPengirimanModel.fromJson)
+              .toList();
+        }
+      }
     }
 
-    return data.where((item) => item.dapurId == dapurId).toList();
+    throw Exception('Format data pengiriman tidak valid');
   }
 
   // Get Pengiriman by ID
-  Future<PengirimanModel> getPengirimanById(String id) async {
+  Future<DapurPengirimanModel> getPengirimanById(String id) async {
     MBGHttpHelper.loadSessionToken();
     final response = await _httpHelper.getRequest('pengiriman/$id');
 
@@ -570,7 +625,7 @@ class DapurService extends GetxService {
     }
 
     final data = _extractDataObject(response);
-    return PengirimanModel.fromJson(data);
+    return DapurPengirimanModel.fromJson(data);
   }
 
   // Dalete Pengiriman

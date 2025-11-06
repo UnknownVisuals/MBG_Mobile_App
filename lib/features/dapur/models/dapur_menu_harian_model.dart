@@ -10,10 +10,11 @@ class DapurMenuHarianModel {
     required this.protein,
     required this.karbohidrat,
     required this.lemak,
+    required this.targetTray,
     required this.createdAt,
     required this.updatedAt,
     required this.menuPlanningId,
-    required this.checkpoint,
+    this.checkpoint = const [],
   });
 
   final String id;
@@ -26,10 +27,11 @@ class DapurMenuHarianModel {
   final double protein;
   final double karbohidrat;
   final double lemak;
+  final int targetTray;
   final DateTime createdAt;
   final DateTime updatedAt;
   final String menuPlanningId;
-  final DapurMenuHarianCheckpointSummary checkpoint;
+  final List<DapurMenuHarianCheckpointSummary> checkpoint;
 
   factory DapurMenuHarianModel.fromJson(Map<String, dynamic> json) {
     return DapurMenuHarianModel(
@@ -43,12 +45,19 @@ class DapurMenuHarianModel {
       protein: (json['protein'] as num).toDouble(),
       karbohidrat: (json['karbohidrat'] as num).toDouble(),
       lemak: (json['lemak'] as num).toDouble(),
+      targetTray: json['targetTray'] as int,
       createdAt: DateTime.parse(json['createdAt'] as String),
       updatedAt: DateTime.parse(json['updatedAt'] as String),
       menuPlanningId: json['menuPlanningId'] as String,
-      checkpoint: DapurMenuHarianCheckpointSummary.fromJson(
-        json['checkpoint'] as Map<String, dynamic>,
-      ),
+      checkpoint:
+          (json['checkpoint'] as List<dynamic>?)
+              ?.map(
+                (e) => DapurMenuHarianCheckpointSummary.fromJson(
+                  e as Map<String, dynamic>,
+                ),
+              )
+              .toList() ??
+          [],
     );
   }
 
@@ -64,10 +73,11 @@ class DapurMenuHarianModel {
       'protein': protein,
       'karbohidrat': karbohidrat,
       'lemak': lemak,
+      'targetTray': targetTray,
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
       'menuPlanningId': menuPlanningId,
-      'checkpoint': checkpoint.toJson(),
+      'checkpoint': checkpoint.map((e) => e.toJson()).toList(),
     };
   }
 }

@@ -10,21 +10,17 @@ import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
 import 'package:sidebarx/sidebarx.dart';
 
-/// Drawer for DRIVER role placed inside driver feature folder.
 class DriverDrawer extends StatelessWidget {
-  const DriverDrawer({
-    super.key,
-    required this.userController,
-    required this.logoutController,
-    required this.driverController,
-  });
-
-  final UserController userController;
-  final LogoutController logoutController;
-  final DriverController driverController;
+  const DriverDrawer({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final userController = Get.find<UserController>();
+    final logoutController = Get.isRegistered<LogoutController>()
+        ? Get.find<LogoutController>()
+        : Get.put(LogoutController());
+    final driverController = Get.find<DriverController>();
+
     return Drawer(
       child: Expanded(
         child: Obx(
@@ -67,31 +63,23 @@ class DriverDrawer extends StatelessWidget {
                 label: 'Dashboard',
                 onTap: () {
                   driverController.drawerSelectedIndex.value = 0;
-                  Navigator.of(context).pop();
+                  Get.back();
                 },
               ),
-              SidebarXItem(
-                icon: Iconsax.truck_fast,
-                label: 'My Deliveries',
-                onTap: () {
-                  driverController.drawerSelectedIndex.value = 1;
-                  Navigator.of(context).pop();
-                },
-              ),
+              // SidebarXItem(
+              //   icon: Iconsax.truck_fast,
+              //   label: 'My Deliveries',
+              //   onTap: () {
+              //     driverController.drawerSelectedIndex.value = 1;
+              //     Get.back();
+              //   },
+              // ),
               SidebarXItem(
                 icon: Iconsax.scan,
-                label: 'QR Scanner',
+                label: 'Checkpoint',
                 onTap: () {
-                  driverController.drawerSelectedIndex.value = 2;
-                  Navigator.of(context).pop();
-                },
-              ),
-              SidebarXItem(
-                icon: Iconsax.clock,
-                label: 'History',
-                onTap: () {
-                  driverController.drawerSelectedIndex.value = 3;
-                  Navigator.of(context).pop();
+                  driverController.drawerSelectedIndex.value = 1;
+                  Get.back();
                 },
               ),
             ],

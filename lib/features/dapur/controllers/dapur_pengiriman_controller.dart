@@ -1,267 +1,225 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:mbg_mobile_app/features/dapur/controllers/dapur_controller.dart';
-import '../../../utils/services/dapur_service.dart';
-import '../../../utils/services/sekolah_service.dart';
-import '../../../utils/popups/loaders.dart';
-import '../../../utils/popups/full_screen_loader.dart';
-import '../../../utils/constants/image_strings.dart';
-import '../models/dapur_pengiriman_model.dart';
-import '../../sekolah/models/sekolah_model.dart';
+import 'package:get/get.dart';
+import 'package:mbg_mobile_app/features/dapur/models/dapur_pengiriman_model.dart';
+import 'package:mbg_mobile_app/features/dapur/models/dapur_sekolah_model.dart';
+import 'package:mbg_mobile_app/utils/popups/loaders.dart';
+import 'package:mbg_mobile_app/utils/services/dapur_service.dart';
 
-class PengirimanController extends GetxController {
-  static PengirimanController get instance => Get.find();
-
+class DapurPengirimanController extends GetxController {
+  // Dependencies
   final DapurService _dapurService = Get.find<DapurService>();
-  final SekolahService _sekolahService = Get.find<SekolahService>();
-  final DapurController _dapurController = Get.find<DapurController>();
 
-  Worker? _dapurSelectionWorker;
+  // Data Variables
+  RxList<DapurSekolahModel> sekolahList = <DapurSekolahModel>[].obs;
+  final RxList<DapurPengirimanModel> pengirimanList =
+      <DapurPengirimanModel>[].obs;
 
-  // Observable lists
-  final RxList<PengirimanModel> allPengiriman = <PengirimanModel>[].obs;
-  final RxList<PengirimanModel> pendingPengiriman = <PengirimanModel>[].obs;
-  final RxList<PengirimanModel> inTransitPengiriman = <PengirimanModel>[].obs;
-  final RxList<PengirimanModel> completedPengiriman = <PengirimanModel>[].obs;
-  final RxList<SekolahModel> sekolahList = <SekolahModel>[].obs;
-
-  // Loading states
+  // State Variables
   final RxBool isLoading = false.obs;
-  final RxBool isLoadingSekolah = false.obs;
+  final RxBool isSubmitting = false.obs;
+  final RxString selectedFilter = 'all'.obs;
 
-  // Counts
-  final RxInt pendingCount = 0.obs;
-  final RxInt inTransitCount = 0.obs;
-  final RxInt completedTodayCount = 0.obs;
+  // Form Variables
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  late final TextEditingController jumlahTrayController;
+  late final TextEditingController jumlahKeranjangController;
+
+  static const Set<String> _pendingStatuses = {
+    'PENDING',
+    'MENUNGGU_PENGIRIMAN',
+    'MENUNGGU_PENGAMBILAN',
+  };
+
+  static const Set<String> _inTransitStatuses = {
+    'IN_TRANSIT',
+    'DIAMBIL',
+    'SEDANG_DIJEMPUT',
+    'SEDANG_DIANTAR',
+    'DIANTAR',
+  };
+
+  static const Set<String> _completedStatuses = {'DITERIMA', 'SELESAI'};
 
   @override
   void onInit() {
     super.onInit();
-    _dapurSelectionWorker = ever(
-      _dapurController.selectedDapur,
-      (_) => fetchPengiriman(),
-    );
-    fetchPengiriman();
-    fetchSekolahList();
+    jumlahTrayController = TextEditingController();
+    jumlahKeranjangController = TextEditingController();
+
+    // Fetch sekolah first, then fetch pengiriman when sekolah list is loaded
+    fetchAllSekolah().then((_) {
+      // After sekolah list is loaded, fetch pengiriman for first sekolah
+      if (sekolahList.isNotEmpty) {
+        fetchPengiriman();
+      }
+    });
   }
 
   @override
   void onClose() {
-    _dapurSelectionWorker?.dispose();
+    jumlahTrayController.dispose();
+    jumlahKeranjangController.dispose();
     super.onClose();
   }
 
-  /// Fetch all pengiriman and categorize them
-  Future<void> fetchPengiriman() async {
+  String? get sekolahId {
+    if (sekolahList.isEmpty) {
+      print('DapurPengirimanController: sekolahList is empty');
+      return null;
+    }
+    final id = sekolahList.first.id;
+    print('DapurPengirimanController: sekolahId = $id (from sekolahList)');
+    return id;
+  }
+
+  String? get sekolahNama {
+    if (sekolahList.isEmpty) return null;
+    return sekolahList.first.nama;
+  }
+
+  List<DapurPengirimanModel> get filteredPengiriman {
+    final List<DapurPengirimanModel> list = pengirimanList.toList();
+    switch (selectedFilter.value) {
+      case 'pending':
+        return list.where((item) => _isPending(item.status)).toList();
+      case 'in_transit':
+        return list.where((item) => _isInTransit(item.status)).toList();
+      case 'completed':
+        return list.where((item) => _isCompleted(item.status)).toList();
+      default:
+        return list;
+    }
+  }
+
+  int get totalCount => pengirimanList.length;
+  int get pendingCount =>
+      pengirimanList.where((item) => _isPending(item.status)).length;
+  int get inTransitCount =>
+      pengirimanList.where((item) => _isInTransit(item.status)).length;
+  int get completedCount =>
+      pengirimanList.where((item) => _isCompleted(item.status)).length;
+
+  void setFilter(String filter) {
+    selectedFilter.value = filter;
+  }
+
+  // Helper methods for status checking
+  bool _isPending(String status) => _pendingStatuses.contains(status);
+  bool _isInTransit(String status) => _inTransitStatuses.contains(status);
+  bool _isCompleted(String status) => _completedStatuses.contains(status);
+
+  // ===============
+  // GET ALL SEKOLAH
+  // ===============
+  Future<void> fetchAllSekolah() async {
     try {
-      final selectedDapur = _dapurController.selectedDapur.value;
-
-      if (selectedDapur == null) {
-        _applyPengirimanData(const <PengirimanModel>[]);
-        isLoading.value = false;
-        return;
-      }
-
       isLoading.value = true;
-      final pengirimanList = await _dapurService.getAllPengiriman(
-        dapurId: selectedDapur.id,
-      );
-      _applyPengirimanData(pengirimanList);
+      final data = await _dapurService.getAllSekolah();
+      sekolahList.assignAll(data);
     } catch (e) {
       MBGLoaders.errorSnackBar(
-        title: 'Error',
-        message: 'Gagal memuat data pengiriman: $e',
+        title: 'Gagal memuat data sekolah',
+        message: e.toString(),
       );
     } finally {
       isLoading.value = false;
     }
   }
 
-  /// Fetch list of sekolah for dropdown
-  Future<void> fetchSekolahList() async {
+  // ==================
+  // GET ALL PENGIRIMAN
+  // ==================
+  Future<void> fetchPengiriman() async {
     try {
-      isLoadingSekolah.value = true;
-      final schools = await _sekolahService.getAllSekolah();
-      sekolahList.value = schools;
+      isLoading.value = true;
+
+      // Get sekolah ID from dapur info
+      final currentSekolahId = sekolahId;
+      if (currentSekolahId == null) {
+        pengirimanList.clear();
+        print('DapurPengirimanController: No sekolah ID available');
+        return;
+      }
+
+      print(
+        'DapurPengirimanController: Fetching pengiriman for sekolah: $currentSekolahId',
+      );
+      final data = await _dapurService.getPengirimanBySekolah(currentSekolahId);
+      print('DapurPengirimanController: Received ${data.length} pengiriman');
+      pengirimanList.assignAll(data);
     } catch (e) {
+      print('DapurPengirimanController: Error fetching pengiriman: $e');
       MBGLoaders.errorSnackBar(
-        title: 'Error',
-        message: 'Gagal memuat data sekolah: $e',
+        title: 'Gagal memuat data pengiriman',
+        message: e.toString(),
       );
     } finally {
-      isLoadingSekolah.value = false;
+      isLoading.value = false;
     }
   }
 
-  /// Create new pengiriman
-  Future<bool> createPengiriman({
-    required String sekolahId,
-    required int jumlahTray,
-    required int jumlahKeranjang,
-  }) async {
+  // ====================
+  // CREATE PENGIRIMAN
+  // ====================
+  Future<DapurPengirimanModel?> createPengiriman(
+    Map<String, dynamic> payload,
+  ) async {
     try {
-      final selectedDapur = _dapurController.selectedDapur.value;
-      if (selectedDapur == null) {
-        MBGLoaders.warningSnackBar(
-          title: 'Peringatan',
-          message: 'Silakan pilih dapur terlebih dahulu.',
-        );
-        return false;
-      }
+      isSubmitting.value = true;
+      final DapurPengirimanModel newPengiriman = await _dapurService
+          .createPengiriman(payload);
 
-      MBGFullScreenLoader.openLoadingDialog(
-        'Membuat pengiriman...',
-        MBGImages.onBoardingImage1,
-      );
-
-      await _dapurService.createPengiriman({
-        'dapurId': selectedDapur.id,
-        'sekolahId': sekolahId,
-        'jumlahTray': jumlahTray,
-        'jumlahKeranjang': jumlahKeranjang,
-      });
-
-      MBGFullScreenLoader.stopLoading();
       MBGLoaders.successSnackBar(
-        title: 'Berhasil',
-        message: 'Pengiriman berhasil dibuat',
+        title: 'Pengiriman Berhasil Dibuat',
+        message: 'Pengiriman dengan ID ${newPengiriman.id} berhasil dibuat.',
       );
 
-      // Refresh the list
-      await fetchPengiriman();
-      return true;
-    } catch (e) {
-      MBGFullScreenLoader.stopLoading();
-      MBGLoaders.errorSnackBar(
-        title: 'Error',
-        message: 'Gagal membuat pengiriman: $e',
-      );
-      return false;
-    }
-  }
+      pengirimanList.insert(0, newPengiriman);
 
-  /// Delete pengiriman (only for PENDING status)
-  Future<bool> deletePengiriman(PengirimanModel pengiriman) async {
-    try {
-      if (pengiriman.status != 'PENDING') {
-        MBGLoaders.warningSnackBar(
-          title: 'Peringatan',
-          message: 'Hanya pengiriman dengan status PENDING yang dapat dihapus',
-        );
-        return false;
-      }
-
-      MBGFullScreenLoader.openLoadingDialog(
-        'Menghapus pengiriman...',
-        MBGImages.onBoardingImage1,
-      );
-
-      await _dapurService.deletePengiriman(pengiriman.id);
-
-      MBGFullScreenLoader.stopLoading();
-      MBGLoaders.successSnackBar(
-        title: 'Berhasil',
-        message: 'Pengiriman berhasil dihapus',
-      );
-
-      // Refresh the list
-      await fetchPengiriman();
-      return true;
-    } catch (e) {
-      MBGFullScreenLoader.stopLoading();
-      MBGLoaders.errorSnackBar(
-        title: 'Error',
-        message: 'Gagal menghapus pengiriman: $e',
-      );
-      return false;
-    }
-  }
-
-  /// Get pengiriman by ID
-  Future<PengirimanModel?> getPengirimanById(String id) async {
-    try {
-      return await _dapurService.getPengirimanById(id);
+      return newPengiriman;
     } catch (e) {
       MBGLoaders.errorSnackBar(
-        title: 'Error',
-        message: 'Gagal memuat detail pengiriman: $e',
+        title: 'Gagal Membuat Pengiriman',
+        message: e.toString(),
       );
       return null;
+    } finally {
+      isSubmitting.value = false;
     }
   }
 
-  /// Refresh all data
-  Future<void> refreshData() async {
-    await Future.wait([fetchPengiriman(), fetchSekolahList()]);
-  }
+  // ==================
+  // DELETE PENGIRIMAN
+  // ==================
+  Future<bool> deletePengiriman(String pengirimanId) async {
+    try {
+      isSubmitting.value = true;
+      await _dapurService.deletePengiriman(pengirimanId);
 
-  void _applyPengirimanData(List<PengirimanModel> pengirimanList) {
-    allPengiriman.value = pengirimanList;
+      MBGLoaders.successSnackBar(
+        title: 'Pengiriman Berhasil Dihapus',
+        message: 'Data pengiriman telah dihapus.',
+      );
 
-    pendingPengiriman.value = pengirimanList
-        .where((p) => p.status == 'PENDING')
-        .toList();
-    inTransitPengiriman.value = pengirimanList
-        .where((p) => p.status == 'DIAMBIL')
-        .toList();
-    completedPengiriman.value = pengirimanList
-        .where((p) => p.status == 'DITERIMA')
-        .toList();
+      // Remove from list
+      pengirimanList.removeWhere((item) => item == pengirimanId);
 
-    pendingCount.value = pendingPengiriman.length;
-    inTransitCount.value = inTransitPengiriman.length;
-
-    final today = DateTime.now();
-    completedTodayCount.value = completedPengiriman
-        .where(
-          (p) =>
-              p.waktuDiterima != null &&
-              p.waktuDiterima!.year == today.year &&
-              p.waktuDiterima!.month == today.month &&
-              p.waktuDiterima!.day == today.day,
-        )
-        .length;
-  }
-
-  /// Get status color
-  Color getStatusColor(String status) {
-    switch (status) {
-      case 'PENDING':
-        return Colors.orange;
-      case 'DIAMBIL':
-        return Colors.blue;
-      case 'DITERIMA':
-        return Colors.green;
-      default:
-        return Colors.grey;
+      return true;
+    } catch (e) {
+      MBGLoaders.errorSnackBar(
+        title: 'Gagal Menghapus Pengiriman',
+        message: e.toString(),
+      );
+      return false;
+    } finally {
+      isSubmitting.value = false;
     }
   }
 
-  /// Get status text
-  String getStatusText(String status) {
-    switch (status) {
-      case 'PENDING':
-        return 'Menunggu Pengambilan';
-      case 'DIAMBIL':
-        return 'Sedang Dikirim';
-      case 'DITERIMA':
-        return 'Sudah Diterima';
-      default:
-        return status;
-    }
-  }
-
-  /// Get status icon
-  IconData getStatusIcon(String status) {
-    switch (status) {
-      case 'PENDING':
-        return Icons.schedule;
-      case 'DIAMBIL':
-        return Icons.local_shipping;
-      case 'DITERIMA':
-        return Icons.check_circle;
-      default:
-        return Icons.help_outline;
-    }
+  // ==================
+  // REFRESH PENGIRIMAN
+  // ==================
+  Future<void> refreshPengiriman() async {
+    await fetchPengiriman();
   }
 }

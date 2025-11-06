@@ -22,9 +22,9 @@ class DapurInfoController extends GetxController {
   RxBool isLoading = false.obs;
 
   @override
-  void onInit() {
+  Future<void> onInit() async {
     super.onInit();
-    fetchDapurInfo(dapurId: dapurId);
+    await fetchDapurInfo(dapurId: dapurId);
   }
 
   // =======================

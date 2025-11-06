@@ -1,102 +1,165 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/get_core.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:mbg_mobile_app/features/dapur/controllers/dapur_menu_planning_controller.dart';
+import 'package:mbg_mobile_app/features/dapur/screens/dapur_menu_planning/widgets/dapur_menu_planning_delete.dart';
 import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
+import 'package:mbg_mobile_app/utils/formatters/formatter.dart';
 
-class _MenuPlanCardData {
-  final String title;
-  final String range;
-  final bool isHighlighted;
-
-  const _MenuPlanCardData({
-    required this.title,
-    required this.range,
-    this.isHighlighted = false,
-  });
-}
-
-/// List widget displaying menu planning weeks using sample data
+/// List widget displaying menu planning weeks from API data
 class DapurMenuPlanningList extends StatelessWidget {
   const DapurMenuPlanningList({super.key});
-
-  static const List<_MenuPlanCardData> _plans = [
-    _MenuPlanCardData(
-      title: 'Week 1',
-      range: '01 Nov - 07 Nov 2025',
-      isHighlighted: true,
-    ),
-    _MenuPlanCardData(title: 'Week 2', range: '08 Nov - 14 Nov 2025'),
-    _MenuPlanCardData(title: 'Week 3', range: '15 Nov - 21 Nov 2025'),
-    _MenuPlanCardData(title: 'Week 4', range: '22 Nov - 28 Nov 2025'),
-  ];
 
   @override
   Widget build(BuildContext context) {
     final DapurMenuPlanningController dapurMenuPlanningController =
         Get.find<DapurMenuPlanningController>();
 
-    return SizedBox(
-      height: 110,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: _plans.length,
-        separatorBuilder: (_, __) =>
-            const SizedBox(width: MBGSizes.spaceBtwItems),
-        itemBuilder: (context, index) {
-          final plan = _plans[index];
-          final cardColor = plan.isHighlighted
-              ? MBGColors.primary.withValues(alpha: 0.1)
-              : MBGColors.light;
-          return Container(
-            width: 200,
-            padding: const EdgeInsets.all(MBGSizes.defaultSpace / 2),
-            decoration: BoxDecoration(
-              color: cardColor,
-              borderRadius: BorderRadius.circular(MBGSizes.borderRadiusMd),
-              border: Border.all(
-                color: plan.isHighlighted
-                    ? MBGColors.primary
-                    : MBGColors.borderPrimary,
-              ),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  plan.title,
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: plan.isHighlighted
-                        ? MBGColors.primary
-                        : MBGColors.textPrimary,
+    return Obx(() {
+      if (dapurMenuPlanningController.isLoading.value) {
+        return const SizedBox(
+          height: 110,
+          child: Center(
+            child: CircularProgressIndicator(color: MBGColors.primary),
+          ),
+        );
+      }
+
+      if (dapurMenuPlanningController.menuPlanningList.isEmpty) {
+        return Container(
+          height: 110,
+          alignment: Alignment.center,
+          padding: const EdgeInsets.all(MBGSizes.defaultSpace),
+          decoration: BoxDecoration(
+            color: MBGColors.light,
+            borderRadius: BorderRadius.circular(MBGSizes.borderRadiusMd),
+            border: Border.all(color: MBGColors.borderPrimary),
+          ),
+          child: Text(
+            'Belum ada menu planning',
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(color: MBGColors.textSecondary),
+          ),
+        );
+      }
+
+      return SizedBox(
+        height: 110,
+        child: ListView.separated(
+          scrollDirection: Axis.horizontal,
+          itemCount: dapurMenuPlanningController.menuPlanningList.length,
+          separatorBuilder: (_, __) =>
+              const SizedBox(width: MBGSizes.spaceBtwItems),
+          itemBuilder: (context, index) {
+            final menuPlan =
+                dapurMenuPlanningController.menuPlanningList[index];
+
+            return Obx(() {
+              final isSelected =
+                  dapurMenuPlanningController.selectedMenuPlanningId.value ==
+                  menuPlan.id;
+
+              final cardColor = isSelected
+                  ? MBGColors.primary.withValues(alpha: 0.1)
+                  : MBGColors.light;
+
+              return GestureDetector(
+                onTap: () =>
+                    dapurMenuPlanningController.selectMenuPlanning(menuPlan.id),
+                child: Container(
+                  width: 200,
+                  padding: const EdgeInsets.all(MBGSizes.defaultSpace / 2),
+                  decoration: BoxDecoration(
+                    color: cardColor,
+                    borderRadius: BorderRadius.circular(
+                      MBGSizes.borderRadiusMd,
+                    ),
+                    border: Border.all(
+                      color: isSelected
+                          ? MBGColors.primary
+                          : MBGColors.borderPrimary,
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Week ${menuPlan.mingguanKe}',
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: isSelected
+                              ? MBGColors.primary
+                              : MBGColors.textPrimary,
+                        ),
+                      ),
+                      Text(
+                        MBGFormatter.formatDateRange(
+                          menuPlan.tanggalMulai,
+                          menuPlan.tanggalSelesai,
+                        ),
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                      const Spacer(),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            '${menuPlan.count.menuHarian} Menu',
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(color: MBGColors.textSecondary),
+                          ),
+
+                          // Edit and Delete Buttons
+                          Row(
+                            children: [
+                              // SizedBox(
+                              //   width: 32,
+                              //   height: 32,
+                              //   child: IconButton(
+                              //     padding: EdgeInsets.zero,
+                              //     constraints: const BoxConstraints(),
+                              //     onPressed: () {},
+                              //     icon: const Icon(
+                              //       Iconsax.edit_2,
+                              //       size: MBGSizes.iconSm,
+                              //       color: MBGColors.primary,
+                              //     ),
+                              //   ),
+                              // ),
+                              SizedBox(
+                                width: 32,
+                                height: 32,
+                                child: IconButton(
+                                  padding: EdgeInsets.zero,
+                                  constraints: const BoxConstraints(),
+                                  onPressed: () {
+                                    Get.dialog(
+                                      DapurMenuPlanningDelete(
+                                        menuPlanning: menuPlan,
+                                      ),
+                                    );
+                                  },
+                                  icon: const Icon(
+                                    Iconsax.trash,
+                                    size: MBGSizes.iconSm,
+                                    color: MBGColors.error,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
-                Text(plan.range, style: Theme.of(context).textTheme.bodyMedium),
-                const Spacer(),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: const [
-                    Icon(
-                      Iconsax.edit,
-                      size: MBGSizes.iconSm,
-                      color: MBGColors.primary,
-                    ),
-                    SizedBox(width: MBGSizes.spaceBtwItems),
-                    Icon(
-                      Iconsax.trash,
-                      size: MBGSizes.iconSm,
-                      color: MBGColors.error,
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          );
-        },
-      ),
-    );
+              );
+            });
+          },
+        ),
+      );
+    });
   }
 }
