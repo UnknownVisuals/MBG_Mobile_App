@@ -32,15 +32,17 @@ class DriverCheckpointScreen extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: Obx(() {
-          final bool isSekolahLoading = driverController.isSekolahLoading.value;
           final bool isMenuPlanningLoading =
               driverController.isMenuPlanningLoading.value;
           final bool isMenuHarianLoading =
               driverController.isMenuHarianLoading.value;
+          final String? selectedMenuPlanningId =
+              driverController.selectedMenuPlanningId.value;
           final String? selectedMenuHarianId =
               driverController.selectedMenuHarianId.value;
 
-          if (isSekolahLoading && driverController.sekolahList.isEmpty) {
+          if (isMenuPlanningLoading &&
+              driverController.menuPlanningList.isEmpty) {
             return const Center(child: CircularProgressIndicator());
           }
 
@@ -53,21 +55,14 @@ class DriverCheckpointScreen extends StatelessWidget {
                 return;
               }
 
-              if (driverController.selectedMenuPlanningId.value != null) {
+              if (selectedMenuPlanningId != null) {
                 await driverController.fetchMenuHarian(
-                  planningId: driverController.selectedMenuPlanningId.value!,
+                  planningId: selectedMenuPlanningId,
                 );
                 return;
               }
 
-              if (driverController.selectedSekolahId.value != null) {
-                await driverController.fetchMenuPlanningBySekolah(
-                  driverController.selectedSekolahId.value!,
-                );
-                return;
-              }
-
-              await driverController.fetchAllSekolah();
+              await driverController.fetchAllMenuPlanning();
             },
             child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
@@ -77,41 +72,8 @@ class DriverCheckpointScreen extends StatelessWidget {
                 children: [
                   _buildDropdownCard(
                     context: context,
-                    label: 'Sekolah',
-                    hint: 'Pilih Sekolah',
-                    value: driverController.selectedSekolahId.value,
-                    items: driverController.sekolahList
-                        .map(
-                          (sekolah) => DropdownMenuItem<String>(
-                            value: sekolah.id,
-                            child: Text(sekolah.nama),
-                          ),
-                        )
-                        .toList(),
-                    onChanged: isSekolahLoading
-                        ? null
-                        : (value) {
-                            dapurCheckpointController
-                                    .currentMenuHarianId
-                                    .value =
-                                null;
-                            dapurCheckpointController.checkpointList.clear();
-                            driverController.selectSekolah(value);
-                          },
-                    isLoading: isSekolahLoading,
-                  ),
-                  if (!isSekolahLoading && driverController.sekolahList.isEmpty)
-                    _buildEmptyMessage(
-                      context,
-                      'Tidak ada sekolah tersedia untuk saat ini.',
-                    ),
-                  const SizedBox(height: MBGSizes.spaceBtwSections),
-                  _buildDropdownCard(
-                    context: context,
                     label: 'Menu Planning',
-                    hint: driverController.selectedSekolahId.value == null
-                        ? 'Pilih sekolah terlebih dahulu'
-                        : 'Pilih Menu Planning',
+                    hint: 'Pilih Menu Planning',
                     value: driverController.selectedMenuPlanningId.value,
                     items: driverController.menuPlanningList
                         .map(
@@ -136,9 +98,7 @@ class DriverCheckpointScreen extends StatelessWidget {
                           ),
                         )
                         .toList(),
-                    onChanged:
-                        (driverController.selectedSekolahId.value == null ||
-                            isMenuPlanningLoading)
+                    onChanged: isMenuPlanningLoading
                         ? null
                         : (value) {
                             dapurCheckpointController
@@ -150,12 +110,11 @@ class DriverCheckpointScreen extends StatelessWidget {
                           },
                     isLoading: isMenuPlanningLoading,
                   ),
-                  if (driverController.selectedSekolahId.value != null &&
-                      !isMenuPlanningLoading &&
+                  if (!isMenuPlanningLoading &&
                       driverController.menuPlanningList.isEmpty)
                     _buildEmptyMessage(
                       context,
-                      'Menu planning belum tersedia untuk sekolah ini.',
+                      'Menu planning belum tersedia untuk saat ini.',
                     ),
                   const SizedBox(height: MBGSizes.spaceBtwSections),
                   _buildDropdownCard(

@@ -1,7 +1,6 @@
 import 'package:get/get.dart';
 import 'package:mbg_mobile_app/features/driver/models/driver_menu_harian_model.dart';
 import 'package:mbg_mobile_app/features/driver/models/driver_menu_planning_model.dart';
-import 'package:mbg_mobile_app/features/driver/models/driver_sekolah_model.dart';
 import 'package:mbg_mobile_app/utils/popups/loaders.dart';
 import 'package:mbg_mobile_app/utils/services/driver_service.dart';
 
@@ -10,81 +9,43 @@ class DriverCheckpointController extends GetxController {
   final DriverService _driverService = Get.find<DriverService>();
 
   // Data Variables
-  RxList<DriverSekolahModel> sekolahList = <DriverSekolahModel>[].obs;
   RxList<DriverMenuPlanningModel> menuPlanningList =
       <DriverMenuPlanningModel>[].obs;
   RxList<DriverMenuHarianModel> menuHarianList = <DriverMenuHarianModel>[].obs;
 
   // Selected Variables
-  Rx<String?> selectedSekolahId = Rx<String?>(null);
   Rx<String?> selectedMenuPlanningId = Rx<String?>(null);
   Rx<String?> selectedMenuHarianId = Rx<String?>(null);
 
   // State Variables
-  RxBool isSekolahLoading = false.obs;
   RxBool isMenuPlanningLoading = false.obs;
   RxBool isMenuHarianLoading = false.obs;
 
   @override
   Future<void> onInit() async {
     super.onInit();
-    await fetchAllSekolah();
+    await fetchAllMenuPlanning();
   }
 
-  // ===============
-  // GET ALL SEKOLAH
-  // ===============
-  Future<void> fetchAllSekolah() async {
-    try {
-      isSekolahLoading.value = true;
-      final data = await _driverService.getAllSekolah();
-      sekolahList.assignAll(data);
-    } catch (e) {
-      MBGLoaders.errorSnackBar(
-        title: 'Gagal memuat data sekolah',
-        message: e.toString(),
-      );
-    } finally {
-      isSekolahLoading.value = false;
-    }
-  }
-
-  Future<void> selectSekolah(String? sekolahId) async {
-    selectedSekolahId.value = sekolahId;
-    selectedMenuPlanningId.value = null;
-    selectedMenuHarianId.value = null;
-
-    menuPlanningList.clear();
-    menuHarianList.clear();
-
-    if (sekolahId != null) {
-      await fetchMenuPlanningBySekolah(sekolahId);
-    }
-  }
-
-  // ===================================
-  // GET ALL MENU PLANNING BY SEKOLAH ID
-  // ===================================
+  // =============================
+  // GET ALL MENU PLANNING RECORDS
+  // =============================
   Future<void> fetchAllMenuPlanning() async {
     try {
       isMenuPlanningLoading.value = true;
       final data = await _driverService.getAllMenuPlanning();
       menuPlanningList.assignAll(data);
-    } catch (e) {
-      MBGLoaders.errorSnackBar(
-        title: 'Gagal memuat data menu planning',
-        message: e.toString(),
-      );
-    } finally {
-      isMenuPlanningLoading.value = false;
-    }
-  }
 
-  Future<void> fetchMenuPlanningBySekolah(String sekolahId) async {
-    try {
-      isMenuPlanningLoading.value = true;
-      final data = await _driverService.getMenuPlanningBySekolah(sekolahId);
-      menuPlanningList.assignAll(data);
+      final String? currentPlanningId = selectedMenuPlanningId.value;
+      final bool hasSelectedPlanning =
+          currentPlanningId != null &&
+          menuPlanningList.any((planning) => planning.id == currentPlanningId);
+
+      if (!hasSelectedPlanning) {
+        selectedMenuPlanningId.value = null;
+        selectedMenuHarianId.value = null;
+        menuHarianList.clear();
+      }
     } catch (e) {
       MBGLoaders.errorSnackBar(
         title: 'Gagal memuat data menu planning',
@@ -114,6 +75,15 @@ class DriverCheckpointController extends GetxController {
       isMenuHarianLoading.value = true;
       final data = await _driverService.getMenuHarianByPlanning(planningId);
       menuHarianList.assignAll(data);
+
+      final String? currentMenuId = selectedMenuHarianId.value;
+      final bool hasSelectedMenu =
+          currentMenuId != null &&
+          menuHarianList.any((menu) => menu.id == currentMenuId);
+
+      if (!hasSelectedMenu) {
+        selectedMenuHarianId.value = null;
+      }
     } catch (e) {
       MBGLoaders.errorSnackBar(
         title: 'Gagal memuat data menu harian',
