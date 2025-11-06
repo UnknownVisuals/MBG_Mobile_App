@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// Halaman QR Scanner Sekolah (versi dummy)
 class SekolahQRScannerScreen extends StatelessWidget {
   const SekolahQRScannerScreen({super.key});
 
