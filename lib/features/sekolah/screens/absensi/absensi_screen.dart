@@ -48,9 +48,7 @@ class _AbsensiScreenState extends State<AbsensiScreen> {
         final theme = Theme.of(context);
         return Theme(
           data: theme.copyWith(
-            colorScheme: theme.colorScheme.copyWith(
-              primary: MBGColors.primary,
-            ),
+            colorScheme: theme.colorScheme.copyWith(primary: MBGColors.primary),
           ),
           child: child!,
         );
@@ -63,8 +61,10 @@ class _AbsensiScreenState extends State<AbsensiScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final color = theme.colorScheme;
-    final tanggalFormatted =
-        DateFormat('EEEE, dd MMM yyyy', 'id_ID').format(selectedDate);
+    final tanggalFormatted = DateFormat(
+      'EEEE, dd MMM yyyy',
+      'id_ID',
+    ).format(selectedDate);
     final isMobile = MediaQuery.of(context).size.width < 700;
 
     return Scaffold(
@@ -136,7 +136,9 @@ class _AbsensiScreenState extends State<AbsensiScreen> {
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
-                  color: color.surfaceContainerHighest ?? color.surfaceVariant,
+                  color:
+                      color.surfaceContainerHighest ??
+                      color.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     if (theme.brightness == Brightness.light)
@@ -215,8 +217,6 @@ class _AbsensiScreenState extends State<AbsensiScreen> {
     );
   }
 }
-
-
 
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';

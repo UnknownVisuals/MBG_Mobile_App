@@ -2,19 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
+import 'package:mbg_mobile_app/utils/helpers/helper_functions.dart';
 
 class DapurDashboardCookingProgress extends StatelessWidget {
   const DapurDashboardCookingProgress({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final bool isDarkMode = MBGHelperFunctions.isDarkMode(context);
+
     final int progress = 85;
 
     return Container(
       padding: const EdgeInsets.all(MBGSizes.defaultSpace),
       decoration: BoxDecoration(
-        color: MBGColors.light,
-        border: Border.all(color: MBGColors.grey),
+        color: isDarkMode ? MBGColors.dark : MBGColors.light,
+        border: Border.all(
+          color: isDarkMode ? MBGColors.darkerGrey : MBGColors.grey,
+        ),
         borderRadius: BorderRadius.circular(MBGSizes.cardRadiusMd),
       ),
       child: Column(
@@ -43,7 +48,9 @@ class DapurDashboardCookingProgress extends StatelessWidget {
                   child: LinearProgressIndicator(
                     value: (progress / 100).clamp(0.0, 1.0),
                     minHeight: MBGSizes.md,
-                    backgroundColor: MBGColors.grey,
+                    backgroundColor: isDarkMode
+                        ? MBGColors.darkerGrey
+                        : MBGColors.grey,
                     valueColor: AlwaysStoppedAnimation<Color>(
                       progress >= 80
                           ? Colors.green

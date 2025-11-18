@@ -10,7 +10,6 @@ import 'package:mbg_mobile_app/features/sekolah/screens/sekolah_drawer.dart';
 import 'package:mbg_mobile_app/features/sekolah/screens/sekolah_dashboard/sekolah_dashboard_screen.dart';
 import 'package:mbg_mobile_app/features/sekolah/screens/sekolah_management/sekolah_management_screen.dart';
 import 'package:mbg_mobile_app/features/sekolah/screens/kelas_management/kelas_management_screen.dart';
-import 'package:mbg_mobile_app/features/sekolah/screens/sekolah_qr_scanner/sekolah_qr_scanner_screen.dart';
 import 'package:mbg_mobile_app/features/sekolah/screens/siswa_management/siswa_management_screen.dart';
 import 'package:mbg_mobile_app/features/sekolah/screens/absensi/absensi_screen.dart';
 import 'package:mbg_mobile_app/features/sekolah/screens/nutrition_monitor/nutrition_monitor_screen.dart';
@@ -41,8 +40,8 @@ class SekolahScreen extends StatelessWidget {
               Text(
                 "Halo, ${userController.userModel.value?.name ?? 'Guru Sekolah'}!",
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ],
           ),
@@ -81,7 +80,6 @@ class SekolahScreen extends StatelessWidget {
     );
   }
 }
-
 
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';
