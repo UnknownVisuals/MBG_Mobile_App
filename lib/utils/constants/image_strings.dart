@@ -6,7 +6,7 @@ class MBGImages {
   static const String logo = "assets/logos/logo.png";
   static const String delivery = "assets/logos/delivery.png";
   static const String payment = "assets/logos/payment.png";
-  static const String mbg = "assets/logos/mbg.png";
+  static const String mbg = "assets/logos/covermbg.png";
   static const String login = "assets/logos/login.png";
 
   // -- Social Logos

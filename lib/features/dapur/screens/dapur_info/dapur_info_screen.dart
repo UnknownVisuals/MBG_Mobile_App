@@ -17,6 +17,9 @@ import 'package:mbg_mobile_app/features/dapur/screens/dapur_info/widgets/dapur_i
 import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
 
+// ➕ Tambahkan file responsive
+import 'package:mbg_mobile_app/utils/helpers/responsive.dart';
+
 class DapurInfoScreen extends StatelessWidget {
   const DapurInfoScreen({super.key});
 
@@ -49,7 +52,7 @@ class DapurInfoScreen extends StatelessWidget {
           child: Column(
             children: [
               // =========================
-              // DAPUR INFORMATION SECTION
+              // INFORMASI DAPUR
               // =========================
               MBGSectionHeading(
                 showLeadingIcon: true,
@@ -65,26 +68,24 @@ class DapurInfoScreen extends StatelessWidget {
                 value: "${dapur?.latitude}, ${dapur?.longitude}",
               ),
               MBGInfoRow(
-                title: 'Dibuat Pada',
+                title: 'Dibuat pada',
                 value: dapur?.createdAt != null
-                    ? DateFormat(
-                        'dd MMMM yyyy, HH:mm',
-                      ).format(dapur!.createdAt.toLocal())
+                    ? DateFormat('dd MMMM yyyy, HH:mm')
+                        .format(dapur!.createdAt.toLocal())
                     : '-',
               ),
               MBGInfoRow(
-                title: 'Diperbarui Pada',
+                title: 'Diperbarui pada',
                 value: dapur?.updatedAt != null
-                    ? DateFormat(
-                        'dd MMMM yyyy, HH:mm',
-                      ).format(dapur!.updatedAt.toLocal())
+                    ? DateFormat('dd MMMM yyyy, HH:mm')
+                        .format(dapur!.updatedAt.toLocal())
                     : '-',
               ),
               const SizedBox(height: MBGSizes.spaceBtwSections),
 
-              // ===================
-              // MAP PREVIEW SECTION
-              // ===================
+              // =========================
+              // LOKASI DAPUR
+              // =========================
               MBGSectionHeading(
                 showLeadingIcon: true,
                 leadingIcon: Iconsax.location,
@@ -94,9 +95,9 @@ class DapurInfoScreen extends StatelessWidget {
               DapurInfoMapPreview(),
               const SizedBox(height: MBGSizes.spaceBtwSections),
 
-              // =================
-              // PIC DAPUR SECTION
-              // =================
+              // =========================
+              // PIC DAPUR
+              // =========================
               MBGSectionHeading(
                 showLeadingIcon: true,
                 leadingIcon: Iconsax.profile_2user,
@@ -106,15 +107,15 @@ class DapurInfoScreen extends StatelessWidget {
               DapurInfoHorizontalCardList<PICDapurSummary>(
                 items: picDapur,
                 emptyMessage: 'Tidak ada PIC yang ditugaskan',
-                listHeight: 180,
+                listHeight: MBGResponsive.autoScaleHeight(context, 215),
                 itemBuilder: (context, item, index) =>
                     DapurInfoPicCard(pic: item),
               ),
               const SizedBox(height: MBGSizes.spaceBtwSections),
 
-              // ===============
-              // DRIVERS SECTION
-              // ===============
+              // =========================
+              // DRIVER
+              // =========================
               MBGSectionHeading(
                 showLeadingIcon: true,
                 leadingIcon: Iconsax.truck,
@@ -124,15 +125,15 @@ class DapurInfoScreen extends StatelessWidget {
               DapurInfoHorizontalCardList<DriversSummary>(
                 items: drivers,
                 emptyMessage: 'Tidak ada driver yang ditugaskan',
-                listHeight: 215,
+                listHeight: MBGResponsive.autoScaleHeight(context, 215),
                 itemBuilder: (context, item, index) =>
                     DapurInfoDriverCard(driver: item),
               ),
               const SizedBox(height: MBGSizes.spaceBtwSections),
 
-              // ================
-              // KARYAWAN SECTION
-              // ================
+              // =========================
+              // KARYAWAN
+              // =========================
               MBGSectionHeading(
                 showLeadingIcon: true,
                 leadingIcon: Iconsax.people,
@@ -142,15 +143,15 @@ class DapurInfoScreen extends StatelessWidget {
               DapurInfoHorizontalCardList<KaryawanSummary>(
                 items: karyawan,
                 emptyMessage: 'Tidak ada karyawan terdaftar',
-                listHeight: 190,
+                listHeight: MBGResponsive.autoScaleHeight(context, 215),
                 itemBuilder: (context, item, index) =>
                     DapurInfoKaryawanCard(karyawan: item),
               ),
               const SizedBox(height: MBGSizes.spaceBtwSections),
 
-              // =======================
-              // STOK BAHAN BAKU SECTION
-              // =======================
+              // =========================
+              // STOK BAHAN BAKU
+              // =========================
               MBGSectionHeading(
                 showLeadingIcon: true,
                 leadingIcon: Iconsax.box,
@@ -160,15 +161,15 @@ class DapurInfoScreen extends StatelessWidget {
               DapurInfoHorizontalCardList<StockSummary>(
                 items: stokBahanBaku,
                 emptyMessage: 'Tidak ada stok bahan baku',
-                listHeight: 190,
+                listHeight: MBGResponsive.autoScaleHeight(context, 215),
                 itemBuilder: (context, item, index) =>
                     DapurInfoStokCard(stok: item),
               ),
               const SizedBox(height: MBGSizes.spaceBtwSections),
 
-              // ========================
-              // SEKOLAH DILAYANI SECTION
-              // ========================
+              // =========================
+              // SEKOLAH DILAYANI
+              // =========================
               MBGSectionHeading(
                 showLeadingIcon: true,
                 leadingIcon: Iconsax.building_3,
@@ -178,7 +179,7 @@ class DapurInfoScreen extends StatelessWidget {
               DapurInfoHorizontalCardList<SekolahDilayaniSummary>(
                 items: sekolahDilayani,
                 emptyMessage: 'Tidak ada sekolah yang dilayani',
-                listHeight: 235,
+                listHeight: MBGResponsive.autoScaleHeight(context, 215),
                 itemBuilder: (context, item, index) =>
                     DapurInfoSekolahCard(sekolahDilayani: item),
               ),

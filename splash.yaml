@@ -3,12 +3,11 @@ flutter_native_splash:
   color: "#FFFFFF"
 
   # Gambar/logo splash (pastikan sudah ada di assets, misalnya logo MBG)
-  image: assets/logos/mbg-icon.png
+  image: assets/logos/logo.png
 
   # Mode gelap (opsional)
   color_dark: "#FFFFFF"
-  image_dark: assets/logos/mbg-icon.png
-
+  image_dark: assets/logos/logo.png
   # Menyesuaikan orientasi
   android_gravity: center
   ios_content_mode: scaleAspectFit

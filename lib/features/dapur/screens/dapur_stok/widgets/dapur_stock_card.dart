@@ -17,6 +17,9 @@ class DapurStokCard extends StatelessWidget {
     final DapurStokController dapurStokController =
         Get.find<DapurStokController>();
 
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     final filters = [
       {
         'label': 'Semua',
@@ -76,7 +79,7 @@ class DapurStokCard extends StatelessWidget {
               return Obx(() {
                 final isSelected =
                     dapurStokController.selectedCategory.value ==
-                    filter['value'];
+                        filter['value'];
 
                 return MBChipFilter(
                   chipFilterString: filter['label'] as String,
@@ -96,8 +99,10 @@ class DapurStokCard extends StatelessWidget {
         Expanded(
           child: Obx(() {
             if (dapurStokController.isLoading.value) {
-              return const Center(
-                child: CircularProgressIndicator(color: MBGColors.primary),
+              return Center(
+                child: CircularProgressIndicator(
+                  color: MBGColors.primary,
+                ),
               );
             }
 
@@ -111,13 +116,14 @@ class DapurStokCard extends StatelessWidget {
                       Icon(
                         Iconsax.box_remove,
                         size: MBGSizes.iconLg * 2,
-                        color: MBGColors.darkGrey,
+                        color: colorScheme.onSurfaceVariant,
                       ),
                       const SizedBox(height: MBGSizes.md),
                       Text(
                         'Belum ada data stok',
-                        style: Theme.of(context).textTheme.titleMedium
-                            ?.copyWith(color: MBGColors.darkGrey),
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
+                        ),
                       ),
                     ],
                   ),
@@ -143,18 +149,19 @@ class DapurStokCard extends StatelessWidget {
                   margin: const EdgeInsets.only(bottom: MBGSizes.spaceBtwItems),
                   padding: const EdgeInsets.all(MBGSizes.md),
                   decoration: BoxDecoration(
-                    color: MBGColors.light,
-                    borderRadius: BorderRadius.circular(
-                      MBGSizes.borderRadiusLg,
-                    ),
+                    color: colorScheme.surface,
+                    borderRadius:
+                        BorderRadius.circular(MBGSizes.borderRadiusLg),
                     border: Border.all(
-                      color: isLowStock ? MBGColors.error : MBGColors.grey,
+                      color: isLowStock
+                          ? MBGColors.error
+                          : colorScheme.outline,
                     ),
                   ),
                   child: Row(
                     children: [
                       CircleAvatar(
-                        backgroundColor: categoryColor.withValues(alpha: 0.2),
+                        backgroundColor: categoryColor.withOpacity(0.15),
                         child: Icon(
                           categoryIcon,
                           color: categoryColor,
@@ -162,15 +169,20 @@ class DapurStokCard extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: MBGSizes.md),
+
+                      // content
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               stok.nama,
-                              style: Theme.of(context).textTheme.titleSmall
-                                  ?.copyWith(fontWeight: FontWeight.bold),
+                              style: theme.textTheme.titleSmall?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: colorScheme.onSurface,
+                              ),
                             ),
+
                             if (isLowStock) ...[
                               const SizedBox(height: MBGSizes.xs),
                               Container(
@@ -179,41 +191,45 @@ class DapurStokCard extends StatelessWidget {
                                   vertical: MBGSizes.xs,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: MBGColors.error.withValues(alpha: 0.1),
+                                  color: MBGColors.error.withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(
                                     MBGSizes.borderRadiusSm,
                                   ),
                                 ),
                                 child: Text(
                                   'Stok Menipis',
-                                  style: Theme.of(context).textTheme.labelSmall
-                                      ?.copyWith(
-                                        color: MBGColors.error,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                  style: theme.textTheme.labelSmall?.copyWith(
+                                    color: MBGColors.error,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                             ],
+
                             const SizedBox(height: MBGSizes.sm),
+
                             Text(
                               stok.kategoriLabel,
-                              style: Theme.of(context).textTheme.labelLarge
-                                  ?.copyWith(color: categoryColor),
+                              style: theme.textTheme.labelLarge?.copyWith(
+                                color: categoryColor,
+                              ),
                             ),
+
                             const SizedBox(height: MBGSizes.xs),
+
                             Text(
                               'Stok: ${stok.stokKg.toStringAsFixed(2)} kg',
-                              style: Theme.of(context).textTheme.bodyMedium
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: isLowStock
-                                        ? MBGColors.error
-                                        : MBGColors.textPrimary,
-                                  ),
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: isLowStock
+                                    ? MBGColors.error
+                                    : colorScheme.onSurface,
+                              ),
                             ),
                           ],
                         ),
                       ),
+
                       IconButton(
                         icon: const Icon(Iconsax.edit),
                         color: MBGColors.primary,

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/features/dapur/models/dapur_checkpoint_model.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
 import 'package:mbg_mobile_app/features/dapur/screens/dapur_checkpoint/widgets/dapur_checkpoint_event_card_header.dart';
@@ -22,48 +21,53 @@ class DapurCheckpointEventCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Style based on status
-    Color backgroundColor;
-    Color borderColor;
-    double borderWidth;
-    Color textColor;
-    Color iconColor;
-    Color iconBackgroundColor;
-    bool showButton;
-    bool showShadow;
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
+
+    // Adaptive Colors
+    late Color backgroundColor;
+    late Color borderColor;
+    late double borderWidth;
+    late Color textColor;
+    late Color iconColor;
+    late Color iconBackgroundColor;
+    late bool showButton;
+    late bool showShadow;
 
     switch (status) {
       case 'completed':
-        // Normal appearance for completed tasks
-        backgroundColor = MBGColors.light;
-        borderColor = MBGColors.borderPrimary;
+        backgroundColor = scheme.surface;
+        borderColor = scheme.outline;
         borderWidth = 1;
-        textColor = MBGColors.textPrimary;
-        iconColor = MBGColors.success;
-        iconBackgroundColor = MBGColors.success.withValues(alpha: 0.1);
+        textColor = scheme.onSurface;
+        iconColor = scheme.primary;
+        iconBackgroundColor = scheme.primary.withOpacity(0.1);
         showButton = false;
         showShadow = false;
         break;
+
       case 'active':
-        // Highlighted appearance for active task
-        backgroundColor = MBGColors.primary.withValues(alpha: 0.08);
-        borderColor = MBGColors.primary;
+        backgroundColor = scheme.primary.withOpacity(0.08);
+        borderColor = scheme.primary;
         borderWidth = 2;
-        textColor = MBGColors.textPrimary;
-        iconColor = MBGColors.primary;
-        iconBackgroundColor = MBGColors.primary.withValues(alpha: 0.15);
+        textColor = scheme.onSurface;
+        iconColor = scheme.primary;
+        iconBackgroundColor = scheme.primary.withOpacity(0.15);
         showButton = true;
         showShadow = true;
         break;
+
       case 'future':
       default:
-        // Greyed out appearance for future tasks
-        backgroundColor = MBGColors.softGrey;
-        borderColor = MBGColors.grey;
+        backgroundColor = isDark
+            ? scheme.surfaceVariant.withOpacity(0.3)
+            : scheme.surfaceVariant;
+        borderColor = scheme.outlineVariant;
         borderWidth = 1;
-        textColor = MBGColors.darkGrey.withValues(alpha: 0.5);
-        iconColor = MBGColors.grey;
-        iconBackgroundColor = MBGColors.grey.withValues(alpha: 0.1);
+        textColor = scheme.onSurface.withOpacity(0.5);
+        iconColor = scheme.outline;
+        iconBackgroundColor = scheme.outline.withOpacity(0.1);
         showButton = false;
         showShadow = false;
     }
@@ -76,7 +80,7 @@ class DapurCheckpointEventCard extends StatelessWidget {
         boxShadow: showShadow
             ? [
                 BoxShadow(
-                  color: MBGColors.primary.withValues(alpha: 0.1),
+                  color: scheme.primary.withOpacity(0.12),
                   blurRadius: MBGSizes.sm,
                   offset: const Offset(0, 2),
                 ),
@@ -87,24 +91,19 @@ class DapurCheckpointEventCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Card Header with icon, title, role badges, and status badge
+          // Header
           DapurCheckpointEventCardHeader(
             tipe: tipe,
             status: status,
-            textColor: textColor,
-            iconColor: iconColor,
-            iconBackgroundColor: iconBackgroundColor,
           ),
 
-          // Show details for completed checkpoint
+          // Completed: Detail
           if (status == 'completed' && checkpoint != null) ...[
             const SizedBox(height: MBGSizes.spaceBtwItems / 2),
-            // Photo if available
-            if (checkpoint?.fotoUrl != null) ...[
-              DapurCheckpointEventCardImage(imageUrl: checkpoint!.fotoUrl),
-            ],
 
-            // Description if available
+            if (checkpoint?.fotoUrl != null)
+              DapurCheckpointEventCardImage(imageUrl: checkpoint!.fotoUrl),
+
             if (checkpoint!.deskripsi != null) ...[
               const SizedBox(height: MBGSizes.spaceBtwItems / 2),
               DapurCheckpointEventCardDescription(
@@ -113,7 +112,6 @@ class DapurCheckpointEventCard extends StatelessWidget {
               ),
             ],
 
-            // Timestamp and Duration in cards
             const SizedBox(height: MBGSizes.spaceBtwItems / 2),
             DapurCheckpointEventCardTimestamp(
               timestamp: checkpoint!.timestamp,
@@ -121,7 +119,7 @@ class DapurCheckpointEventCard extends StatelessWidget {
             ),
           ],
 
-          // Show description for active and future checkpoints
+          // Active/Future Description
           if ((status == 'active' || status == 'future') &&
               checkpoint?.deskripsi != null) ...[
             const SizedBox(height: MBGSizes.md),
@@ -131,7 +129,7 @@ class DapurCheckpointEventCard extends StatelessWidget {
             ),
           ],
 
-          // Show button for active checkpoint
+          // Button only for active
           if (showButton) ...[
             const SizedBox(height: MBGSizes.md),
             DapurCheckpointEventCardActionButton(tipe: tipe),

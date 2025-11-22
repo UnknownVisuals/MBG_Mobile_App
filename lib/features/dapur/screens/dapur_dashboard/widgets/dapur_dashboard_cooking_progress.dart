@@ -18,7 +18,7 @@ class DapurDashboardCookingProgress extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDarkMode ? MBGColors.dark : MBGColors.light,
         border: Border.all(
-          color: isDarkMode ? MBGColors.darkerGrey : MBGColors.grey,
+          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
         ),
         borderRadius: BorderRadius.circular(MBGSizes.cardRadiusMd),
       ),

@@ -12,8 +12,8 @@ class DapurInfoDriverCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 280,
-      padding: const EdgeInsets.all(MBGSizes.defaultSpace),
+      width: 260, // dikurangi agar tidak overflow di list
+      padding: const EdgeInsets.all(MBGSizes.md),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           colors: [Color(0xFFB86DB8), Color(0xFFC73D51)],
@@ -23,18 +23,21 @@ class DapurInfoDriverCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(MBGSizes.cardRadiusLg),
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min, // ⛔ mencegah tinggi membengkak
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          /// ==== HEADER DRIVER ====
           Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Container(
-                padding: const EdgeInsets.all(MBGSizes.sm + 2),
+                padding: const EdgeInsets.all(MBGSizes.sm),
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.25),
                   borderRadius: BorderRadius.circular(MBGSizes.borderRadiusMd),
                   border: Border.all(
                     color: Colors.white.withValues(alpha: 0.3),
-                    width: 1.5,
+                    width: 1.2,
                   ),
                 ),
                 child: const Icon(
@@ -43,85 +46,101 @@ class DapurInfoDriverCard extends StatelessWidget {
                   size: MBGSizes.iconMd,
                 ),
               ),
-              const SizedBox(width: MBGSizes.spaceBtwItems / 2),
+              const SizedBox(width: MBGSizes.sm),
+
               Expanded(
                 child: Text(
                   driver.name,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: MBGColors.textWhite,
-                    fontWeight: FontWeight.bold,
-                  ),
+                        color: MBGColors.textWhite,
+                        fontWeight: FontWeight.bold,
+                      ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: MBGSizes.spaceBtwItems / 2),
-          const Divider(color: MBGColors.grey),
-          const SizedBox(height: MBGSizes.spaceBtwItems / 2),
+
+          const SizedBox(height: MBGSizes.xs),
+          Divider(color: MBGColors.white.withOpacity(0.3), height: 1),
+          const SizedBox(height: MBGSizes.xs),
+
+          /// ==== EMAIL ====
           Row(
             children: [
-              const Icon(
-                Iconsax.direct_right,
-                color: MBGColors.white,
-                size: MBGSizes.iconSm,
-              ),
-              const SizedBox(width: MBGSizes.spaceBtwItems / 2),
+              const Icon(Iconsax.direct_right,
+                  color: MBGColors.white, size: MBGSizes.iconSm),
+              const SizedBox(width: MBGSizes.xs),
+
               Expanded(
                 child: Text(
                   driver.email,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyMedium?.copyWith(color: MBGColors.textWhite),
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium
+                      ?.copyWith(color: MBGColors.textWhite),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: MBGSizes.spaceBtwItems / 2),
+
+          const SizedBox(height: MBGSizes.xs),
+
+          /// ==== PHONE ====
           Row(
             children: [
-              const Icon(
-                Iconsax.call,
-                color: MBGColors.white,
-                size: MBGSizes.iconSm,
-              ),
-              const SizedBox(width: MBGSizes.spaceBtwItems / 2),
-              Text(
-                driver.phone,
-                style: Theme.of(
-                  context,
-                ).textTheme.bodyMedium?.copyWith(color: MBGColors.textWhite),
+              const Icon(Iconsax.call,
+                  color: MBGColors.white, size: MBGSizes.iconSm),
+              const SizedBox(width: MBGSizes.xs),
+
+              Expanded(
+                child: Text(
+                  driver.phone,
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium
+                      ?.copyWith(color: MBGColors.textWhite),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
             ],
           ),
-          const SizedBox(height: MBGSizes.spaceBtwItems / 2),
+
+          const SizedBox(height: MBGSizes.xs),
+
+          /// ==== KENDARAAN TAG ====
           Container(
             padding: const EdgeInsets.symmetric(
               horizontal: MBGSizes.sm,
               vertical: MBGSizes.xs,
             ),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.25),
+              color: Colors.white.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(MBGSizes.borderRadiusSm),
               border: Border.all(
-                color: Colors.white.withValues(alpha: 0.3),
+                color: Colors.white.withValues(alpha: 0.25),
                 width: 1,
               ),
             ),
             child: Row(
-              mainAxisSize: MainAxisSize.min,
               children: [
                 const Icon(Iconsax.car, color: MBGColors.white, size: 16),
                 const SizedBox(width: MBGSizes.xs),
-                Text(
-                  driver.nomorKendaraan,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: MBGColors.textWhite,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 1.2,
+
+                Expanded(
+                  child: Text(
+                    driver.nomorKendaraan,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: MBGColors.textWhite,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1.1,
+                        ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],

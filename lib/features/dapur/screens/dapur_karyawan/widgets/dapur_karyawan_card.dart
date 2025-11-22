@@ -23,54 +23,56 @@ class DapurKaryawanCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Profile Picture
-          AspectRatio(
-            aspectRatio: 4 / 5,
-            child: ClipRRect(
-              borderRadius: const BorderRadius.all(
-                Radius.circular(MBGSizes.borderRadiusLg),
-              ),
-              child: karyawan.fotoUrl != null
-                  ? Image.network(
-                      karyawan.fotoUrl!,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          color: MBGColors.grey,
-                          child: const Icon(
-                            Iconsax.profile,
-                            size: MBGSizes.iconLg,
-                          ),
-                        );
-                      },
-                    )
-                  : Container(
-                      color: MBGColors.grey,
-                      child: const Icon(Iconsax.profile, size: MBGSizes.iconLg),
-                    ),
-            ),
+          // === FOTO ===
+Expanded(
+  child: ClipRRect(
+    borderRadius: const BorderRadius.all(
+      Radius.circular(MBGSizes.borderRadiusLg),
+    ),
+    child: karyawan.fotoUrl != null
+        ? Image.network(
+            karyawan.fotoUrl!,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              return Container(
+                color: MBGColors.grey,
+                child: const Icon(
+                  Iconsax.profile,
+                  size: MBGSizes.iconLg,
+                ),
+              );
+            },
+          )
+        : Container(
+            color: MBGColors.grey,
+            child: const Icon(Iconsax.profile, size: MBGSizes.iconLg),
           ),
+  ),
+),
 
-          // Profile Details
+
+          // === DETAIL ===
           Padding(
             padding: const EdgeInsets.all(MBGSizes.defaultSpace / 2),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Name
+                // Nama
                 Text(
                   karyawan.nama,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
-                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleSmall
+                      ?.copyWith(fontWeight: FontWeight.bold),
                   maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
 
                 const SizedBox(height: MBGSizes.spaceBtwItems / 2),
 
                 // Posisi
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Icon(
                       Iconsax.briefcase,
@@ -81,11 +83,12 @@ class DapurKaryawanCard extends StatelessWidget {
                     Expanded(
                       child: Text(
                         karyawan.posisi,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: MBGColors.textSecondary,
-                        ),
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodySmall
+                            ?.copyWith(color: MBGColors.textSecondary),
+                        maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
                       ),
                     ),
                   ],
@@ -103,97 +106,82 @@ class DapurKaryawanCard extends StatelessWidget {
                     color: karyawan.status == KaryawanStatus.AKTIF
                         ? Colors.green.withValues(alpha: 0.2)
                         : Colors.red.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(
-                      MBGSizes.borderRadiusSm,
-                    ),
+                    borderRadius: BorderRadius.circular(MBGSizes.borderRadiusSm),
                     border: Border.all(
                       color: karyawan.status == KaryawanStatus.AKTIF
-                          ? Colors.green.withValues(alpha: 0.8)
-                          : Colors.red.withValues(alpha: 0.8),
+                          ? Colors.green
+                          : Colors.red,
                     ),
                   ),
                   child: Text(
                     karyawan.status.displayName,
                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: karyawan.status == KaryawanStatus.AKTIF
-                          ? Colors.green
-                          : Colors.red,
-                      fontWeight: FontWeight.bold,
-                    ),
+                          fontWeight: FontWeight.bold,
+                          color: karyawan.status == KaryawanStatus.AKTIF
+                              ? Colors.green
+                              : Colors.red,
+                        ),
                   ),
                 ),
 
                 const SizedBox(height: MBGSizes.spaceBtwItems / 2),
-                const Divider(color: MBGColors.darkGrey),
+
+                Divider(color: MBGColors.darkGrey.withValues(alpha: 0.4), thickness: 1),
+
                 const SizedBox(height: MBGSizes.spaceBtwItems / 2),
 
-                // Edit Buttton and Delete Button
+                // === EDIT & DELETE ===
                 Row(
                   children: [
-                    // Edit Button
+                    // Edit
                     Expanded(
-                      child: SizedBox(
-                        height: 30,
-                        child: OutlinedButton(
-                          style: OutlinedButton.styleFrom(
-                            padding: EdgeInsets.zero,
-                            backgroundColor: MBGColors.primary.withValues(
-                              alpha: 0.15,
-                            ),
-                            side: BorderSide(
-                              color: MBGColors.primary.withValues(alpha: 0.7),
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                MBGSizes.borderRadiusSm,
-                              ),
-                            ),
-                          ),
-                          onPressed: () {
-                            Get.to(() => DapurKaryawanEdit(karyawan: karyawan));
-                          },
-                          child: const Icon(
-                            Iconsax.edit,
-                            size: MBGSizes.iconSm,
-                            color: MBGColors.primary,
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          minimumSize: const Size(0, 32),
+                          padding: EdgeInsets.zero,
+                          backgroundColor:
+                              MBGColors.primary.withValues(alpha: 0.15),
+                          side: BorderSide(
+                              color:
+                                  MBGColors.primary.withValues(alpha: 0.7)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.circular(MBGSizes.borderRadiusSm),
                           ),
                         ),
+                        onPressed: () =>
+                            Get.to(() => DapurKaryawanEdit(karyawan: karyawan)),
+                        child: const Icon(Iconsax.edit,
+                            size: MBGSizes.iconSm, color: MBGColors.primary),
                       ),
                     ),
+
                     const SizedBox(width: MBGSizes.spaceBtwItems / 2),
-                    // Delete Button
+
+                    // Delete
                     Expanded(
-                      child: SizedBox(
-                        height: 30,
-                        child: OutlinedButton(
-                          style: OutlinedButton.styleFrom(
-                            padding: EdgeInsets.zero,
-                            backgroundColor: Colors.red.withValues(alpha: 0.15),
-                            side: BorderSide(
-                              color: Colors.red.withValues(alpha: 0.7),
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                MBGSizes.borderRadiusSm,
-                              ),
-                            ),
-                          ),
-                          onPressed: () {
-                            Get.dialog(
-                              DapurKaryawanDelete(karyawan: karyawan),
-                              barrierDismissible: false,
-                            );
-                          },
-                          child: const Icon(
-                            Iconsax.trash,
-                            size: MBGSizes.iconSm,
-                            color: Colors.red,
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          minimumSize: const Size(0, 32),
+                          padding: EdgeInsets.zero,
+                          backgroundColor: Colors.red.withValues(alpha: 0.15),
+                          side: BorderSide(
+                              color: Colors.red.withValues(alpha: 0.7)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.circular(MBGSizes.borderRadiusSm),
                           ),
                         ),
+                        onPressed: () => Get.dialog(
+                          DapurKaryawanDelete(karyawan: karyawan),
+                          barrierDismissible: false,
+                        ),
+                        child: const Icon(Iconsax.trash,
+                            size: MBGSizes.iconSm, color: Colors.red),
                       ),
                     ),
                   ],
-                ),
+                )
               ],
             ),
           ),
@@ -201,4 +189,9 @@ class DapurKaryawanCard extends StatelessWidget {
       ),
     );
   }
+
+  Widget _fallbackAvatar() => Container(
+        color: MBGColors.grey,
+        child: const Icon(Iconsax.profile, size: MBGSizes.iconLg),
+      );
 }

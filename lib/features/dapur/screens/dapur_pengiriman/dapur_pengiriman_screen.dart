@@ -11,151 +11,162 @@ import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
 import 'package:mbg_mobile_app/utils/popups/loaders.dart';
 
-/// Main pengiriman management screen - Dumb UI with hardcoded data
 class DapurPengirimanScreen extends StatelessWidget {
   const DapurPengirimanScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final DapurPengirimanController dapurPengirimanController = Get.put(
-      DapurPengirimanController(),
-    );
+    final controller = Get.put(DapurPengirimanController());
+
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = isDark ? Colors.black : Colors.white;
 
     return Scaffold(
-      body: Padding(
-        padding: MBGSpacingStyles.homeScreenPadding,
-        child: Column(
-          children: [
-            Obx(() {
-              if (dapurPengirimanController.isLoading.value &&
-                  dapurPengirimanController.sekolahList.isEmpty) {
-                return const Align(
-                  alignment: Alignment.centerLeft,
-                  child: SizedBox(
-                    height: 32,
-                    width: 32,
-                    child: CircularProgressIndicator(strokeWidth: 2),
+      backgroundColor: bgColor,
+      body: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return Padding(
+              padding: MBGSpacingStyles.homeScreenPadding,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  /// ===============================
+                  ///          DROPDOWN SEKOLAH
+                  /// ===============================
+                  Obx(() {
+                    if (controller.isLoading.value &&
+                        controller.sekolahList.isEmpty) {
+                      return const SizedBox(
+                        height: 32,
+                        width: 32,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      );
+                    }
+
+                    if (controller.sekolahList.isEmpty) {
+                      return Text(
+                        'Belum ada sekolah yang dilayani',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      );
+                    }
+
+                    return InputDecorator(
+                      decoration: InputDecoration(
+                        labelText: 'Sekolah',
+                        prefixIcon: const Icon(Iconsax.building_3),
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color:
+                                isDark ? Colors.white24 : Colors.grey.shade400,
+                          ),
+                        ),
+                      ),
+                      child: Text(
+                        controller.sekolahNama ?? '',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    );
+                  }),
+
+                  const SizedBox(height: MBGSizes.spaceBtwItems),
+
+                  /// ===============================
+                  ///            CHIP FILTER
+                  /// ===============================
+                  Obx(
+                    () => SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          MBChipFilter(
+                            chipFilterString:
+                                'Semua (${controller.totalCount})',
+                            chipFilterColor: Colors.blue,
+                            chipFilterIcon: Iconsax.category,
+                            isSelected:
+                                controller.selectedFilter.value == 'all',
+                            onTap: () => controller.setFilter('all'),
+                          ),
+                          const SizedBox(width: MBGSizes.spaceBtwItems),
+                          MBChipFilter(
+                            chipFilterString:
+                                'Pending (${controller.pendingCount})',
+                            chipFilterColor: Colors.orange,
+                            chipFilterIcon: Iconsax.clock,
+                            isSelected:
+                                controller.selectedFilter.value == 'pending',
+                            onTap: () => controller.setFilter('pending'),
+                          ),
+                          const SizedBox(width: MBGSizes.spaceBtwItems),
+                          MBChipFilter(
+                            chipFilterString:
+                                'Dikirim (${controller.inTransitCount})',
+                            chipFilterColor: Colors.purple,
+                            chipFilterIcon: Iconsax.truck_fast,
+                            isSelected:
+                                controller.selectedFilter.value == 'in_transit',
+                            onTap: () => controller.setFilter('in_transit'),
+                          ),
+                          const SizedBox(width: MBGSizes.spaceBtwItems),
+                          MBChipFilter(
+                            chipFilterString:
+                                'Selesai (${controller.completedCount})',
+                            chipFilterColor: Colors.green,
+                            chipFilterIcon: Iconsax.tick_circle,
+                            isSelected:
+                                controller.selectedFilter.value == 'completed',
+                            onTap: () => controller.setFilter('completed'),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                );
-              }
 
-              if (dapurPengirimanController.sekolahList.isEmpty) {
-                return Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Belum ada sekolah yang dilayani',
-                    style: Theme.of(context).textTheme.bodyMedium,
+                  const SizedBox(height: MBGSizes.spaceBtwItems),
+
+                  /// ===============================
+                  ///        LIST PENGIRIMAN
+                  /// ===============================
+                  Expanded(
+                    child: Obx(() {
+                      if (controller.isLoading.value) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+
+                      final list = controller.filteredPengiriman;
+
+                      if (list.isEmpty) {
+                        return const DapurPengirimanEmpty();
+                      }
+
+                      return RefreshIndicator(
+                        color: MBGColors.primary,
+                        onRefresh: controller.refreshPengiriman,
+                        child: ListView.builder(
+                          padding: const EdgeInsets.only(bottom: 80),
+                          itemCount: list.length,
+                          itemBuilder: (context, i) =>
+                              DapurPengirimanCard(pengiriman: list[i]),
+                        ),
+                      );
+                    }),
                   ),
-                );
-              }
-
-              final sekolahNama = dapurPengirimanController.sekolahNama ?? '';
-              return InputDecorator(
-                decoration: const InputDecoration(
-                  labelText: 'Sekolah',
-                  prefixIcon: Icon(Iconsax.building_3),
-                  border: OutlineInputBorder(),
-                ),
-                child: Text(
-                  sekolahNama,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-              );
-            }),
-
-            const SizedBox(height: MBGSizes.spaceBtwItems),
-
-            // Chip Filter Section
-            Obx(
-              () => SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    MBChipFilter(
-                      chipFilterString:
-                          'Semua (${dapurPengirimanController.totalCount})',
-                      chipFilterColor: Colors.blue,
-                      chipFilterIcon: Iconsax.category,
-                      isSelected:
-                          dapurPengirimanController.selectedFilter.value ==
-                          'all',
-                      onTap: () => dapurPengirimanController.setFilter('all'),
-                    ),
-                    const SizedBox(width: MBGSizes.spaceBtwItems),
-                    MBChipFilter(
-                      chipFilterString:
-                          'Pending (${dapurPengirimanController.pendingCount})',
-                      chipFilterColor: Colors.orange,
-                      chipFilterIcon: Iconsax.clock,
-                      isSelected:
-                          dapurPengirimanController.selectedFilter.value ==
-                          'pending',
-                      onTap: () =>
-                          dapurPengirimanController.setFilter('pending'),
-                    ),
-                    const SizedBox(width: MBGSizes.spaceBtwItems),
-                    MBChipFilter(
-                      chipFilterString:
-                          'Dikirim (${dapurPengirimanController.inTransitCount})',
-                      chipFilterColor: Colors.purple,
-                      chipFilterIcon: Iconsax.truck_fast,
-                      isSelected:
-                          dapurPengirimanController.selectedFilter.value ==
-                          'in_transit',
-                      onTap: () =>
-                          dapurPengirimanController.setFilter('in_transit'),
-                    ),
-                    const SizedBox(width: MBGSizes.spaceBtwItems),
-                    MBChipFilter(
-                      chipFilterString:
-                          'Selesai (${dapurPengirimanController.completedCount})',
-                      chipFilterColor: Colors.green,
-                      chipFilterIcon: Iconsax.tick_circle,
-                      isSelected:
-                          dapurPengirimanController.selectedFilter.value ==
-                          'completed',
-                      onTap: () =>
-                          dapurPengirimanController.setFilter('completed'),
-                    ),
-                  ],
-                ),
+                ],
               ),
-            ),
-
-            const SizedBox(height: MBGSizes.spaceBtwItems),
-
-            // List Section
-            Expanded(
-              child: Obx(() {
-                if (dapurPengirimanController.isLoading.value) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                final list = dapurPengirimanController.filteredPengiriman;
-                if (list.isEmpty) {
-                  return const DapurPengirimanEmpty();
-                }
-
-                return RefreshIndicator(
-                  onRefresh: dapurPengirimanController.refreshPengiriman,
-                  color: MBGColors.primary,
-                  child: ListView.builder(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    itemCount: list.length,
-                    itemBuilder: (context, index) {
-                      final pengiriman = list[index];
-                      return DapurPengirimanCard(pengiriman: pengiriman);
-                    },
-                  ),
-                );
-              }),
-            ),
-          ],
+            );
+          },
         ),
       ),
+
+      /// ===============================
+      ///         TOMBOL FAB
+      /// ===============================
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          if (dapurPengirimanController.sekolahId == null) {
+          if (controller.sekolahId == null) {
             MBGLoaders.errorSnackBar(
               title: 'Sekolah belum tersedia',
               message:
@@ -169,9 +180,10 @@ class DapurPengirimanScreen extends StatelessWidget {
         icon: Icon(Iconsax.profile_add, color: MBGColors.white),
         label: Text(
           'Buat Pengiriman',
-          style: Theme.of(
-            context,
-          ).textTheme.bodyMedium?.copyWith(color: MBGColors.white),
+          style: Theme.of(context)
+              .textTheme
+              .bodyMedium
+              ?.copyWith(color: MBGColors.white),
         ),
       ),
     );

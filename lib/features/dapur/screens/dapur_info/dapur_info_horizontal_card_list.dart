@@ -40,8 +40,8 @@ class DapurInfoHorizontalCardList<T> extends StatelessWidget {
               Text(
                 emptyMessage,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: MBGColors.textSecondary,
-                ),
+                      color: MBGColors.textSecondary,
+                    ),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -52,19 +52,26 @@ class DapurInfoHorizontalCardList<T> extends StatelessWidget {
 
     return SizedBox(
       height: listHeight,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: items.length,
-        itemBuilder: (context, index) {
-          final T item = items[index];
-          final Widget child = itemBuilder(context, item, index);
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemCount: items.length,
+            separatorBuilder: (_, __) =>
+                const SizedBox(width: MBGSizes.spaceBtwItems),
+            itemBuilder: (context, index) {
+              final T item = items[index];
+              final Widget child = itemBuilder(context, item, index);
 
-          return Padding(
-            padding: EdgeInsets.only(
-              right: MBGSizes.spaceBtwItems,
-              left: index == 0 ? 0 : 0,
-            ),
-            child: child,
+              return ConstrainedBox(
+                constraints: BoxConstraints(
+                  // ⛔ Mencegah card lebih tinggi dari listHeight
+                  maxHeight: constraints.maxHeight,
+                ),
+                child: child,
+              );
+            },
+            padding: const EdgeInsets.only(left: MBGSizes.defaultSpace),
           );
         },
       ),

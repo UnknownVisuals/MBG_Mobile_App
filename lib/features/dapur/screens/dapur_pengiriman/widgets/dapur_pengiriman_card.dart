@@ -16,6 +16,7 @@ class DapurPengirimanCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final statusColor = _getStatusColor(pengiriman.status);
     final statusText = _getStatusText(pengiriman.status);
     final statusIcon = _getStatusIcon(pengiriman.status);
@@ -23,8 +24,8 @@ class DapurPengirimanCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: MBGSizes.spaceBtwItems),
       decoration: BoxDecoration(
-        color: MBGColors.light,
-        border: Border.all(color: MBGColors.borderPrimary),
+        color: theme.cardColor, // 🟢 Adaptif Light/Dark
+        border: Border.all(color: theme.dividerColor), // 🟢 Adaptif
         borderRadius: BorderRadius.circular(MBGSizes.borderRadiusMd),
       ),
       child: Padding(
@@ -32,45 +33,44 @@ class DapurPengirimanCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header with school name and status
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            // --- HEADER SEKOLAH ---
+            Text(
+              pengiriman.sekolahNama ?? 'Sekolah',
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+
+            const SizedBox(height: 4),
+
+            Row(
               children: [
-                Text(
-                  pengiriman.sekolahNama ?? 'Sekolah',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+                Icon(
+                  Iconsax.location,
+                  size: MBGSizes.iconSm,
+                  color: theme.iconTheme.color?.withOpacity(0.7),
                 ),
-                Row(
-                  children: [
-                    Icon(
-                      Iconsax.location,
-                      size: MBGSizes.iconSm,
-                      color: MBGColors.textSecondary,
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    pengiriman.sekolahAlamat ?? '---',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.textTheme.bodyMedium!.color!.withOpacity(0.7),
                     ),
-                    const SizedBox(width: MBGSizes.spaceBtwItems / 2),
-                    Expanded(
-                      child: Text(
-                        pengiriman.sekolahAlamat ?? '---',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: MBGColors.textSecondary,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
               ],
             ),
 
-            const SizedBox(height: MBGSizes.spaceBtwItems / 2),
+            const SizedBox(height: MBGSizes.spaceBtwItems),
 
+            // --- STATUS CHIP ---
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: statusColor.withValues(alpha: 0.1),
+                color: statusColor.withOpacity(0.12),
                 border: Border.all(color: statusColor),
                 borderRadius: BorderRadius.circular(MBGSizes.borderRadiusLg),
               ),
@@ -91,107 +91,34 @@ class DapurPengirimanCard extends StatelessWidget {
               ),
             ),
 
-            const Divider(height: MBGSizes.spaceBtwSections),
+            const SizedBox(height: MBGSizes.spaceBtwSections),
 
-            // Tray and Keranjang info
+            // --- TRAY & KERANJANG ---
             Row(
               children: [
-                Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.all(MBGSizes.defaultSpace / 2),
-                    decoration: BoxDecoration(
-                      color: MBGColors.primary.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Iconsax.box,
-                          size: MBGSizes.iconMd,
-                          color: MBGColors.primary,
-                        ),
-                        const SizedBox(width: MBGSizes.spaceBtwItems / 2),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Tray',
-                              style: Theme.of(context).textTheme.bodySmall
-                                  ?.copyWith(color: MBGColors.textSecondary),
-                            ),
-                            Text(
-                              '${pengiriman.jumlahTray}',
-                              style: Theme.of(context).textTheme.bodyMedium
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: MBGColors.primary,
-                                  ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+                Expanded(child: _infoBox(theme, 'Tray', pengiriman.jumlahTray, MBGColors.primary)),
                 const SizedBox(width: MBGSizes.spaceBtwItems),
-                Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.all(MBGSizes.defaultSpace / 2),
-                    decoration: BoxDecoration(
-                      color: MBGColors.success.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Iconsax.box_1,
-                          size: MBGSizes.iconMd,
-                          color: MBGColors.success,
-                        ),
-                        const SizedBox(width: MBGSizes.spaceBtwItems / 2),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Keranjang',
-                              style: Theme.of(context).textTheme.bodySmall
-                                  ?.copyWith(color: MBGColors.textSecondary),
-                            ),
-                            Text(
-                              '${pengiriman.jumlahKeranjang}',
-                              style: Theme.of(context).textTheme.bodyMedium
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: MBGColors.success,
-                                  ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+                Expanded(child: _infoBox(theme, 'Keranjang', pengiriman.jumlahKeranjang, MBGColors.success)),
               ],
             ),
 
             const SizedBox(height: MBGSizes.spaceBtwItems),
 
+            // --- WAKTU ---
             Container(
               padding: const EdgeInsets.all(MBGSizes.defaultSpace / 2),
               decoration: BoxDecoration(
-                color: MBGColors.primary.withValues(alpha: 0.06),
+                color: theme.colorScheme.primary.withOpacity(0.06),
                 borderRadius: BorderRadius.circular(MBGSizes.borderRadiusMd),
               ),
               child: Row(
                 children: [
-                  const Icon(Iconsax.calendar_1, size: MBGSizes.iconSm),
-                  const SizedBox(width: MBGSizes.spaceBtwItems / 2),
+                  Icon(Iconsax.calendar_1, size: MBGSizes.iconSm, color: theme.iconTheme.color),
+                  const SizedBox(width: 6),
                   Expanded(
                     child: Text(
-                      DateFormat(
-                        'dd MMM yyyy, HH:mm',
-                      ).format(pengiriman.createdAt.toLocal()),
-                      style: Theme.of(context).textTheme.bodySmall,
+                      DateFormat('dd MMM yyyy, HH:mm').format(pengiriman.createdAt.toLocal()),
+                      style: theme.textTheme.bodySmall,
                     ),
                   ),
                 ],
@@ -200,7 +127,7 @@ class DapurPengirimanCard extends StatelessWidget {
 
             const SizedBox(height: MBGSizes.spaceBtwItems),
 
-            // Action buttons
+            // --- BUTTON BAR ---
             Row(
               children: [
                 Expanded(
@@ -213,14 +140,8 @@ class DapurPengirimanCard extends StatelessWidget {
                         );
                       }
                     },
-                    icon: const Icon(
-                      Iconsax.scan_barcode,
-                      size: MBGSizes.iconMd,
-                    ),
-                    label: Text(
-                      'QR Code',
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
+                    icon: Icon(Iconsax.scan_barcode, color: theme.iconTheme.color),
+                    label: Text('QR Code'),
                   ),
                 ),
                 if (_isPendingStatus(pengiriman.status)) ...[
@@ -230,26 +151,59 @@ class DapurPengirimanCard extends StatelessWidget {
                       final controller = Get.find<DapurPengirimanController>();
                       showDialog(
                         context: context,
-                        builder: (context) => DapurPengirimanDelete(
+                        builder: (_) => DapurPengirimanDelete(
                           pengirimanId: pengiriman.id,
                           controller: controller,
                         ),
                       );
                     },
                     icon: const Icon(Iconsax.trash, color: MBGColors.error),
-                    tooltip: 'Hapus',
-                  ),
-                ],
+                  )
+                ]
               ],
-            ),
+            )
           ],
         ),
       ),
     );
   }
 
-  Color _getStatusColor(String status) {
-    switch (status.toUpperCase()) {
+  // --- Widget helper untuk tray & keranjang ---
+  Widget _infoBox(ThemeData theme, String title, int value, Color brandColor) {
+    return Container(
+      padding: const EdgeInsets.all(MBGSizes.defaultSpace / 2),
+      decoration: BoxDecoration(
+        color: brandColor.withOpacity(0.12),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        children: [
+          Icon(Iconsax.box, size: MBGSizes.iconMd, color: brandColor),
+          const SizedBox(width: 6),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.textTheme.bodySmall!.color!.withOpacity(0.7),
+                  )),
+              Text(
+                '$value',
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: brandColor,
+                ),
+              ),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
+  // --- STATUS COLOR / TEXT / ICON ---
+  Color _getStatusColor(String s) {
+    switch (s.toUpperCase()) {
       case 'PENDING':
       case 'MENUNGGU_PENGIRIMAN':
       case 'MENUNGGU_PENGAMBILAN':
@@ -268,8 +222,8 @@ class DapurPengirimanCard extends StatelessWidget {
     }
   }
 
-  String _getStatusText(String status) {
-    switch (status.toUpperCase()) {
+  String _getStatusText(String s) {
+    switch (s.toUpperCase()) {
       case 'PENDING':
       case 'MENUNGGU_PENGAMBILAN':
         return 'Menunggu Pengambilan';
@@ -288,13 +242,12 @@ class DapurPengirimanCard extends StatelessWidget {
         return 'Diterima';
       case 'SELESAI':
         return 'Selesai';
-      default:
-        return status;
     }
+    return s;
   }
 
-  IconData _getStatusIcon(String status) {
-    switch (status.toUpperCase()) {
+  IconData _getStatusIcon(String s) {
+    switch (s.toUpperCase()) {
       case 'PENDING':
       case 'MENUNGGU_PENGIRIMAN':
       case 'MENUNGGU_PENGAMBILAN':
@@ -313,14 +266,11 @@ class DapurPengirimanCard extends StatelessWidget {
     }
   }
 
-  bool _isPendingStatus(String status) {
-    switch (status.toUpperCase()) {
-      case 'PENDING':
-      case 'MENUNGGU_PENGIRIMAN':
-      case 'MENUNGGU_PENGAMBILAN':
-        return true;
-      default:
-        return false;
-    }
+  bool _isPendingStatus(String s) {
+    return [
+      'PENDING',
+      'MENUNGGU_PENGIRIMAN',
+      'MENUNGGU_PENGAMBILAN',
+    ].contains(s.toUpperCase());
   }
 }
