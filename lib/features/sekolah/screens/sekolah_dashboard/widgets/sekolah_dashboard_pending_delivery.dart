@@ -9,20 +9,26 @@ class SekolahDashboardPendingDelivery extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final color = theme.colorScheme;
+
     return Container(
       padding: const EdgeInsets.all(MBGSizes.md),
       decoration: BoxDecoration(
-        color: MBGColors.white,
+        color: color.surface, // adaptif
         borderRadius: BorderRadius.circular(MBGSizes.cardRadiusLg),
         boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            spreadRadius: 2,
-            offset: const Offset(0, 4),
-          ),
+          if (theme.brightness == Brightness.light)
+            BoxShadow(
+              color: color.shadow.withOpacity(0.08),
+              blurRadius: 10,
+              spreadRadius: 2,
+              offset: const Offset(0, 4),
+            ),
         ],
-        border: Border.all(color: MBGColors.grey.withOpacity(0.3)),
+        border: Border.all(
+          color: color.outlineVariant.withOpacity(0.4), // adaptif
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -36,20 +42,23 @@ class SekolahDashboardPendingDelivery extends StatelessWidget {
                   color: MBGColors.warning.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Icon(Iconsax.truck_fast,
-                    color: MBGColors.warning, size: 22),
+                child: const Icon(
+                  Iconsax.truck_fast,
+                  color: MBGColors.warning,
+                  size: 22,
+                ),
               ),
               const SizedBox(width: MBGSizes.spaceBtwItems),
-              const Text(
+              Text(
                 'Pending Deliveries',
-                style: TextStyle(
-                  fontSize: 16,
+                style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w700,
-                  color: MBGColors.dark,
+                  color: color.onSurface, // adaptif
                 ),
               ),
             ],
           ),
+
           const SizedBox(height: MBGSizes.spaceBtwItems),
 
           // === List pengiriman dummy ===
@@ -59,14 +68,14 @@ class SekolahDashboardPendingDelivery extends StatelessWidget {
             icon: Iconsax.timer_1,
             color: MBGColors.warning,
           ),
-          const Divider(),
+          Divider(color: color.outlineVariant.withOpacity(0.4)),
           _PendingItem(
             name: 'Menu Siang',
             status: 'Belum Diterima',
             icon: Iconsax.truck_fast,
             color: MBGColors.info,
           ),
-          const Divider(),
+          Divider(color: color.outlineVariant.withOpacity(0.4)),
           _PendingItem(
             name: 'Tambahan Buah',
             status: 'Menunggu Konfirmasi',
@@ -95,28 +104,32 @@ class _PendingItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final cs = theme.colorScheme;
+
     return ListTile(
       dense: true,
       contentPadding: EdgeInsets.zero,
       leading: Icon(icon, color: color, size: 22),
       title: Text(
         name,
-        style: const TextStyle(
-          fontSize: 14,
+        style: theme.textTheme.bodyMedium?.copyWith(
           fontWeight: FontWeight.w600,
-          color: MBGColors.dark,
+          color: cs.onSurface, // adaptif
         ),
       ),
       subtitle: Text(
         status,
-        style: TextStyle(
-          fontSize: 13,
+        style: theme.textTheme.bodySmall?.copyWith(
           color: color,
           fontWeight: FontWeight.w500,
         ),
       ),
-      trailing: const Icon(Iconsax.arrow_right_3,
-          size: 18, color: MBGColors.grey),
+      trailing: Icon(
+        Iconsax.arrow_right_3,
+        size: 18,
+        color: cs.onSurfaceVariant, // adaptif
+      ),
     );
   }
 }

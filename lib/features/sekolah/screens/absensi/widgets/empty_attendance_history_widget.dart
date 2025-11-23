@@ -2,28 +2,41 @@ import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import '../../../../../utils/constants/sizes.dart';
 
-/// Empty attendance history widget
+/// Empty attendance history widget (theme-adaptive)
 class EmptyAttendanceHistoryWidget extends StatelessWidget {
   const EmptyAttendanceHistoryWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Iconsax.note, size: 60, color: Colors.grey[300]),
+          Icon(
+            Iconsax.note,
+            size: 60,
+            color: colors.onSurfaceVariant.withOpacity(0.3), // adaptive
+          ),
+
           const SizedBox(height: MBGSizes.spaceBtwItems),
+
           Text(
             'No Attendance Records',
-            style: Theme.of(context).textTheme.titleMedium,
+            style: theme.textTheme.titleMedium?.copyWith(
+              color: colors.onSurface,
+            ),
           ),
+
           const SizedBox(height: MBGSizes.sm),
+
           Text(
             'Start recording daily attendance',
-            style: Theme.of(
-              context,
-            ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: colors.onSurfaceVariant, // adaptive
+            ),
           ),
         ],
       ),

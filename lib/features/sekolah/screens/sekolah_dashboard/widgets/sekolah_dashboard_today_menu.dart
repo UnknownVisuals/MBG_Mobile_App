@@ -9,43 +9,56 @@ class SekolahDashboardTodayMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Menu Hari Ini',
-          style: Theme.of(context)
-              .textTheme
-              .titleLarge
-              ?.copyWith(fontWeight: FontWeight.bold),
+          style: theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
         ),
         const SizedBox(height: MBGSizes.spaceBtwItems),
+
+        // ====== CARD CONTAINER ADAPTIF ======
         Container(
           padding: const EdgeInsets.all(MBGSizes.md),
           decoration: BoxDecoration(
-            color: Colors.grey[100],
+            color: scheme.surfaceContainerHighest, // adaptive M3 container
             borderRadius: BorderRadius.circular(MBGSizes.cardRadiusMd),
+            border: Border.all(
+              color: scheme.outline.withOpacity(0.3), // soft border
+            ),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
-                  Icon(Iconsax.note, color: MBGColors.primary, size: 28),
+                  Icon(
+                    Iconsax.note,
+                    size: 28,
+                    color: scheme.primary, // adaptive icon color
+                  ),
                   const SizedBox(width: MBGSizes.sm),
                   Text(
                     'Nasi Ayam & Sayur Sop',
-                    style: Theme.of(context).textTheme.titleMedium,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      color: scheme.onSurface,
+                    ),
                   ),
                 ],
               ),
               const SizedBox(height: MBGSizes.sm),
+
               Text(
                 'Kalori: 450 kkal | Protein: 25g | Karbo: 55g',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodySmall
-                    ?.copyWith(color: Colors.grey[600]),
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: scheme.onSurfaceVariant, // adaptive secondary text
+                ),
               ),
             ],
           ),

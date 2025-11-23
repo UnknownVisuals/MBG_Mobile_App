@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:mbg_mobile_app/features/dapur/screens/dapur_checkpoint/widgets/dapur_checkpoint_add.dart';
-import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
 import 'package:mbg_mobile_app/features/authentication/controllers/user_controller.dart';
 import 'package:mbg_mobile_app/features/dapur/controllers/dapur_checkpoint_controller.dart';
@@ -18,6 +17,15 @@ class DapurCheckpointEventCardActionButton extends StatelessWidget {
     final DapurCheckpointController checkpointController =
         Get.find<DapurCheckpointController>();
 
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    // Define colors based on theme
+    final errorColor = theme.colorScheme.error;
+    final backgroundColor = isDark ? Colors.grey[800] : Colors.grey[100];
+    final buttonColor = theme.colorScheme.primary;
+    final buttonTextColor = theme.colorScheme.onPrimary;
+
     return Obx(() {
       final userRole = userController.userModel.value?.role;
       final canPerform =
@@ -29,16 +37,16 @@ class DapurCheckpointEventCardActionButton extends StatelessWidget {
         return Container(
           padding: const EdgeInsets.all(MBGSizes.fontSizeSm),
           decoration: BoxDecoration(
-            color: MBGColors.error.withValues(alpha: 0.08),
+            color: errorColor.withOpacity(0.08),
             borderRadius: BorderRadius.circular(MBGSizes.borderRadiusSm + 6),
-            border: Border.all(color: MBGColors.error.withValues(alpha: 0.3)),
+            border: Border.all(color: errorColor.withOpacity(0.3)),
           ),
           child: Row(
             children: [
               Icon(
                 Iconsax.lock,
                 size: MBGSizes.iconSm + 4,
-                color: MBGColors.error,
+                color: errorColor,
               ),
               const SizedBox(width: MBGSizes.md - 4),
               Expanded(
@@ -47,16 +55,16 @@ class DapurCheckpointEventCardActionButton extends StatelessWidget {
                   children: [
                     Text(
                       'Akses Ditolak',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: MBGColors.error,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: errorColor,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       'Anda tidak memiliki izin untuk melakukan checkpoint ini',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: MBGColors.error.withValues(alpha: 0.8),
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: errorColor.withOpacity(0.8),
                         fontSize: 12,
                       ),
                     ),
@@ -74,8 +82,8 @@ class DapurCheckpointEventCardActionButton extends StatelessWidget {
         child: ElevatedButton.icon(
           onPressed: () => Get.to(DapurCheckpointAdd(checkpointType: tipe)),
           style: ElevatedButton.styleFrom(
-            backgroundColor: MBGColors.primary,
-            foregroundColor: MBGColors.white,
+            backgroundColor: buttonColor,
+            foregroundColor: buttonTextColor,
             padding: const EdgeInsets.symmetric(vertical: MBGSizes.fontSizeSm),
             elevation: 0,
             shape: RoundedRectangleBorder(
@@ -85,8 +93,8 @@ class DapurCheckpointEventCardActionButton extends StatelessWidget {
           icon: Icon(Iconsax.play_circle, size: MBGSizes.iconSm + 4),
           label: Text(
             'Mulai Proses',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Colors.white,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: buttonTextColor,
               fontWeight: FontWeight.w600,
             ),
           ),
