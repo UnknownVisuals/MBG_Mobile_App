@@ -1,35 +1,41 @@
 class SekolahAlergiModel {
   SekolahAlergiModel({
     required this.id,
-    required this.namaAlergi,
     required this.siswaId,
-    required this.createdAt,
-    required this.updatedAt,
+    required this.namaAlergi,
+    this.createdAt,
+    this.updatedAt,
   });
 
   final String id;
-  final String namaAlergi;
   final String siswaId;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final String namaAlergi;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   factory SekolahAlergiModel.fromJson(Map<String, dynamic> json) {
+    DateTime? parseDateTime(dynamic value) {
+      if (value == null) return null;
+      if (value is DateTime) return value;
+      return DateTime.tryParse(value.toString());
+    }
+
     return SekolahAlergiModel(
-      id: json['id'],
-      namaAlergi: json['namaAlergi'],
-      siswaId: json['siswaId'],
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: DateTime.parse(json['updatedAt']),
+      id: json['id'] as String,
+      siswaId: json['siswaId'] as String,
+      namaAlergi: json['namaAlergi'] as String? ?? '',
+      createdAt: parseDateTime(json['createdAt']),
+      updatedAt: parseDateTime(json['updatedAt']),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'namaAlergi': namaAlergi,
       'siswaId': siswaId,
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt.toIso8601String(),
+      'namaAlergi': namaAlergi,
+      if (createdAt != null) 'createdAt': createdAt!.toIso8601String(),
+      if (updatedAt != null) 'updatedAt': updatedAt!.toIso8601String(),
     };
   }
 }

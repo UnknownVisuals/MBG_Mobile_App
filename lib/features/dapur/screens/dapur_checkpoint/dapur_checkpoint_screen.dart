@@ -6,7 +6,6 @@ import 'package:mbg_mobile_app/features/dapur/controllers/dapur_checkpoint_contr
 import 'package:mbg_mobile_app/features/dapur/controllers/dapur_menu_harian_controller.dart';
 import 'package:mbg_mobile_app/features/dapur/screens/dapur_checkpoint/widgets/dapur_checkpoint_list.dart';
 import 'package:mbg_mobile_app/features/dapur/screens/dapur_checkpoint/widgets/dapur_checkpoint_summary.dart';
-import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
 
 class DapurCheckpointScreen extends StatelessWidget {
@@ -24,6 +23,16 @@ class DapurCheckpointScreen extends StatelessWidget {
 
     dapurCheckpointController.initializeWithMenuId(menuHarianId);
 
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    // Theme-aware colors
+    final dropdownBgColor = isDark ? Colors.grey[850] : Colors.white;
+    final dropdownBorderColor =
+        isDark ? Colors.grey[700]! : Colors.grey[300]!; // border
+    final dropdownHintColor = isDark ? Colors.grey[400] : Colors.grey[700];
+    final dateTextColor = isDark ? Colors.grey[400] : Colors.grey[700];
+
     return Scaffold(
       body: Obx(() {
         // Show placeholder if no menu harian available
@@ -38,9 +47,8 @@ class DapurCheckpointScreen extends StatelessWidget {
                   const SizedBox(height: MBGSizes.spaceBtwItems),
                   Text(
                     'Tidak ada menu harian tersedia',
-                    style: Theme.of(
-                      context,
-                    ).textTheme.titleMedium?.copyWith(color: Colors.grey[600]),
+                    style: theme.textTheme.titleMedium
+                        ?.copyWith(color: dropdownHintColor),
                     textAlign: TextAlign.center,
                   ),
                 ],
@@ -72,9 +80,10 @@ class DapurCheckpointScreen extends StatelessWidget {
                     vertical: MBGSizes.sm,
                   ),
                   decoration: BoxDecoration(
-                    color: MBGColors.white,
-                    borderRadius: BorderRadius.circular(MBGSizes.cardRadiusMd),
-                    border: Border.all(color: MBGColors.borderPrimary),
+                    color: dropdownBgColor,
+                    borderRadius:
+                        BorderRadius.circular(MBGSizes.cardRadiusMd),
+                    border: Border.all(color: dropdownBorderColor),
                   ),
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<String>(
@@ -83,17 +92,14 @@ class DapurCheckpointScreen extends StatelessWidget {
                           dapurCheckpointController.currentMenuHarianId.value,
                       hint: Text(
                         'Pilih Menu Harian',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: MBGColors.darkGrey,
-                        ),
+                        style: theme.textTheme.bodyMedium
+                            ?.copyWith(color: dropdownHintColor),
                       ),
-                      icon: const Icon(
+                      icon: Icon(
                         Icons.keyboard_arrow_down,
-                        color: MBGColors.primary,
+                        color: theme.colorScheme.primary,
                       ),
-                      items: menuHarianController.menuHarianList.map((
-                        menuHarian,
-                      ) {
+                      items: menuHarianController.menuHarianList.map((menuHarian) {
                         return DropdownMenuItem<String>(
                           value: menuHarian.id,
                           child: Column(
@@ -102,17 +108,15 @@ class DapurCheckpointScreen extends StatelessWidget {
                             children: [
                               Text(
                                 menuHarian.namaMenu,
-                                style: Theme.of(context).textTheme.titleSmall
+                                style: theme.textTheme.titleSmall
                                     ?.copyWith(fontWeight: FontWeight.w600),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
                               Text(
-                                DateFormat(
-                                  'dd MMM yyyy',
-                                ).format(menuHarian.tanggal),
-                                style: Theme.of(context).textTheme.bodySmall
-                                    ?.copyWith(color: MBGColors.darkGrey),
+                                DateFormat('dd MMM yyyy').format(menuHarian.tanggal),
+                                style: theme.textTheme.bodySmall
+                                    ?.copyWith(color: dateTextColor),
                               ),
                             ],
                           ),

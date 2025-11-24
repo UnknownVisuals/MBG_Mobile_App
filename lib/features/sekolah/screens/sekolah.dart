@@ -9,8 +9,8 @@ import 'package:mbg_mobile_app/features/sekolah/screens/sekolah_drawer.dart';
 // Screens
 import 'package:mbg_mobile_app/features/sekolah/screens/sekolah_dashboard/sekolah_dashboard_screen.dart';
 import 'package:mbg_mobile_app/features/sekolah/screens/sekolah_info/sekolah_info_screen.dart';
-import 'package:mbg_mobile_app/features/sekolah/screens/sekolah_kelas_management/sekolah_kelas_management_screen.dart';
-import 'package:mbg_mobile_app/features/sekolah/screens/siswa_management/siswa_management_screen.dart';
+import 'package:mbg_mobile_app/features/sekolah/screens/sekolah_kelas/sekolah_kelas_screen.dart';
+import 'package:mbg_mobile_app/features/sekolah/screens/sekolah_siswa/sekolah_siswa_screen.dart';
 import 'package:mbg_mobile_app/features/sekolah/screens/absensi/absensi_screen.dart';
 import 'package:mbg_mobile_app/features/sekolah/screens/receive_delivery/receive_delivery_screen.dart';
 import 'package:mbg_mobile_app/features/sekolah/screens/menu_view/menu_view_screen.dart';
@@ -55,7 +55,7 @@ class SekolahScreen extends StatelessWidget {
             // 2 - Kelas
             SekolahKelasScreen(),
             // 3 - Siswa
-            SiswaManagementScreen(),
+            SekolahSiswaScreen(),
             // 4 - Absensi
             AbsensiScreen(),
             // 5 - Receive Delivery

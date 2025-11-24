@@ -9,24 +9,26 @@ class DapurDashboardDeliveryCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final delivery = {
-      'sekolahNama': 'SDN 01 Jakarta',
+      'sekolahNama': 'SD Negeri 01 Jakarta',
       'jumlahTray': 10,
       'jumlahKeranjang': 5,
       'status': 'PENDING',
+
     };
 
     final statusColor = delivery['status'] == 'PENDING'
-        ? Colors.orange
-        : Colors.blue;
+        ? MBGColors.warning
+        : MBGColors.info;
 
     return Container(
       margin: const EdgeInsets.only(bottom: MBGSizes.spaceBtwItems),
       padding: const EdgeInsets.all(MBGSizes.md),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(MBGSizes.cardRadiusMd),
-        border: Border.all(color: MBGColors.borderPrimary),
+        border: Border.all(color: theme.colorScheme.onSurface.withOpacity(0.4)),
       ),
       child: Row(
         children: [
@@ -34,7 +36,7 @@ class DapurDashboardDeliveryCardWidget extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(MBGSizes.md),
             decoration: BoxDecoration(
-              color: statusColor.withValues(alpha: 0.1),
+               color: statusColor.withOpacity(0.12),
               borderRadius: BorderRadius.circular(MBGSizes.borderRadiusMd),
             ),
             child: Icon(Iconsax.truck, color: statusColor),
@@ -49,13 +51,13 @@ class DapurDashboardDeliveryCardWidget extends StatelessWidget {
               children: [
                 Text(
                   delivery['sekolahNama'].toString(),
-                  style: Theme.of(context).textTheme.bodyMedium,
+                  style: theme.textTheme.bodyMedium,
                 ),
                 const SizedBox(height: 4),
                 Text(
                   '${delivery['jumlahTray']} trays • ${delivery['jumlahKeranjang']} baskets',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: MBGColors.textSecondary,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                     color: theme.hintColor,
                   ),
                 ),
               ],

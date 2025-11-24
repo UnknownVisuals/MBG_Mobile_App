@@ -10,21 +10,25 @@ class DapurCheckpointEventCardHeader extends StatelessWidget {
     super.key,
     required this.tipe,
     required this.status,
-    required this.textColor,
-    required this.iconColor,
-    required this.iconBackgroundColor,
   });
 
   final String tipe;
   final String status;
-  final Color textColor;
-  final Color iconColor;
-  final Color iconBackgroundColor;
 
   @override
   Widget build(BuildContext context) {
     final DapurCheckpointController checkpointController =
         Get.find<DapurCheckpointController>();
+
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    // ---- WARNA ADAPTIF DARI THEME ----
+    final Color textColor = theme.colorScheme.onSurface;
+    final Color iconColor = theme.colorScheme.primary;
+    final Color iconBackgroundColor = isDark
+        ? theme.colorScheme.surfaceVariant.withOpacity(0.3)
+        : theme.colorScheme.primary.withOpacity(0.1);
 
     return Row(
       children: [
@@ -47,12 +51,11 @@ class DapurCheckpointEventCardHeader extends StatelessWidget {
             children: [
               Text(
                 checkpointController.getCheckpointLabel(tipe),
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                style: theme.textTheme.bodyLarge?.copyWith(
                   fontWeight: FontWeight.w600,
                   color: textColor,
                 ),
               ),
-              // Role badges
               DapurCheckpointEventCardRoleBadge(tipe: tipe),
             ],
           ),

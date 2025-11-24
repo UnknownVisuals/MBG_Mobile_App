@@ -15,24 +15,27 @@ class DriverDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final userController = Get.find<UserController>();
-    final logoutController = Get.isRegistered<LogoutController>()
-        ? Get.find<LogoutController>()
-        : Get.put(LogoutController());
-    final driverController = Get.find<DriverController>();
+    final userController = Get.put(UserController());
+    final logoutController = Get.put(LogoutController());
+    final driverController = Get.put(DriverController());
+
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
 
     return Drawer(
-      child: Expanded(
         child: Obx(
           () => SidebarX(
             controller: SidebarXController(
               selectedIndex: driverController.drawerSelectedIndex.value,
               extended: true,
             ),
+            
+            /// ---- THEME ----
             theme: SidebarXTheme(
-              iconTheme: const IconThemeData(color: MBGColors.dark),
+              iconTheme: IconThemeData(color: isDark ? colorScheme.onSurface : MBGColors.dark),
               selectedIconTheme: const IconThemeData(color: MBGColors.white),
-              textStyle: const TextStyle(color: MBGColors.dark),
+              textStyle: TextStyle(color: isDark ? colorScheme.onSurface : MBGColors.dark,),
               selectedTextStyle: const TextStyle(color: MBGColors.white),
               itemTextPadding: const EdgeInsets.only(
                 left: MBGSizes.spaceBtwItems,
@@ -88,7 +91,6 @@ class DriverDrawer extends StatelessWidget {
             showToggleButton: false,
           ),
         ),
-      ),
     );
   }
 }

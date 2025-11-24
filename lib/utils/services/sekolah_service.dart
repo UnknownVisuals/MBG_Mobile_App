@@ -6,9 +6,7 @@ import 'package:mbg_mobile_app/features/sekolah/models/sekolah_absensi_model.dar
 import 'package:mbg_mobile_app/features/sekolah/models/sekolah_alergi_model.dart';
 import 'package:mbg_mobile_app/features/sekolah/models/sekolah_info_model.dart';
 import 'package:mbg_mobile_app/features/sekolah/models/sekolah_kelas_model.dart';
-import 'package:mbg_mobile_app/features/sekolah/models/sekolah_model.dart';
 import 'package:mbg_mobile_app/features/sekolah/models/sekolah_siswa_model.dart';
-import 'package:mbg_mobile_app/features/sekolah/models/sekolah_pengiriman_model.dart';
 import 'package:mbg_mobile_app/utils/http/http_client.dart';
 
 class SekolahService extends GetxService {
@@ -16,18 +14,6 @@ class SekolahService extends GetxService {
     : _httpHelper = httpHelper ?? Get.find<MBGHttpHelper>();
 
   final MBGHttpHelper _httpHelper;
-
-  Future<List<SekolahModel>> getAllSekolah() async {
-    MBGHttpHelper.loadSessionToken();
-    final response = await _httpHelper.getRequest('sekolah');
-
-    if (!_isSuccess(response)) {
-      throw Exception(_responseMessage(response, 'Gagal memuat sekolah'));
-    }
-
-    final data = _extractDataList(response);
-    return data.map(SekolahModel.fromJson).toList();
-  }
 
   Future<List<DapurMenuPlanningModel>> getMenuBySekolah(
     String sekolahId,
@@ -45,23 +31,23 @@ class SekolahService extends GetxService {
     return data.map(DapurMenuPlanningModel.fromJson).toList();
   }
 
-  Future<List<SekolahPengirimanModel>> getPengirimanBySekolah(
-    String sekolahId,
-  ) async {
-    MBGHttpHelper.loadSessionToken();
-    final response = await _httpHelper.getRequest(
-      'sekolah/$sekolahId/pengiriman',
-    );
+  // Future<List<SekolahPengirimanModel>> getPengirimanBySekolah(
+  //   String sekolahId,
+  // ) async {
+  //   MBGHttpHelper.loadSessionToken();
+  //   final response = await _httpHelper.getRequest(
+  //     'sekolah/$sekolahId/pengiriman',
+  //   );
 
-    if (!_isSuccess(response)) {
-      throw Exception(
-        _responseMessage(response, 'Gagal memuat pengiriman sekolah'),
-      );
-    }
+  //   if (!_isSuccess(response)) {
+  //     throw Exception(
+  //       _responseMessage(response, 'Gagal memuat pengiriman sekolah'),
+  //     );
+  //   }
 
-    final data = _extractDataList(response);
-    return data.map(SekolahPengirimanModel.fromJson).toList();
-  }
+  //   final data = _extractDataList(response);
+  //   return data.map(SekolahPengirimanModel.fromJson).toList();
+  // }
 
   Future<Map<String, dynamic>> getTotalAbsensi(
     String sekolahId,
@@ -97,6 +83,18 @@ class SekolahService extends GetxService {
 
     final data = _extractDataList(response);
     return data.map(SekolahSiswaModel.fromJson).toList();
+  }
+
+  Future<SekolahSiswaModel> getSiswaById(String siswaId) async {
+    MBGHttpHelper.loadSessionToken();
+    final response = await _httpHelper.getRequest('siswa/$siswaId');
+
+    if (!_isSuccess(response)) {
+      throw Exception(_responseMessage(response, 'Gagal memuat siswa'));
+    }
+
+    final data = _extractDataObject(response);
+    return SekolahSiswaModel.fromJson(data);
   }
 
   Future<List<SekolahKelasModel>> getKelasBySekolah(String sekolahId) async {
@@ -226,6 +224,44 @@ class SekolahService extends GetxService {
     return SekolahSiswaModel.fromJson(data);
   }
 
+  Future<SekolahSiswaModel> updateSiswa({
+    required String siswaId,
+    required String nama,
+    required String nis,
+    required String jenisKelamin,
+    required int umur,
+    required double tinggiBadan,
+    required double beratBadan,
+    required String kelasId,
+    File? foto,
+  }) async {
+    MBGHttpHelper.loadSessionToken();
+    final fields = {
+      'nama': nama,
+      'nis': nis,
+      'jenisKelamin': jenisKelamin,
+      'umur': umur.toString(),
+      'tinggiBadan': tinggiBadan.toString(),
+      'beratBadan': beratBadan.toString(),
+      'kelasId': kelasId,
+    };
+
+    final response = await _httpHelper.postMultipartRequest(
+      'siswa/$siswaId',
+      fields: fields,
+      file: foto,
+      fileFieldName: 'foto',
+      isPutMethod: true,
+    );
+
+    if (!_isSuccess(response)) {
+      throw Exception(_responseMessage(response, 'Gagal memperbarui siswa'));
+    }
+
+    final data = _extractDataObject(response);
+    return SekolahSiswaModel.fromJson(data);
+  }
+
   Future<void> deleteSiswa(String siswaId) async {
     MBGHttpHelper.loadSessionToken();
     final response = await _httpHelper.deleteRequest('siswa/$siswaId');
@@ -235,20 +271,20 @@ class SekolahService extends GetxService {
     }
   }
 
-  Future<SekolahPengirimanModel> scanSekolahQR(String qrCodeId) async {
-    MBGHttpHelper.loadSessionToken();
-    final response = await _httpHelper.postRequest(
-      'pengiriman/$qrCodeId/scan-sekolah',
-      const {},
-    );
+  // Future<SekolahPengirimanModel> scanSekolahQR(String qrCodeId) async {
+  //   MBGHttpHelper.loadSessionToken();
+  //   final response = await _httpHelper.postRequest(
+  //     'pengiriman/$qrCodeId/scan-sekolah',
+  //     const {},
+  //   );
 
-    if (!_isSuccess(response)) {
-      throw Exception(_responseMessage(response, 'Gagal memindai QR sekolah'));
-    }
+  //   if (!_isSuccess(response)) {
+  //     throw Exception(_responseMessage(response, 'Gagal memindai QR sekolah'));
+  //   }
 
-    final data = _extractDataObject(response);
-    return SekolahPengirimanModel.fromJson(data);
-  }
+  //   final data = _extractDataObject(response);
+  //   return SekolahPengirimanModel.fromJson(data);
+  // }
 
   Future<List<SekolahAbsensiModel>> getAbsensiByKelas(String kelasId) async {
     MBGHttpHelper.loadSessionToken();

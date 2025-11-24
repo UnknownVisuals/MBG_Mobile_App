@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:mbg_mobile_app/features/sekolah/controllers/sekolah_kelas_controller.dart';
-import 'package:mbg_mobile_app/features/sekolah/screens/sekolah_kelas_management/widgets/sekolah_kelas_add.dart';
-import 'package:mbg_mobile_app/features/sekolah/screens/sekolah_kelas_management/widgets/sekolah_kelas_card.dart';
-import 'package:mbg_mobile_app/features/sekolah/screens/sekolah_kelas_management/widgets/sekolah_kelas_delete.dart';
-import 'package:mbg_mobile_app/features/sekolah/screens/sekolah_kelas_management/widgets/sekolah_kelas_edit.dart';
+import 'package:mbg_mobile_app/features/sekolah/screens/sekolah_kelas/widgets/sekolah_kelas_add.dart';
+import 'package:mbg_mobile_app/features/sekolah/screens/sekolah_kelas/widgets/sekolah_kelas_card.dart';
+import 'package:mbg_mobile_app/features/sekolah/screens/sekolah_kelas/widgets/sekolah_kelas_delete.dart';
+import 'package:mbg_mobile_app/features/sekolah/screens/sekolah_kelas/widgets/sekolah_kelas_edit.dart';
 import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
 

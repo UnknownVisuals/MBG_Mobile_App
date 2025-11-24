@@ -16,12 +16,8 @@ class DriverCheckpointScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final DriverCheckpointController driverController = Get.put(
-      DriverCheckpointController(),
-    );
-    final DapurCheckpointController dapurCheckpointController = Get.put(
-      DapurCheckpointController(),
-    );
+    final driverController = Get.put(DriverCheckpointController());
+    final dapurCheckpointController = Get.put(DapurCheckpointController());
 
     if (menuHarianId != null &&
         dapurCheckpointController.currentMenuHarianId.value != menuHarianId) {
@@ -32,17 +28,12 @@ class DriverCheckpointScreen extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: Obx(() {
-          final bool isMenuPlanningLoading =
-              driverController.isMenuPlanningLoading.value;
-          final bool isMenuHarianLoading =
-              driverController.isMenuHarianLoading.value;
-          final String? selectedMenuPlanningId =
-              driverController.selectedMenuPlanningId.value;
-          final String? selectedMenuHarianId =
-              driverController.selectedMenuHarianId.value;
+          final isMenuPlanningLoading = driverController.isMenuPlanningLoading.value;
+          final isMenuHarianLoading = driverController.isMenuHarianLoading.value;
+          final selectedMenuPlanningId = driverController.selectedMenuPlanningId.value;
+          final selectedMenuHarianId = driverController.selectedMenuHarianId.value;
 
-          if (isMenuPlanningLoading &&
-              driverController.menuPlanningList.isEmpty) {
+          if (isMenuPlanningLoading && driverController.menuPlanningList.isEmpty) {
             return const Center(child: CircularProgressIndicator());
           }
 
@@ -85,13 +76,17 @@ class DriverCheckpointScreen extends StatelessWidget {
                               children: [
                                 Text(
                                   'Minggu ke-${planning.mingguanKe}',
-                                  style: Theme.of(context).textTheme.titleSmall
-                                      ?.copyWith(fontWeight: FontWeight.w600),
+                                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                        fontWeight: FontWeight.w600,
+                                        color: Theme.of(context).colorScheme.onSurface,
+                                      ),
                                 ),
                                 Text(
-                                  '${DateFormat('dd MMM yyyy').format(planning.tanggalMulai)} - ${DateFormat('dd MMM yyyy').format(planning.tanggalSelesai)}',
-                                  style: Theme.of(context).textTheme.bodySmall
-                                      ?.copyWith(color: MBGColors.darkGrey),
+                                  '${DateFormat('dd MMM yyyy').format(planning.tanggalMulai)} - '
+                                  '${DateFormat('dd MMM yyyy').format(planning.tanggalSelesai)}',
+                                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                      ),
                                 ),
                               ],
                             ),
@@ -101,22 +96,22 @@ class DriverCheckpointScreen extends StatelessWidget {
                     onChanged: isMenuPlanningLoading
                         ? null
                         : (value) {
-                            dapurCheckpointController
-                                    .currentMenuHarianId
-                                    .value =
-                                null;
+                            dapurCheckpointController.currentMenuHarianId.value = null;
                             dapurCheckpointController.checkpointList.clear();
                             driverController.selectMenuPlanning(value);
                           },
                     isLoading: isMenuPlanningLoading,
                   ),
+
                   if (!isMenuPlanningLoading &&
                       driverController.menuPlanningList.isEmpty)
                     _buildEmptyMessage(
                       context,
                       'Menu planning belum tersedia untuk saat ini.',
                     ),
+
                   const SizedBox(height: MBGSizes.spaceBtwSections),
+
                   _buildDropdownCard(
                     context: context,
                     label: 'Menu Harian',
@@ -124,36 +119,35 @@ class DriverCheckpointScreen extends StatelessWidget {
                         ? 'Pilih menu planning terlebih dahulu'
                         : 'Pilih Menu Harian',
                     value: driverController.selectedMenuHarianId.value,
-                    items: driverController.menuHarianList
-                        .map(
-                          (menuHarian) => DropdownMenuItem<String>(
-                            value: menuHarian.id,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  menuHarian.namaMenu,
-                                  style: Theme.of(context).textTheme.titleSmall
-                                      ?.copyWith(fontWeight: FontWeight.w600),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                Text(
-                                  DateFormat(
-                                    'dd MMM yyyy',
-                                  ).format(menuHarian.tanggal),
-                                  style: Theme.of(context).textTheme.bodySmall
-                                      ?.copyWith(color: MBGColors.darkGrey),
-                                ),
-                              ],
-                            ),
+                    items: driverController.menuHarianList.map(
+                      (menuHarian) {
+                        return DropdownMenuItem<String>(
+                          value: menuHarian.id,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                menuHarian.namaMenu,
+                                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              Text(
+                                DateFormat('dd MMM yyyy').format(menuHarian.tanggal),
+                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                      color:
+                                          Theme.of(context).colorScheme.onSurfaceVariant,
+                                    ),
+                              ),
+                            ],
                           ),
-                        )
-                        .toList(),
-                    onChanged:
-                        (driverController.selectedMenuPlanningId.value ==
-                                null ||
+                        );
+                      },
+                    ).toList(),
+                    onChanged: (driverController.selectedMenuPlanningId.value == null ||
                             isMenuHarianLoading)
                         ? null
                         : (value) {
@@ -164,6 +158,7 @@ class DriverCheckpointScreen extends StatelessWidget {
                           },
                     isLoading: isMenuHarianLoading,
                   ),
+
                   if (driverController.selectedMenuPlanningId.value != null &&
                       !isMenuHarianLoading &&
                       driverController.menuHarianList.isEmpty)
@@ -171,7 +166,9 @@ class DriverCheckpointScreen extends StatelessWidget {
                       context,
                       'Menu harian belum tersedia untuk menu planning ini.',
                     ),
+
                   const SizedBox(height: MBGSizes.spaceBtwSections),
+
                   if (selectedMenuHarianId == null)
                     driverController.menuHarianList.isNotEmpty
                         ? _buildEmptyMessage(
@@ -207,17 +204,16 @@ class DriverCheckpointScreen extends StatelessWidget {
     required ValueChanged<String?>? onChanged,
     required bool isLoading,
   }) {
-    final bool hasValue =
-        value != null && items.any((item) => item.value == value);
+    final hasValue = value != null && items.any((item) => item.value == value);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
-          style: Theme.of(
-            context,
-          ).textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w600),
+          style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
         ),
         const SizedBox(height: MBGSizes.xs),
         Container(
@@ -227,9 +223,11 @@ class DriverCheckpointScreen extends StatelessWidget {
             vertical: MBGSizes.sm,
           ),
           decoration: BoxDecoration(
-            color: MBGColors.white,
+            color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(MBGSizes.cardRadiusMd),
-            border: Border.all(color: MBGColors.borderPrimary),
+            border: Border.all(
+              color: Theme.of(context).dividerColor,
+            ),
           ),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
@@ -237,13 +235,13 @@ class DriverCheckpointScreen extends StatelessWidget {
               value: hasValue ? value : null,
               hint: Text(
                 hint,
-                style: Theme.of(
-                  context,
-                ).textTheme.bodyMedium?.copyWith(color: MBGColors.darkGrey),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context).hintColor,
+                    ),
               ),
-              icon: const Icon(
+              icon: Icon(
                 Icons.keyboard_arrow_down,
-                color: MBGColors.primary,
+                color: Theme.of(context).colorScheme.primary,
               ),
               items: items,
               onChanged: onChanged,
@@ -265,18 +263,18 @@ class DriverCheckpointScreen extends StatelessWidget {
       margin: const EdgeInsets.only(top: MBGSizes.sm),
       padding: const EdgeInsets.all(MBGSizes.md),
       decoration: BoxDecoration(
-        color: MBGColors.softGrey,
+        color: Theme.of(context).colorScheme.surfaceVariant,
         borderRadius: BorderRadius.circular(MBGSizes.cardRadiusMd),
         border: Border.all(
-          color: MBGColors.borderPrimary.withValues(alpha: 0.3),
+          color: Theme.of(context).dividerColor.withOpacity(0.3),
         ),
       ),
       child: Text(
         message,
         textAlign: TextAlign.center,
-        style: Theme.of(
-          context,
-        ).textTheme.bodyMedium?.copyWith(color: MBGColors.darkGrey),
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
       ),
     );
   }

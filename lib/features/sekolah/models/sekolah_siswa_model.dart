@@ -1,58 +1,85 @@
 class SekolahSiswaModel {
   SekolahSiswaModel({
     required this.id,
-    required this.nama,
-    required this.nis,
-    required this.jenisKelamin,
-    required this.umur,
-    required this.tinggiBadan,
-    required this.beratBadan,
-    required this.imt,
-    required this.statusGizi,
+    this.nama,
+    this.nis,
+    this.jenisKelamin,
+    this.umur,
+    this.tinggiBadan,
+    this.beratBadan,
+    this.imt,
+    this.statusGizi,
     this.fotoUrl,
-    this.alergi,
-    required this.kelasId,
-    this.kelasNama,
+    this.createdAt,
+    this.updatedAt,
     required this.sekolahId,
-    required this.createdAt,
-    required this.updatedAt,
+    required this.kelasId,
+    this.sekolah,
+    this.kelas,
+    this.alergi,
   });
 
-  final String id;
-  final String nama;
-  final String nis;
-  final String jenisKelamin;
-  final int umur;
-  final double tinggiBadan;
-  final double beratBadan;
-  final double imt;
-  final String statusGizi;
-  final String? fotoUrl;
-  final List<dynamic>? alergi;
-  final String kelasId;
-  final String? kelasNama;
-  final String sekolahId;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  String id;
+  String? nama;
+  String? nis;
+  String? jenisKelamin;
+  int? umur;
+  double? tinggiBadan;
+  double? beratBadan;
+  double? imt;
+  String? statusGizi;
+  String? fotoUrl;
+  DateTime? createdAt;
+  DateTime? updatedAt;
+  String sekolahId;
+  String kelasId;
+  SekolahSiswaSekolahSummary? sekolah;
+  SekolahSiswaKelasSummary? kelas;
+  List<SekolahSiswaAlergiSummary>? alergi;
 
   factory SekolahSiswaModel.fromJson(Map<String, dynamic> json) {
+    DateTime? parseDateTime(dynamic value) {
+      if (value == null) return null;
+      if (value is DateTime) return value;
+      return DateTime.tryParse(value.toString());
+    }
+
+    List<SekolahSiswaAlergiSummary>? parseAlergiList(dynamic value) {
+      if (value == null || value is! List) return null;
+      return value
+          .map<SekolahSiswaAlergiSummary>(
+            (e) =>
+                SekolahSiswaAlergiSummary.fromJson(e as Map<String, dynamic>),
+          )
+          .toList();
+    }
+
     return SekolahSiswaModel(
-      id: json['id'],
-      nama: json['nama'],
-      nis: json['nis'],
-      jenisKelamin: json['jenisKelamin'],
-      umur: json['umur'],
-      tinggiBadan: (json['tinggiBadan'] as num).toDouble(),
-      beratBadan: (json['beratBadan'] as num).toDouble(),
-      imt: (json['imt'] as num).toDouble(),
-      statusGizi: json['statusGizi'],
-      fotoUrl: json['fotoUrl'],
-      alergi: json['alergi'] as List<dynamic>?,
-      kelasId: json['kelasId'],
-      kelasNama: json['kelas']?['nama'],
-      sekolahId: json['sekolahId'],
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: DateTime.parse(json['updatedAt']),
+      id: json['id'] as String,
+      nama: json['nama'] as String?,
+      nis: json['nis'] as String?,
+      jenisKelamin: json['jenisKelamin'] as String?,
+      umur: json['umur'] as int?,
+      tinggiBadan: (json['tinggiBadan'] as num?)?.toDouble(),
+      beratBadan: (json['beratBadan'] as num?)?.toDouble(),
+      imt: (json['imt'] as num?)?.toDouble(),
+      statusGizi: json['statusGizi'] as String?,
+      fotoUrl: json['fotoUrl'] as String?,
+      createdAt: parseDateTime(json['createdAt']),
+      updatedAt: parseDateTime(json['updatedAt']),
+      sekolahId: json['sekolahId'] as String,
+      kelasId: json['kelasId'] as String,
+      sekolah: json['sekolah'] != null
+          ? SekolahSiswaSekolahSummary.fromJson(
+              json['sekolah'] as Map<String, dynamic>,
+            )
+          : null,
+      kelas: json['kelas'] != null
+          ? SekolahSiswaKelasSummary.fromJson(
+              json['kelas'] as Map<String, dynamic>,
+            )
+          : null,
+      alergi: parseAlergiList(json['alergi']),
     );
   }
 
@@ -68,11 +95,75 @@ class SekolahSiswaModel {
       'imt': imt,
       'statusGizi': statusGizi,
       'fotoUrl': fotoUrl,
-      'alergi': alergi,
-      'kelasId': kelasId,
+      'createdAt': createdAt?.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
       'sekolahId': sekolahId,
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt.toIso8601String(),
+      'kelasId': kelasId,
+      if (sekolah != null) 'sekolah': sekolah!.toJson(),
+      if (kelas != null) 'kelas': kelas!.toJson(),
+      if (alergi != null) 'alergi': alergi!.map((e) => e.toJson()).toList(),
     };
+  }
+}
+
+// ======================================================================
+
+class SekolahSiswaSekolahSummary {
+  SekolahSiswaSekolahSummary({required this.id, this.nama});
+
+  final String id;
+  final String? nama;
+
+  factory SekolahSiswaSekolahSummary.fromJson(Map<String, dynamic> json) {
+    return SekolahSiswaSekolahSummary(
+      id: json['id'] as String,
+      nama: json['nama'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {'id': id, 'nama': nama};
+  }
+}
+
+// ======================================================================
+
+class SekolahSiswaKelasSummary {
+  SekolahSiswaKelasSummary({required this.id, this.nama, this.tingkat});
+
+  final String id;
+  final String? nama;
+  final int? tingkat;
+
+  factory SekolahSiswaKelasSummary.fromJson(Map<String, dynamic> json) {
+    return SekolahSiswaKelasSummary(
+      id: json['id'] as String,
+      nama: json['nama'] as String?,
+      tingkat: json['tingkat'] as int?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {'id': id, 'nama': nama, 'tingkat': tingkat};
+  }
+}
+
+// ======================================================================
+
+class SekolahSiswaAlergiSummary {
+  SekolahSiswaAlergiSummary({required this.id, required this.namaAlergi});
+
+  final String id;
+  final String namaAlergi;
+
+  factory SekolahSiswaAlergiSummary.fromJson(Map<String, dynamic> json) {
+    return SekolahSiswaAlergiSummary(
+      id: json['id'] as String,
+      namaAlergi: json['namaAlergi'] as String,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {'id': id, 'namaAlergi': namaAlergi};
   }
 }

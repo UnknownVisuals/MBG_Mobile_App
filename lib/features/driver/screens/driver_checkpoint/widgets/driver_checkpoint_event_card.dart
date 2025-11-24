@@ -22,50 +22,45 @@ class DriverCheckpointEventCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Style based on status
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    // ==========================
+    //   DEFINE ADAPTIVE COLORS
+    // ==========================
+
+    // Background adapts with theme
     Color backgroundColor;
     Color borderColor;
     double borderWidth;
-    Color textColor;
-    Color iconColor;
-    Color iconBackgroundColor;
     bool showButton;
     bool showShadow;
 
     switch (status) {
       case 'completed':
-        // Normal appearance for completed tasks
-        backgroundColor = MBGColors.light;
-        borderColor = MBGColors.borderPrimary;
+        backgroundColor = colorScheme.surface;
+        borderColor = colorScheme.outlineVariant;
         borderWidth = 1;
-        textColor = MBGColors.textPrimary;
-        iconColor = MBGColors.success;
-        iconBackgroundColor = MBGColors.success.withValues(alpha: 0.1);
         showButton = false;
         showShadow = false;
         break;
+
       case 'active':
-        // Highlighted appearance for active task
-        backgroundColor = MBGColors.primary.withValues(alpha: 0.08);
-        borderColor = MBGColors.primary;
+        backgroundColor = colorScheme.primary.withOpacity(0.08);
+        borderColor = colorScheme.primary;
         borderWidth = 2;
-        textColor = MBGColors.textPrimary;
-        iconColor = MBGColors.primary;
-        iconBackgroundColor = MBGColors.primary.withValues(alpha: 0.15);
         showButton = true;
         showShadow = true;
         break;
+
       case 'future':
       default:
-        // Greyed out appearance for future tasks
-        backgroundColor = MBGColors.softGrey;
-        borderColor = MBGColors.grey;
+        backgroundColor = colorScheme.surfaceVariant.withOpacity(0.4);
+        borderColor = colorScheme.outlineVariant;
         borderWidth = 1;
-        textColor = MBGColors.darkGrey.withValues(alpha: 0.5);
-        iconColor = MBGColors.grey;
-        iconBackgroundColor = MBGColors.grey.withValues(alpha: 0.1);
         showButton = false;
         showShadow = false;
+        break;
     }
 
     return Container(
@@ -76,7 +71,7 @@ class DriverCheckpointEventCard extends StatelessWidget {
         boxShadow: showShadow
             ? [
                 BoxShadow(
-                  color: MBGColors.primary.withValues(alpha: 0.1),
+                  color: colorScheme.primary.withOpacity(0.15),
                   blurRadius: MBGSizes.sm,
                   offset: const Offset(0, 2),
                 ),
@@ -87,24 +82,23 @@ class DriverCheckpointEventCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Card Header with icon, title, role badges, and status badge
+          // ==========================
+          //        HEADER
+          // ==========================
           DapurCheckpointEventCardHeader(
             tipe: tipe,
             status: status,
-            textColor: textColor,
-            iconColor: iconColor,
-            iconBackgroundColor: iconBackgroundColor,
           ),
 
-          // Show details for completed checkpoint
+          // ==========================
+          //    COMPLETED CONTENT
+          // ==========================
           if (status == 'completed' && checkpoint != null) ...[
             const SizedBox(height: MBGSizes.spaceBtwItems / 2),
-            // Photo if available
-            if (checkpoint?.fotoUrl != null) ...[
-              DapurCheckpointEventCardImage(imageUrl: checkpoint!.fotoUrl),
-            ],
 
-            // Description if available
+            if (checkpoint?.fotoUrl != null)
+              DapurCheckpointEventCardImage(imageUrl: checkpoint!.fotoUrl),
+
             if (checkpoint!.deskripsi != null) ...[
               const SizedBox(height: MBGSizes.spaceBtwItems / 2),
               DapurCheckpointEventCardDescription(
@@ -113,7 +107,6 @@ class DriverCheckpointEventCard extends StatelessWidget {
               ),
             ],
 
-            // Timestamp and Duration in cards
             const SizedBox(height: MBGSizes.spaceBtwItems / 2),
             DapurCheckpointEventCardTimestamp(
               timestamp: checkpoint!.timestamp,
@@ -121,7 +114,9 @@ class DriverCheckpointEventCard extends StatelessWidget {
             ),
           ],
 
-          // Show description for active and future checkpoints
+          // ==========================
+          // ACTIVE / FUTURE DESCRIPTION
+          // ==========================
           if ((status == 'active' || status == 'future') &&
               checkpoint?.deskripsi != null) ...[
             const SizedBox(height: MBGSizes.md),
@@ -131,7 +126,9 @@ class DriverCheckpointEventCard extends StatelessWidget {
             ),
           ],
 
-          // Show button for active checkpoint
+          // ==========================
+          //     ACTION BUTTON
+          // ==========================
           if (showButton) ...[
             const SizedBox(height: MBGSizes.md),
             DapurCheckpointEventCardActionButton(tipe: tipe),

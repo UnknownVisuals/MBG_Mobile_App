@@ -11,24 +11,37 @@ class DapurStokScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final DapurStokController dapurStokController = Get.put(
-      DapurStokController(),
-    );
+    final DapurStokController dapurStokController =
+        Get.put(DapurStokController());
+
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: RefreshIndicator(
+        color: theme.colorScheme.primary,
         onRefresh: () => dapurStokController.refreshStok(),
         child: const DapurStokCard(),
       ),
+
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => Get.to(() => const DapurStokAdd()),
+
+        /// Tetap memakai warna branding MBG, tapi pastikan teks ikonnya adaptif
         backgroundColor: MBGColors.primary,
-        icon: const Icon(Iconsax.box_add, color: MBGColors.white),
+        foregroundColor: theme.colorScheme.onPrimary,
+
+        icon: Icon(
+          Iconsax.box_add,
+          color: theme.colorScheme.onPrimary,
+        ),
+
         label: Text(
           'Tambah Stok',
-          style: Theme.of(
-            context,
-          ).textTheme.bodyMedium?.copyWith(color: MBGColors.white),
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: theme.colorScheme.onPrimary,
+          ),
         ),
       ),
     );

@@ -79,11 +79,13 @@ class DapurKaryawanScreen extends StatelessWidget {
               return GridView.builder(
                 padding: const EdgeInsets.all(MBGSizes.defaultSpace),
                 physics: const AlwaysScrollableScrollPhysics(),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: crossAxisCount,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
                   crossAxisSpacing: MBGSizes.gridViewSpacing,
                   mainAxisSpacing: MBGSizes.gridViewSpacing,
-                  childAspectRatio: childAspectRatio,
+
+                  /// Tinggi card FIX → 100% bebas overflow
+                  mainAxisExtent: 380,
                 ),
                 itemCount: dapurKaryawanController.karyawanList.length,
                 itemBuilder: (context, index) {
