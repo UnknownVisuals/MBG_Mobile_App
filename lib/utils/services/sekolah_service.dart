@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:mbg_mobile_app/features/dapur/models/dapur_menu_planning_model.dart';
 import 'package:mbg_mobile_app/features/sekolah/models/sekolah_absensi_model.dart';
 import 'package:mbg_mobile_app/features/sekolah/models/sekolah_alergi_model.dart';
+import 'package:mbg_mobile_app/features/sekolah/models/sekolah_info_model.dart';
 import 'package:mbg_mobile_app/features/sekolah/models/sekolah_kelas_model.dart';
 import 'package:mbg_mobile_app/features/sekolah/models/sekolah_model.dart';
 import 'package:mbg_mobile_app/features/sekolah/models/sekolah_siswa_model.dart';
@@ -277,6 +278,20 @@ class SekolahService extends GetxService {
 
     final data = _extractDataObject(response);
     return SekolahAbsensiModel.fromJson(data);
+  }
+
+  Future<SekolahInfoModel> getSekolahInfo(String sekolahId) async {
+    MBGHttpHelper.loadSessionToken();
+    final response = await _httpHelper.getRequest('sekolah/$sekolahId');
+
+    if (!_isSuccess(response)) {
+      throw Exception(
+        _responseMessage(response, 'Gagal memuat informasi sekolah'),
+      );
+    }
+
+    final data = _extractDataObject(response);
+    return SekolahInfoModel.fromJson(data);
   }
 
   bool _isSuccess(Response<dynamic> response) {

@@ -8,16 +8,13 @@ import 'package:mbg_mobile_app/features/sekolah/screens/sekolah_drawer.dart';
 
 // Screens
 import 'package:mbg_mobile_app/features/sekolah/screens/sekolah_dashboard/sekolah_dashboard_screen.dart';
-import 'package:mbg_mobile_app/features/sekolah/screens/sekolah_management/sekolah_management_screen.dart';
-import 'package:mbg_mobile_app/features/sekolah/screens/kelas_management/kelas_management_screen.dart';
-import 'package:mbg_mobile_app/features/sekolah/screens/sekolah_qr_scanner/sekolah_qr_scanner_screen.dart';
+import 'package:mbg_mobile_app/features/sekolah/screens/sekolah_info/sekolah_info_screen.dart';
+import 'package:mbg_mobile_app/features/sekolah/screens/sekolah_kelas_management/sekolah_kelas_management_screen.dart';
 import 'package:mbg_mobile_app/features/sekolah/screens/siswa_management/siswa_management_screen.dart';
 import 'package:mbg_mobile_app/features/sekolah/screens/absensi/absensi_screen.dart';
-import 'package:mbg_mobile_app/features/sekolah/screens/nutrition_monitor/nutrition_monitor_screen.dart';
 import 'package:mbg_mobile_app/features/sekolah/screens/receive_delivery/receive_delivery_screen.dart';
 import 'package:mbg_mobile_app/features/sekolah/screens/menu_view/menu_view_screen.dart';
 import 'package:mbg_mobile_app/features/sekolah/screens/delivery_history/delivery_history_screen.dart';
-import 'package:mbg_mobile_app/features/sekolah/screens/pengaturan/pengaturan_screen.dart';
 
 class SekolahScreen extends StatelessWidget {
   const SekolahScreen({super.key});
@@ -41,8 +38,8 @@ class SekolahScreen extends StatelessWidget {
               Text(
                 "Halo, ${userController.userModel.value?.name ?? 'Guru Sekolah'}!",
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ],
           ),
@@ -54,34 +51,29 @@ class SekolahScreen extends StatelessWidget {
             // 0 - Dashboard
             SekolahDashboardScreen(),
             // 1 - Sekolah Info
-            SekolahManagementScreen(),
+            SekolahInfoScreen(),
             // 2 - Kelas
-            KelasManagementScreen(),
+            SekolahKelasScreen(),
             // 3 - Siswa
             SiswaManagementScreen(),
             // 4 - Absensi
             AbsensiScreen(),
-            // 5 - Nutrisi
-            NutritionMonitorScreen(),
-            // 6 - Receive Delivery
+            // 5 - Receive Delivery
             ReceiveDeliveryScreen(),
-            // 7 - Menu
+            // 6 - Menu
             MenuViewScreen(),
-            // 8 - Delivery History
+            // 7 - Delivery History
             DeliveryHistoryScreen(),
-            // 9 - Scan QR
+            // 8 - Scan QR
             //SekolahQRScannerScreen(),
-            // 10 - Laporan
+            // 9 - Laporan
             LaporanScreen(),
-            // 11 - Pengaturan
-            PengaturanScreen(),
           ],
         ),
       ),
     );
   }
 }
-
 
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';

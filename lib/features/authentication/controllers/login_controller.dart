@@ -75,7 +75,8 @@ class LoginController extends GetxController {
           // Show success message
           MBGLoaders.successSnackBar(
             title: 'Login Berhasil',
-            message: 'Selamat datang, ${userController.userModel.value}!',
+            message:
+                'Selamat datang, ${userController.userModel.value?.name ?? 'Pengguna'}!',
           );
         } else {
           MBGLoaders.errorSnackBar(

@@ -136,7 +136,7 @@ class _AbsensiScreenState extends State<AbsensiScreen> {
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
-                  color: color.surfaceContainerHighest ?? color.surfaceVariant,
+                  color: color.surfaceContainerHighest ?? color.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     if (theme.brightness == Brightness.light)
