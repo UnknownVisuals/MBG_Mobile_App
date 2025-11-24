@@ -11,11 +11,11 @@ class DapurStokScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final DapurStokController dapurStokController =
-        Get.put(DapurStokController());
+    final DapurStokController dapurStokController = Get.put(
+      DapurStokController(),
+    );
 
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -32,10 +32,7 @@ class DapurStokScreen extends StatelessWidget {
         backgroundColor: MBGColors.primary,
         foregroundColor: theme.colorScheme.onPrimary,
 
-        icon: Icon(
-          Iconsax.box_add,
-          color: theme.colorScheme.onPrimary,
-        ),
+        icon: Icon(Iconsax.box_add, color: theme.colorScheme.onPrimary),
 
         label: Text(
           'Tambah Stok',

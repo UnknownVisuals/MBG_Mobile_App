@@ -106,7 +106,7 @@ class SekolahDrawer extends StatelessWidget {
               ),
               SidebarXItem(
                 icon: Iconsax.calendar_1,
-                label: 'Absensi',
+                label: 'Kalender Akademik',
                 onTap: () {
                   sekolahController.drawerSelectedIndex.value = 4;
                   Navigator.pop(context);
@@ -115,41 +115,9 @@ class SekolahDrawer extends StatelessWidget {
 
               SidebarXItem(
                 icon: Iconsax.box,
-                label: 'Receive Delivery',
+                label: 'Delivery',
                 onTap: () {
                   sekolahController.drawerSelectedIndex.value = 5;
-                  Navigator.pop(context);
-                },
-              ),
-              SidebarXItem(
-                icon: Iconsax.menu_board,
-                label: 'Menu',
-                onTap: () {
-                  sekolahController.drawerSelectedIndex.value = 6;
-                  Navigator.pop(context);
-                },
-              ),
-              SidebarXItem(
-                icon: Iconsax.clock,
-                label: 'Delivery History',
-                onTap: () {
-                  sekolahController.drawerSelectedIndex.value = 7;
-                  Navigator.pop(context);
-                },
-              ),
-              // SidebarXItem(
-              //   icon: Iconsax.scan_barcode,
-              //   label: 'Scan QR',
-              //   onTap: () {
-              //     sekolahController.drawerSelectedIndex.value = 9;
-              //     Navigator.pop(context);
-              //   },
-              // ),
-              SidebarXItem(
-                icon: Iconsax.chart,
-                label: 'Laporan',
-                onTap: () {
-                  sekolahController.drawerSelectedIndex.value = 8;
                   Navigator.pop(context);
                 },
               ),

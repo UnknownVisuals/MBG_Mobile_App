@@ -39,8 +39,9 @@ class DriverScreen extends StatelessWidget {
         body: IndexedStack(
           index: driverController.drawerSelectedIndex.value,
           children: const [
+            // 0 - Dashboard
             DriverDashboardScreen(),
-            // DriverMyDeliveriesScreen(),
+            // 1 - Checkpoint
             DriverCheckpointScreen(),
           ],
         ),

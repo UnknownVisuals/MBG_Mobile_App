@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/features/dapur/models/dapur_checkpoint_model.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
 import 'package:mbg_mobile_app/features/dapur/screens/dapur_checkpoint/widgets/dapur_checkpoint_event_card_header.dart';
@@ -85,10 +84,7 @@ class DriverCheckpointEventCard extends StatelessWidget {
           // ==========================
           //        HEADER
           // ==========================
-          DapurCheckpointEventCardHeader(
-            tipe: tipe,
-            status: status,
-          ),
+          DapurCheckpointEventCardHeader(tipe: tipe, status: status),
 
           // ==========================
           //    COMPLETED CONTENT

@@ -4,7 +4,9 @@ import 'package:get/get.dart';
 import 'package:mbg_mobile_app/features/dapur/models/dapur_menu_planning_model.dart';
 import 'package:mbg_mobile_app/features/sekolah/models/sekolah_absensi_model.dart';
 import 'package:mbg_mobile_app/features/sekolah/models/sekolah_alergi_model.dart';
+import 'package:mbg_mobile_app/features/sekolah/models/sekolah_delivery_model.dart';
 import 'package:mbg_mobile_app/features/sekolah/models/sekolah_info_model.dart';
+import 'package:mbg_mobile_app/features/sekolah/models/sekolah_kalender_akademik_model.dart';
 import 'package:mbg_mobile_app/features/sekolah/models/sekolah_kelas_model.dart';
 import 'package:mbg_mobile_app/features/sekolah/models/sekolah_siswa_model.dart';
 import 'package:mbg_mobile_app/utils/http/http_client.dart';
@@ -31,23 +33,38 @@ class SekolahService extends GetxService {
     return data.map(DapurMenuPlanningModel.fromJson).toList();
   }
 
-  // Future<List<SekolahPengirimanModel>> getPengirimanBySekolah(
-  //   String sekolahId,
-  // ) async {
-  //   MBGHttpHelper.loadSessionToken();
-  //   final response = await _httpHelper.getRequest(
-  //     'sekolah/$sekolahId/pengiriman',
-  //   );
+  Future<List<SekolahDeliveryModel>> getPengirimanBySekolah(
+    String sekolahId,
+  ) async {
+    MBGHttpHelper.loadSessionToken();
+    final response = await _httpHelper.getRequest(
+      'sekolah/$sekolahId/pengiriman',
+    );
 
-  //   if (!_isSuccess(response)) {
-  //     throw Exception(
-  //       _responseMessage(response, 'Gagal memuat pengiriman sekolah'),
-  //     );
-  //   }
+    if (!_isSuccess(response)) {
+      throw Exception(
+        _responseMessage(response, 'Gagal memuat pengiriman sekolah'),
+      );
+    }
 
-  //   final data = _extractDataList(response);
-  //   return data.map(SekolahPengirimanModel.fromJson).toList();
-  // }
+    final data = _extractDataList(response);
+    return data.map(SekolahDeliveryModel.fromJson).toList();
+  }
+
+  Future<SekolahDeliveryModel> scanSekolahQR(String qrCodeId) async {
+    MBGHttpHelper.loadSessionToken();
+    final response = await _httpHelper.postRequest(
+      'pengiriman/$qrCodeId/scan-sekolah',
+      const {},
+    );
+
+    if (!_isSuccess(response)) {
+      throw Exception(_responseMessage(response, 'Gagal memindai QR sekolah'));
+    }
+
+    final data = _extractDataObject(response);
+    return SekolahDeliveryModel.fromJson(data);
+  }
 
   Future<Map<String, dynamic>> getTotalAbsensi(
     String sekolahId,
@@ -107,6 +124,32 @@ class SekolahService extends GetxService {
 
     final data = _extractDataList(response);
     return data.map(SekolahKelasModel.fromJson).toList();
+  }
+
+  Future<SekolahKalenderAkademikResponse> getKalenderAkademik({
+    String? sekolahId,
+  }) async {
+    MBGHttpHelper.loadSessionToken();
+    final endpoint = sekolahId != null && sekolahId.isNotEmpty
+        ? 'sekolah/$sekolahId/kalender-akademik'
+        : 'kalender-akademik';
+    final response = await _httpHelper.getRequest(endpoint);
+
+    if (!_isSuccess(response)) {
+      throw Exception(
+        _responseMessage(response, 'Gagal memuat kalender akademik'),
+      );
+    }
+
+    final body = response.body;
+    if (body is Map<String, dynamic>) {
+      final data = body['data'];
+      if (data is Map<String, dynamic>) {
+        return SekolahKalenderAkademikResponse.fromJson(data);
+      }
+    }
+
+    throw Exception('Format respons tidak valid');
   }
 
   Future<SekolahKelasModel> createKelas(

@@ -169,6 +169,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.1"
+  ensemble_table_calendar:
+    dependency: "direct main"
+    description:
+      name: ensemble_table_calendar
+      sha256: "47a4e37f37c965e49c4cc22a3df718ec0eb2be0086182284d111f17b73d3fdfa"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.1.4"
   equatable:
     dependency: transitive
     description:

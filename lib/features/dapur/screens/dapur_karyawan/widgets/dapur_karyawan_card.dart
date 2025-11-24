@@ -24,32 +24,31 @@ class DapurKaryawanCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // === FOTO ===
-Expanded(
-  child: ClipRRect(
-    borderRadius: const BorderRadius.all(
-      Radius.circular(MBGSizes.borderRadiusLg),
-    ),
-    child: karyawan.fotoUrl != null
-        ? Image.network(
-            karyawan.fotoUrl!,
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) {
-              return Container(
-                color: MBGColors.grey,
-                child: const Icon(
-                  Iconsax.profile,
-                  size: MBGSizes.iconLg,
-                ),
-              );
-            },
-          )
-        : Container(
-            color: MBGColors.grey,
-            child: const Icon(Iconsax.profile, size: MBGSizes.iconLg),
+          Expanded(
+            child: ClipRRect(
+              borderRadius: const BorderRadius.all(
+                Radius.circular(MBGSizes.borderRadiusLg),
+              ),
+              child: karyawan.fotoUrl != null
+                  ? Image.network(
+                      karyawan.fotoUrl!,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          color: MBGColors.grey,
+                          child: const Icon(
+                            Iconsax.profile,
+                            size: MBGSizes.iconLg,
+                          ),
+                        );
+                      },
+                    )
+                  : Container(
+                      color: MBGColors.grey,
+                      child: const Icon(Iconsax.profile, size: MBGSizes.iconLg),
+                    ),
+            ),
           ),
-  ),
-),
-
 
           // === DETAIL ===
           Padding(
@@ -60,10 +59,9 @@ Expanded(
                 // Nama
                 Text(
                   karyawan.nama,
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleSmall
-                      ?.copyWith(fontWeight: FontWeight.bold),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -83,10 +81,9 @@ Expanded(
                     Expanded(
                       child: Text(
                         karyawan.posisi,
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodySmall
-                            ?.copyWith(color: MBGColors.textSecondary),
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: MBGColors.textSecondary,
+                        ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -106,7 +103,9 @@ Expanded(
                     color: karyawan.status == KaryawanStatus.AKTIF
                         ? Colors.green.withValues(alpha: 0.2)
                         : Colors.red.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(MBGSizes.borderRadiusSm),
+                    borderRadius: BorderRadius.circular(
+                      MBGSizes.borderRadiusSm,
+                    ),
                     border: Border.all(
                       color: karyawan.status == KaryawanStatus.AKTIF
                           ? Colors.green
@@ -116,17 +115,20 @@ Expanded(
                   child: Text(
                     karyawan.status.displayName,
                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: karyawan.status == KaryawanStatus.AKTIF
-                              ? Colors.green
-                              : Colors.red,
-                        ),
+                      fontWeight: FontWeight.bold,
+                      color: karyawan.status == KaryawanStatus.AKTIF
+                          ? Colors.green
+                          : Colors.red,
+                    ),
                   ),
                 ),
 
                 const SizedBox(height: MBGSizes.spaceBtwItems / 2),
 
-                Divider(color: MBGColors.darkGrey.withValues(alpha: 0.4), thickness: 1),
+                Divider(
+                  color: MBGColors.darkGrey.withValues(alpha: 0.4),
+                  thickness: 1,
+                ),
 
                 const SizedBox(height: MBGSizes.spaceBtwItems / 2),
 
@@ -139,20 +141,25 @@ Expanded(
                         style: OutlinedButton.styleFrom(
                           minimumSize: const Size(0, 32),
                           padding: EdgeInsets.zero,
-                          backgroundColor:
-                              MBGColors.primary.withValues(alpha: 0.15),
+                          backgroundColor: MBGColors.primary.withValues(
+                            alpha: 0.15,
+                          ),
                           side: BorderSide(
-                              color:
-                                  MBGColors.primary.withValues(alpha: 0.7)),
+                            color: MBGColors.primary.withValues(alpha: 0.7),
+                          ),
                           shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.circular(MBGSizes.borderRadiusSm),
+                            borderRadius: BorderRadius.circular(
+                              MBGSizes.borderRadiusSm,
+                            ),
                           ),
                         ),
                         onPressed: () =>
                             Get.to(() => DapurKaryawanEdit(karyawan: karyawan)),
-                        child: const Icon(Iconsax.edit,
-                            size: MBGSizes.iconSm, color: MBGColors.primary),
+                        child: const Icon(
+                          Iconsax.edit,
+                          size: MBGSizes.iconSm,
+                          color: MBGColors.primary,
+                        ),
                       ),
                     ),
 
@@ -166,22 +173,27 @@ Expanded(
                           padding: EdgeInsets.zero,
                           backgroundColor: Colors.red.withValues(alpha: 0.15),
                           side: BorderSide(
-                              color: Colors.red.withValues(alpha: 0.7)),
+                            color: Colors.red.withValues(alpha: 0.7),
+                          ),
                           shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.circular(MBGSizes.borderRadiusSm),
+                            borderRadius: BorderRadius.circular(
+                              MBGSizes.borderRadiusSm,
+                            ),
                           ),
                         ),
                         onPressed: () => Get.dialog(
                           DapurKaryawanDelete(karyawan: karyawan),
                           barrierDismissible: false,
                         ),
-                        child: const Icon(Iconsax.trash,
-                            size: MBGSizes.iconSm, color: Colors.red),
+                        child: const Icon(
+                          Iconsax.trash,
+                          size: MBGSizes.iconSm,
+                          color: Colors.red,
+                        ),
                       ),
                     ),
                   ],
-                )
+                ),
               ],
             ),
           ),
@@ -189,9 +201,4 @@ Expanded(
       ),
     );
   }
-
-  Widget _fallbackAvatar() => Container(
-        color: MBGColors.grey,
-        child: const Icon(Iconsax.profile, size: MBGSizes.iconLg),
-      );
 }
