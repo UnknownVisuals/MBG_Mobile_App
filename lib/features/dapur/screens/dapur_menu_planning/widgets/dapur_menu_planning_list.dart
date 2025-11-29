@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart'; 
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:mbg_mobile_app/features/dapur/controllers/dapur_menu_planning_controller.dart';
@@ -39,7 +39,9 @@ class DapurMenuPlanningList extends StatelessWidget {
           ),
           child: Text(
             'Belum ada menu planning',
-            style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
+            style: textTheme.bodyMedium?.copyWith(
+              color: colorScheme.onSurfaceVariant,
+            ),
           ),
         );
       }
@@ -49,28 +51,36 @@ class DapurMenuPlanningList extends StatelessWidget {
         child: ListView.separated(
           scrollDirection: Axis.horizontal,
           itemCount: dapurMenuPlanningController.menuPlanningList.length,
-          separatorBuilder: (_, __) => const SizedBox(width: MBGSizes.spaceBtwItems),
+          separatorBuilder: (_, _) =>
+              const SizedBox(width: MBGSizes.spaceBtwItems),
           itemBuilder: (context, index) {
-            final menuPlan = dapurMenuPlanningController.menuPlanningList[index];
+            final menuPlan =
+                dapurMenuPlanningController.menuPlanningList[index];
 
             return Obx(() {
               final isSelected =
-                  dapurMenuPlanningController.selectedMenuPlanningId.value == menuPlan.id;
+                  dapurMenuPlanningController.selectedMenuPlanningId.value ==
+                  menuPlan.id;
 
               final cardColor = isSelected
-                  ? colorScheme.primary.withOpacity(0.1)
+                  ? colorScheme.primary.withValues(alpha: 0.1)
                   : colorScheme.surface;
 
               return GestureDetector(
-                onTap: () => dapurMenuPlanningController.selectMenuPlanning(menuPlan.id),
+                onTap: () =>
+                    dapurMenuPlanningController.selectMenuPlanning(menuPlan.id),
                 child: Container(
                   width: 200,
                   padding: const EdgeInsets.all(MBGSizes.defaultSpace / 2),
                   decoration: BoxDecoration(
                     color: cardColor,
-                    borderRadius: BorderRadius.circular(MBGSizes.borderRadiusMd),
+                    borderRadius: BorderRadius.circular(
+                      MBGSizes.borderRadiusMd,
+                    ),
                     border: Border.all(
-                      color: isSelected ? colorScheme.primary : colorScheme.outline,
+                      color: isSelected
+                          ? colorScheme.primary
+                          : colorScheme.outline,
                     ),
                   ),
                   child: Column(
@@ -87,8 +97,8 @@ class DapurMenuPlanningList extends StatelessWidget {
                       ),
                       Text(
                         MBGFormatter.formatDateRange(
-                          menuPlan.tanggalMulai,
-                          menuPlan.tanggalSelesai,
+                          menuPlan.tanggalMulai!,
+                          menuPlan.tanggalSelesai!,
                         ),
                         style: textTheme.bodyMedium?.copyWith(
                           color: isSelected
@@ -101,7 +111,7 @@ class DapurMenuPlanningList extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            '${menuPlan.count.menuHarian} Menu',
+                            '${menuPlan.count!.menuHarian} Menu',
                             style: textTheme.bodySmall?.copyWith(
                               color: colorScheme.onSurfaceVariant,
                             ),
@@ -115,7 +125,9 @@ class DapurMenuPlanningList extends StatelessWidget {
                               constraints: const BoxConstraints(),
                               onPressed: () {
                                 Get.dialog(
-                                  DapurMenuPlanningDelete(menuPlanning: menuPlan),
+                                  DapurMenuPlanningDelete(
+                                    menuPlanning: menuPlan,
+                                  ),
                                 );
                               },
                               icon: Icon(

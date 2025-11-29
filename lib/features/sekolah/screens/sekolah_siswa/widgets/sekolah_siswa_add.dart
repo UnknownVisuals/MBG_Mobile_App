@@ -92,7 +92,7 @@ class SekolahSiswaAdd extends StatelessWidget {
 
               Obx(
                 () => DropdownButtonFormField<String>(
-                  value: selectedJenisKelamin.value,
+                  initialValue: selectedJenisKelamin.value,
                   decoration: const InputDecoration(
                     labelText: 'Jenis Kelamin',
                     prefixIcon: Icon(Iconsax.user_tag),
@@ -108,7 +108,7 @@ class SekolahSiswaAdd extends StatelessWidget {
               Obx(() {
                 final kelasList = kelasController.kelasList;
                 return DropdownButtonFormField<String>(
-                  value: selectedKelasId.value,
+                  initialValue: selectedKelasId.value,
                   decoration: const InputDecoration(
                     labelText: 'Kelas',
                     prefixIcon: Icon(Iconsax.buildings),

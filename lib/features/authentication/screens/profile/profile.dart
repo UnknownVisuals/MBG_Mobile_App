@@ -52,15 +52,15 @@ class ProfileScreen extends StatelessWidget {
                 const SizedBox(height: MBGSizes.spaceBtwItems),
                 MBGInfoRow(
                   title: 'Dapur sebagai PIC',
-                  value: user?.dapurAsPIC.isEmpty ?? true
+                  value: user?.dapurAsPIC?.isEmpty ?? true
                       ? 'Tidak Ada'
-                      : user!.dapurAsPIC.map((dapur) => dapur.nama).join(', '),
+                      : user!.dapurAsPIC!.map((dapur) => dapur.nama).join(', '),
                 ),
                 MBGInfoRow(
                   title: 'Sekolah sebagai PIC',
-                  value: user?.sekolahAsPIC.isEmpty ?? true
+                  value: user?.sekolahAsPIC?.isEmpty ?? true
                       ? 'Tidak Ada'
-                      : user!.sekolahAsPIC
+                      : user!.sekolahAsPIC!
                             .map((sekolah) => sekolah.nama)
                             .join(', '),
                 ),

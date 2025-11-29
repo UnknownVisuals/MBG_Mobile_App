@@ -20,14 +20,14 @@ class SekolahDashboardPendingDelivery extends StatelessWidget {
         boxShadow: [
           if (theme.brightness == Brightness.light)
             BoxShadow(
-              color: color.shadow.withOpacity(0.08),
+              color: color.shadow.withValues(alpha: 0.08),
               blurRadius: 10,
               spreadRadius: 2,
               offset: const Offset(0, 4),
             ),
         ],
         border: Border.all(
-          color: color.outlineVariant.withOpacity(0.4), // adaptif
+          color: color.outlineVariant.withValues(alpha: 0.4), // adaptif
         ),
       ),
       child: Column(
@@ -39,7 +39,7 @@ class SekolahDashboardPendingDelivery extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: MBGColors.warning.withOpacity(0.1),
+                  color: MBGColors.warning.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Icon(
@@ -68,14 +68,14 @@ class SekolahDashboardPendingDelivery extends StatelessWidget {
             icon: Iconsax.timer_1,
             color: MBGColors.warning,
           ),
-          Divider(color: color.outlineVariant.withOpacity(0.4)),
+          Divider(color: color.outlineVariant.withValues(alpha: 0.4)),
           _PendingItem(
             name: 'Menu Siang',
             status: 'Belum Diterima',
             icon: Iconsax.truck_fast,
             color: MBGColors.info,
           ),
-          Divider(color: color.outlineVariant.withOpacity(0.4)),
+          Divider(color: color.outlineVariant.withValues(alpha: 0.4)),
           _PendingItem(
             name: 'Tambahan Buah',
             status: 'Menunggu Konfirmasi',

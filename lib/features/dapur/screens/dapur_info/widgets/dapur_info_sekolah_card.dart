@@ -13,7 +13,8 @@ class DapurInfoSekolahCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 260, // ⛔ mengecil dari 300 → supaya tidak overflow saat horizontal scroll
+      width:
+          260, // ⛔ mengecil dari 300 → supaya tidak overflow saat horizontal scroll
       padding: const EdgeInsets.all(MBGSizes.md),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
@@ -50,11 +51,11 @@ class DapurInfoSekolahCard extends StatelessWidget {
 
               Expanded(
                 child: Text(
-                  sekolahDilayani.sekolah.nama,
+                  sekolahDilayani.sekolah!.nama ?? '-',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: MBGColors.textWhite,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    color: MBGColors.textWhite,
+                    fontWeight: FontWeight.bold,
+                  ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -63,7 +64,7 @@ class DapurInfoSekolahCard extends StatelessWidget {
           ),
 
           const SizedBox(height: MBGSizes.xs),
-          Divider(color: MBGColors.white.withOpacity(0.3), height: 1),
+          Divider(color: MBGColors.white.withValues(alpha: 0.3), height: 1),
           const SizedBox(height: MBGSizes.xs),
 
           /// ==== ALAMAT ====
@@ -79,11 +80,10 @@ class DapurInfoSekolahCard extends StatelessWidget {
 
               Expanded(
                 child: Text(
-                  sekolahDilayani.sekolah.alamat,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodySmall
-                      ?.copyWith(color: MBGColors.textWhite),
+                  sekolahDilayani.sekolah!.alamat ?? '-',
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodySmall?.copyWith(color: MBGColors.textWhite),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -96,18 +96,20 @@ class DapurInfoSekolahCard extends StatelessWidget {
           /// ==== KOORDINAT ====
           Row(
             children: [
-              const Icon(Iconsax.location_tick,
-                  color: MBGColors.white, size: MBGSizes.iconSm),
+              const Icon(
+                Iconsax.location_tick,
+                color: MBGColors.white,
+                size: MBGSizes.iconSm,
+              ),
               const SizedBox(width: MBGSizes.xs),
 
               Expanded(
                 child: Text(
-                  '${sekolahDilayani.sekolah.latitude.toStringAsFixed(4)}, '
-                  '${sekolahDilayani.sekolah.longitude.toStringAsFixed(4)}',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodySmall
-                      ?.copyWith(color: MBGColors.textWhite),
+                  '${sekolahDilayani.sekolah!.latitude?.toStringAsFixed(4)}, '
+                  '${sekolahDilayani.sekolah!.longitude?.toStringAsFixed(4)}',
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodySmall?.copyWith(color: MBGColors.textWhite),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -137,12 +139,13 @@ class DapurInfoSekolahCard extends StatelessWidget {
                 const Icon(Iconsax.calendar, color: MBGColors.white, size: 12),
                 const SizedBox(width: MBGSizes.xs),
                 Text(
-                  DateFormat('dd MMM yyyy')
-                      .format(sekolahDilayani.createdAt.toLocal()),
+                  DateFormat(
+                    'dd MMM yyyy',
+                  ).format(sekolahDilayani.createdAt!.toLocal()),
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: MBGColors.textWhite,
-                        fontWeight: FontWeight.w500,
-                      ),
+                    color: MBGColors.textWhite,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ],
             ),

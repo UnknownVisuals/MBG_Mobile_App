@@ -28,8 +28,9 @@ class DapurCheckpointScreen extends StatelessWidget {
 
     // Theme-aware colors
     final dropdownBgColor = isDark ? Colors.grey[850] : Colors.white;
-    final dropdownBorderColor =
-        isDark ? Colors.grey[700]! : Colors.grey[300]!; // border
+    final dropdownBorderColor = isDark
+        ? Colors.grey[700]!
+        : Colors.grey[300]!; // border
     final dropdownHintColor = isDark ? Colors.grey[400] : Colors.grey[700];
     final dateTextColor = isDark ? Colors.grey[400] : Colors.grey[700];
 
@@ -47,8 +48,9 @@ class DapurCheckpointScreen extends StatelessWidget {
                   const SizedBox(height: MBGSizes.spaceBtwItems),
                   Text(
                     'Tidak ada menu harian tersedia',
-                    style: theme.textTheme.titleMedium
-                        ?.copyWith(color: dropdownHintColor),
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      color: dropdownHintColor,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                 ],
@@ -81,8 +83,7 @@ class DapurCheckpointScreen extends StatelessWidget {
                   ),
                   decoration: BoxDecoration(
                     color: dropdownBgColor,
-                    borderRadius:
-                        BorderRadius.circular(MBGSizes.cardRadiusMd),
+                    borderRadius: BorderRadius.circular(MBGSizes.cardRadiusMd),
                     border: Border.all(color: dropdownBorderColor),
                   ),
                   child: DropdownButtonHideUnderline(
@@ -92,14 +93,17 @@ class DapurCheckpointScreen extends StatelessWidget {
                           dapurCheckpointController.currentMenuHarianId.value,
                       hint: Text(
                         'Pilih Menu Harian',
-                        style: theme.textTheme.bodyMedium
-                            ?.copyWith(color: dropdownHintColor),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: dropdownHintColor,
+                        ),
                       ),
                       icon: Icon(
                         Icons.keyboard_arrow_down,
                         color: theme.colorScheme.primary,
                       ),
-                      items: menuHarianController.menuHarianList.map((menuHarian) {
+                      items: menuHarianController.menuHarianList.map((
+                        menuHarian,
+                      ) {
                         return DropdownMenuItem<String>(
                           value: menuHarian.id,
                           child: Column(
@@ -107,16 +111,20 @@ class DapurCheckpointScreen extends StatelessWidget {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                menuHarian.namaMenu,
-                                style: theme.textTheme.titleSmall
-                                    ?.copyWith(fontWeight: FontWeight.w600),
+                                menuHarian.namaMenu!,
+                                style: theme.textTheme.titleSmall?.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
                               Text(
-                                DateFormat('dd MMM yyyy').format(menuHarian.tanggal),
-                                style: theme.textTheme.bodySmall
-                                    ?.copyWith(color: dateTextColor),
+                                DateFormat(
+                                  'dd MMM yyyy',
+                                ).format(menuHarian.tanggal!),
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: dateTextColor,
+                                ),
                               ),
                             ],
                           ),

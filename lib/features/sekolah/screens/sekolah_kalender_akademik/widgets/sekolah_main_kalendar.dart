@@ -55,7 +55,7 @@ class SekolahMainKalendar extends StatelessWidget {
         horizontal: MBGSizes.sm,
       ),
       decoration: BoxDecoration(
-        color: MBGColors.primary.withOpacity(0.85),
+        color: MBGColors.primary.withValues(alpha: 0.85),
         borderRadius: BorderRadius.circular(MBGSizes.cardRadiusSm),
       ),
       child: Text(
@@ -93,8 +93,8 @@ class SekolahMainKalendar extends StatelessWidget {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                MBGColors.primary.withOpacity(0.15),
-                MBGColors.primary.withOpacity(0.1),
+                MBGColors.primary.withValues(alpha: 0.15),
+                MBGColors.primary.withValues(alpha: 0.1),
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -102,7 +102,7 @@ class SekolahMainKalendar extends StatelessWidget {
             borderRadius: BorderRadius.circular(MBGSizes.cardRadiusLg),
             boxShadow: [
               BoxShadow(
-                color: MBGColors.black.withOpacity(0.08),
+                color: MBGColors.black.withValues(alpha: 0.08),
                 blurRadius: 18,
                 offset: const Offset(0, 10),
               ),
@@ -142,8 +142,8 @@ class SekolahMainKalendar extends StatelessWidget {
                   shape: BoxShape.circle,
                   gradient: LinearGradient(
                     colors: [
-                      MBGColors.primary.withOpacity(0.25),
-                      MBGColors.primary.withOpacity(0.05),
+                      MBGColors.primary.withValues(alpha: 0.25),
+                      MBGColors.primary.withValues(alpha: 0.05),
                     ],
                   ),
                 ),

@@ -118,7 +118,7 @@ class _SekolahSiswaUpdateState extends State<SekolahSiswaUpdate> {
 
               Obx(
                 () => DropdownButtonFormField<String>(
-                  value: selectedJenisKelamin.value,
+                  initialValue: selectedJenisKelamin.value,
                   decoration: const InputDecoration(
                     labelText: 'Jenis Kelamin',
                     prefixIcon: Icon(Iconsax.user_tag),
@@ -134,7 +134,7 @@ class _SekolahSiswaUpdateState extends State<SekolahSiswaUpdate> {
               Obx(() {
                 final kelasList = kelasController.kelasList;
                 return DropdownButtonFormField<String>(
-                  value: selectedKelasId.value,
+                  initialValue: selectedKelasId.value,
                   decoration: const InputDecoration(
                     labelText: 'Kelas',
                     prefixIcon: Icon(Iconsax.buildings),
@@ -245,7 +245,7 @@ class _SekolahSiswaUpdateState extends State<SekolahSiswaUpdate> {
                                       child: Image.network(
                                         widget.siswa.fotoUrl!,
                                         fit: BoxFit.cover,
-                                        errorBuilder: (_, __, ___) =>
+                                        errorBuilder: (_, _, _) =>
                                             const Icon(Iconsax.gallery),
                                       ),
                                     ),

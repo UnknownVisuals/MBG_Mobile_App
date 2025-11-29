@@ -42,14 +42,11 @@ class DriverCheckpointEventCardActionButton extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(MBGSizes.fontSizeSm),
       decoration: BoxDecoration(
-        color: errorContainer.withOpacity(
-          scheme.brightness == Brightness.dark ? 0.22 : 0.18,
+        color: errorContainer.withValues(
+          alpha: scheme.brightness == Brightness.dark ? 0.22 : 0.18,
         ),
         borderRadius: BorderRadius.circular(MBGSizes.borderRadiusMd),
-        border: Border.all(
-          color: error.withOpacity(0.35),
-          width: 1.2,
-        ),
+        border: Border.all(color: error.withValues(alpha: 0.35), width: 1.2),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -63,17 +60,17 @@ class DriverCheckpointEventCardActionButton extends StatelessWidget {
                 Text(
                   'Akses Ditolak',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: error,
-                        fontWeight: FontWeight.w700,
-                      ),
+                    color: error,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
                 const SizedBox(height: 3),
                 Text(
                   'Anda tidak memiliki izin untuk melakukan checkpoint ini.',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: onError.withOpacity(0.85),
-                        height: 1.3,
-                      ),
+                    color: onError.withValues(alpha: 0.85),
+                    height: 1.3,
+                  ),
                 ),
               ],
             ),
@@ -94,9 +91,9 @@ class DriverCheckpointEventCardActionButton extends StatelessWidget {
         icon: Icon(Iconsax.play_circle, size: MBGSizes.iconSm + 4),
         label: Text(
           'Mulai Proses',
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+          style: Theme.of(
+            context,
+          ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
         ),
         style: FilledButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: MBGSizes.fontSizeSm),

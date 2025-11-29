@@ -19,7 +19,7 @@ class SekolahKelasController extends GetxController {
   final RxnString deletingKelasId = RxnString();
 
   String? get sekolahId =>
-      _userController.userModel.value?.sekolahAsPIC.first.id;
+      _userController.userModel.value?.sekolahAsPIC?.first.id;
 
   @override
   void onInit() {

@@ -27,8 +27,8 @@ class DapurCheckpointEventCardHeader extends StatelessWidget {
     final Color textColor = theme.colorScheme.onSurface;
     final Color iconColor = theme.colorScheme.primary;
     final Color iconBackgroundColor = isDark
-        ? theme.colorScheme.surfaceVariant.withOpacity(0.3)
-        : theme.colorScheme.primary.withOpacity(0.1);
+        ? theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3)
+        : theme.colorScheme.primary.withValues(alpha: 0.1);
 
     return Row(
       children: [

@@ -16,13 +16,13 @@ class SekolahDeliveryCardWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(MBGSizes.cardRadiusLg),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             spreadRadius: 2,
             offset: const Offset(0, 4),
           ),
         ],
-        border: Border.all(color: MBGColors.grey.withOpacity(0.3)),
+        border: Border.all(color: MBGColors.grey.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -33,10 +33,14 @@ class SekolahDeliveryCardWidget extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: MBGColors.warning.withOpacity(0.1),
+                  color: MBGColors.warning.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(Iconsax.truck_fast, color: MBGColors.warning, size: 22),
+                child: Icon(
+                  Iconsax.truck_fast,
+                  color: MBGColors.warning,
+                  size: 22,
+                ),
               ),
               const SizedBox(width: MBGSizes.spaceBtwItems),
               const Text(
@@ -114,7 +118,11 @@ class _DeliveryStatusItem extends StatelessWidget {
           fontWeight: FontWeight.w500,
         ),
       ),
-      trailing: const Icon(Iconsax.arrow_right_3, size: 18, color: MBGColors.grey),
+      trailing: const Icon(
+        Iconsax.arrow_right_3,
+        size: 18,
+        color: MBGColors.grey,
+      ),
     );
   }
 }

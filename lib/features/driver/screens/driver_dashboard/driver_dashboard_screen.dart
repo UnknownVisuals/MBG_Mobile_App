@@ -142,7 +142,7 @@ class DriverDashboardScreen extends GetView<DriverController> {
 // }
 
 bool _isOngoing(DriverDeliveryModel delivery) {
-  final status = delivery.status.replaceAll('_', ' ').toUpperCase();
+  final status = delivery.status!.replaceAll('_', ' ').toUpperCase();
   return status == 'SEDANG DIANTAR' || status == 'IN TRANSIT';
 }
 

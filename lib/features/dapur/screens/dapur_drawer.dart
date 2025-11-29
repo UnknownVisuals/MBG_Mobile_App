@@ -39,7 +39,7 @@ class DapurDrawer extends StatelessWidget {
               border: Border(
                 right: BorderSide(
                   width: 1,
-                  color: colorScheme.outline.withOpacity(0.3),
+                  color: colorScheme.outline.withValues(alpha: 0.3),
                 ),
               ),
             ),
@@ -60,10 +60,12 @@ class DapurDrawer extends StatelessWidget {
             ),
 
             // Padding
-            itemTextPadding:
-                const EdgeInsets.only(left: MBGSizes.spaceBtwItems),
-            selectedItemTextPadding:
-                const EdgeInsets.only(left: MBGSizes.spaceBtwItems),
+            itemTextPadding: const EdgeInsets.only(
+              left: MBGSizes.spaceBtwItems,
+            ),
+            selectedItemTextPadding: const EdgeInsets.only(
+              left: MBGSizes.spaceBtwItems,
+            ),
 
             itemPadding: const EdgeInsets.all(MBGSizes.md),
             selectedItemPadding: const EdgeInsets.all(MBGSizes.md),

@@ -27,7 +27,7 @@ class SekolahEventList extends StatelessWidget {
       physics: const AlwaysScrollableScrollPhysics(),
       padding: const EdgeInsets.only(top: MBGSizes.spaceBtwItems),
       itemCount: events.length,
-      separatorBuilder: (_, __) =>
+      separatorBuilder: (_, _) =>
           const SizedBox(height: MBGSizes.spaceBtwItems),
       itemBuilder: (context, index) {
         final event = events[index];

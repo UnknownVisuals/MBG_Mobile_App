@@ -40,8 +40,8 @@ class DapurInfoHorizontalCardList<T> extends StatelessWidget {
               Text(
                 emptyMessage,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: MBGColors.textSecondary,
-                    ),
+                  color: MBGColors.textSecondary,
+                ),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -57,7 +57,7 @@ class DapurInfoHorizontalCardList<T> extends StatelessWidget {
           return ListView.separated(
             scrollDirection: Axis.horizontal,
             itemCount: items.length,
-            separatorBuilder: (_, __) =>
+            separatorBuilder: (_, _) =>
                 const SizedBox(width: MBGSizes.spaceBtwItems),
             itemBuilder: (context, index) {
               final T item = items[index];

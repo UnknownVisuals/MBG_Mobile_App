@@ -111,7 +111,7 @@ class DapurMenuPlanningAdd extends StatelessWidget {
                   items: sekolahList.map((sekolah) {
                     return DropdownMenuItem<String>(
                       value: sekolah.id,
-                      child: Text(sekolah.nama),
+                      child: Text(sekolah.nama!),
                     );
                   }).toList(),
                   onChanged: (value) {

@@ -10,7 +10,7 @@ class DapurInfoStokCard extends StatelessWidget {
   final StockSummary stok;
 
   IconData _getCategoryIcon() {
-    switch (stok.kategori.toUpperCase()) {
+    switch (stok.kategori!.toUpperCase()) {
       case 'SAYURAN':
         return Iconsax.tree;
       case 'PROTEIN':
@@ -25,9 +25,9 @@ class DapurInfoStokCard extends StatelessWidget {
   }
 
   Color _getStockLevelColor() {
-    if (stok.stokKg < 5) {
+    if (stok.stokKg! < 5) {
       return Colors.red.shade400;
-    } else if (stok.stokKg < 20) {
+    } else if (stok.stokKg! < 20) {
       return Colors.orange.shade400;
     } else {
       return Colors.green.shade400;
@@ -71,7 +71,7 @@ class DapurInfoStokCard extends StatelessWidget {
               const SizedBox(width: MBGSizes.spaceBtwItems / 2),
               Expanded(
                 child: Text(
-                  stok.nama,
+                  stok.nama ?? '-',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     color: MBGColors.textWhite,
                     fontWeight: FontWeight.bold,
@@ -95,7 +95,7 @@ class DapurInfoStokCard extends StatelessWidget {
               const SizedBox(width: MBGSizes.spaceBtwItems / 2),
               Expanded(
                 child: Text(
-                  stok.kategori,
+                  stok.kategori!,
                   style: Theme.of(
                     context,
                   ).textTheme.bodyMedium?.copyWith(color: MBGColors.textWhite),
@@ -125,7 +125,7 @@ class DapurInfoStokCard extends StatelessWidget {
                 const Icon(Iconsax.weight_1, color: MBGColors.white, size: 14),
                 const SizedBox(width: MBGSizes.xs),
                 Text(
-                  '${stok.stokKg.toStringAsFixed(1)} kg',
+                  '${stok.stokKg!.toStringAsFixed(1)} kg',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: MBGColors.textWhite,
                     fontWeight: FontWeight.bold,

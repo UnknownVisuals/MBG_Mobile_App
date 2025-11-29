@@ -29,9 +29,6 @@ class DapurCheckpointEventCard extends StatelessWidget {
     late Color backgroundColor;
     late Color borderColor;
     late double borderWidth;
-    late Color textColor;
-    late Color iconColor;
-    late Color iconBackgroundColor;
     late bool showButton;
     late bool showShadow;
 
@@ -40,20 +37,14 @@ class DapurCheckpointEventCard extends StatelessWidget {
         backgroundColor = scheme.surface;
         borderColor = scheme.outline;
         borderWidth = 1;
-        textColor = scheme.onSurface;
-        iconColor = scheme.primary;
-        iconBackgroundColor = scheme.primary.withOpacity(0.1);
         showButton = false;
         showShadow = false;
         break;
 
       case 'active':
-        backgroundColor = scheme.primary.withOpacity(0.08);
+        backgroundColor = scheme.primary.withValues(alpha: 0.08);
         borderColor = scheme.primary;
         borderWidth = 2;
-        textColor = scheme.onSurface;
-        iconColor = scheme.primary;
-        iconBackgroundColor = scheme.primary.withOpacity(0.15);
         showButton = true;
         showShadow = true;
         break;
@@ -61,13 +52,10 @@ class DapurCheckpointEventCard extends StatelessWidget {
       case 'future':
       default:
         backgroundColor = isDark
-            ? scheme.surfaceVariant.withOpacity(0.3)
-            : scheme.surfaceVariant;
+            ? scheme.surfaceContainerHighest.withValues(alpha: 0.3)
+            : scheme.surfaceContainerHighest;
         borderColor = scheme.outlineVariant;
         borderWidth = 1;
-        textColor = scheme.onSurface.withOpacity(0.5);
-        iconColor = scheme.outline;
-        iconBackgroundColor = scheme.outline.withOpacity(0.1);
         showButton = false;
         showShadow = false;
     }
@@ -80,7 +68,7 @@ class DapurCheckpointEventCard extends StatelessWidget {
         boxShadow: showShadow
             ? [
                 BoxShadow(
-                  color: scheme.primary.withOpacity(0.12),
+                  color: scheme.primary.withValues(alpha: 0.12),
                   blurRadius: MBGSizes.sm,
                   offset: const Offset(0, 2),
                 ),
@@ -92,17 +80,14 @@ class DapurCheckpointEventCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header
-          DapurCheckpointEventCardHeader(
-            tipe: tipe,
-            status: status,
-          ),
+          DapurCheckpointEventCardHeader(tipe: tipe, status: status),
 
           // Completed: Detail
           if (status == 'completed' && checkpoint != null) ...[
             const SizedBox(height: MBGSizes.spaceBtwItems / 2),
 
             if (checkpoint?.fotoUrl != null)
-              DapurCheckpointEventCardImage(imageUrl: checkpoint!.fotoUrl),
+              DapurCheckpointEventCardImage(imageUrl: checkpoint!.fotoUrl!),
 
             if (checkpoint!.deskripsi != null) ...[
               const SizedBox(height: MBGSizes.spaceBtwItems / 2),
@@ -114,7 +99,7 @@ class DapurCheckpointEventCard extends StatelessWidget {
 
             const SizedBox(height: MBGSizes.spaceBtwItems / 2),
             DapurCheckpointEventCardTimestamp(
-              timestamp: checkpoint!.timestamp,
+              timestamp: checkpoint!.timestamp!,
               durasi: checkpoint!.durasi,
             ),
           ],

@@ -18,11 +18,9 @@ class DapurCheckpointEventCardActionButton extends StatelessWidget {
         Get.find<DapurCheckpointController>();
 
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
 
     // Define colors based on theme
     final errorColor = theme.colorScheme.error;
-    final backgroundColor = isDark ? Colors.grey[800] : Colors.grey[100];
     final buttonColor = theme.colorScheme.primary;
     final buttonTextColor = theme.colorScheme.onPrimary;
 
@@ -37,17 +35,13 @@ class DapurCheckpointEventCardActionButton extends StatelessWidget {
         return Container(
           padding: const EdgeInsets.all(MBGSizes.fontSizeSm),
           decoration: BoxDecoration(
-            color: errorColor.withOpacity(0.08),
+            color: errorColor.withValues(alpha: 0.08),
             borderRadius: BorderRadius.circular(MBGSizes.borderRadiusSm + 6),
-            border: Border.all(color: errorColor.withOpacity(0.3)),
+            border: Border.all(color: errorColor.withValues(alpha: 0.3)),
           ),
           child: Row(
             children: [
-              Icon(
-                Iconsax.lock,
-                size: MBGSizes.iconSm + 4,
-                color: errorColor,
-              ),
+              Icon(Iconsax.lock, size: MBGSizes.iconSm + 4, color: errorColor),
               const SizedBox(width: MBGSizes.md - 4),
               Expanded(
                 child: Column(
@@ -64,7 +58,7 @@ class DapurCheckpointEventCardActionButton extends StatelessWidget {
                     Text(
                       'Anda tidak memiliki izin untuk melakukan checkpoint ini',
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: errorColor.withOpacity(0.8),
+                        color: errorColor.withValues(alpha: 0.8),
                         fontSize: 12,
                       ),
                     ),

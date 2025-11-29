@@ -37,35 +37,37 @@ KategoriStok parseKategoriStok(String value) {
 class DapurStokModel {
   DapurStokModel({
     required this.id,
-    required this.nama,
-    required this.kategori,
-    required this.stokKg,
-    required this.dapurId,
-    required this.createdAt,
-    required this.updatedAt,
+    this.nama,
+    this.kategori,
+    this.stokKg,
+    this.dapurId,
+    this.createdAt,
+    this.updatedAt,
     this.dapur,
   });
 
   final String id;
-  final String nama;
-  final KategoriStok kategori;
-  final double stokKg;
-  final String dapurId;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final String? nama;
+  final KategoriStok? kategori;
+  final double? stokKg;
+  final String? dapurId;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
   final DapurSummary? dapur;
 
-  String get kategoriLabel => kategori.label;
+  String? get kategoriLabel => kategori?.label;
 
   factory DapurStokModel.fromJson(Map<String, dynamic> json) {
     return DapurStokModel(
       id: json['id'] as String,
-      nama: json['nama'] as String,
-      kategori: parseKategoriStok(json['kategori'] as String),
-      stokKg: (json['stokKg'] as num).toDouble(),
-      dapurId: json['dapurId'] as String,
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      updatedAt: DateTime.parse(json['updatedAt'] as String),
+      nama: json['nama'] as String?,
+      kategori: json['kategori'] != null
+          ? parseKategoriStok(json['kategori'] as String)
+          : null,
+      stokKg: _parseNullableDouble(json['stokKg']),
+      dapurId: json['dapurId'] as String?,
+      createdAt: _parseNullableDateTime(json['createdAt']),
+      updatedAt: _parseNullableDateTime(json['updatedAt']),
       dapur: json['dapur'] != null
           ? DapurSummary.fromJson(json['dapur'] as Map<String, dynamic>)
           : null,
@@ -75,28 +77,49 @@ class DapurStokModel {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'nama': nama,
-      'kategori': kategori.apiValue,
-      'stokKg': stokKg,
-      'dapurId': dapurId,
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt.toIso8601String(),
+      if (nama != null) 'nama': nama,
+      if (kategori != null) 'kategori': kategori!.apiValue,
+      if (stokKg != null) 'stokKg': stokKg,
+      if (dapurId != null) 'dapurId': dapurId,
+      if (createdAt != null) 'createdAt': createdAt!.toIso8601String(),
+      if (updatedAt != null) 'updatedAt': updatedAt!.toIso8601String(),
       if (dapur != null) 'dapur': dapur!.toJson(),
     };
   }
 }
 
 class DapurSummary {
-  DapurSummary({required this.id, required this.nama});
+  DapurSummary({required this.id, this.nama});
 
   final String id;
-  final String nama;
+  final String? nama;
 
   factory DapurSummary.fromJson(Map<String, dynamic> json) {
-    return DapurSummary(id: json['id'] as String, nama: json['nama'] as String);
+    return DapurSummary(
+      id: json['id'] as String,
+      nama: json['nama'] as String?,
+    );
   }
 
   Map<String, dynamic> toJson() {
-    return {'id': id, 'nama': nama};
+    return {'id': id, if (nama != null) 'nama': nama};
   }
+}
+
+double? _parseNullableDouble(dynamic value) {
+  if (value == null) return null;
+  if (value is num) return value.toDouble();
+  if (value is String && value.isNotEmpty) {
+    return double.tryParse(value);
+  }
+  return null;
+}
+
+DateTime? _parseNullableDateTime(dynamic value) {
+  if (value == null) return null;
+  if (value is DateTime) return value;
+  if (value is String && value.isNotEmpty) {
+    return DateTime.tryParse(value);
+  }
+  return null;
 }

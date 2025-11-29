@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:mbg_mobile_app/features/dapur/controllers/dapur_dashboard_controller.dart';
 import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
 
@@ -8,49 +10,49 @@ class DapurDashboardHeaderSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool selected = false;
+    final controller = Get.find<DapurDashboardController>();
 
-    return selected
-        ? Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey.withValues(alpha: 0.3)),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton<String>(
-                value: 'dapur_id_1',
-                isExpanded: true,
-                icon: const Icon(Iconsax.arrow_down_1),
-                onChanged: (value) {},
-                selectedItemBuilder: (BuildContext context) {
-                  return [
-                    _buildDapurItem(context, 'Dapur 1', 'Alamat Dapur 1'),
-                    _buildDapurItem(context, 'Dapur 2', 'Alamat Dapur 2'),
-                  ];
-                },
-                items: [
-                  DropdownMenuItem<String>(
-                    value: 'dapur_id_1',
-                    child: _buildDapurItem(
-                      context,
-                      'Dapur 1',
-                      'Alamat Dapur 1',
-                    ),
-                  ),
-                  DropdownMenuItem<String>(
-                    value: 'dapur_id_2',
-                    child: _buildDapurItem(
-                      context,
-                      'Dapur 2',
-                      'Alamat Dapur 2',
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          )
-        : _buildDapurItem(context, 'Dapur', 'Alamat Dapur');
+    return Obx(() {
+      final options = controller.dapurOptions;
+      if (options.isEmpty) {
+        return _buildDapurItem(context, 'Dapur belum tersedia', 'Tunggu data');
+      }
+
+      final selected = controller.selectedDapur.value ?? options.first;
+      if (options.length == 1) {
+        return _buildDapurItem(
+          context,
+          selected.nama ?? 'Dapur',
+          selected.alamat ?? 'Alamat belum tersedia',
+        );
+      }
+
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey.withValues(alpha: 0.3)),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: DropdownButtonHideUnderline(
+          child: DropdownButton<String>(
+            value: selected.id,
+            isExpanded: true,
+            icon: const Icon(Iconsax.arrow_down_1),
+            onChanged: controller.selectDapurById,
+            items: options.map((entry) {
+              return DropdownMenuItem<String>(
+                value: entry.id,
+                child: _buildDapurItem(
+                  context,
+                  entry.nama ?? 'Dapur',
+                  entry.alamat ?? 'Alamat belum tersedia',
+                ),
+              );
+            }).toList(),
+          ),
+        ),
+      );
+    });
   }
 
   Widget _buildDapurItem(BuildContext context, String name, String address) {

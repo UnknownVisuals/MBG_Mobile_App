@@ -17,11 +17,11 @@ class DriverDashboardDeliveryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final status = delivery.status;
-    final statusColor = _statusColor(status);
+    final statusColor = _statusColor(status!);
     final statusLabel = _statusText(status);
     final statusIcon = _statusIcon(status);
     final sekolahSummary = delivery.sekolah;
-    final alamat = sekolahSummary.alamat ?? 'Alamat belum tersedia';
+    final alamat = sekolahSummary!.alamat ?? 'Alamat belum tersedia';
 
     return Container(
       margin: const EdgeInsets.only(bottom: MBGSizes.spaceBtwItems),
@@ -36,7 +36,7 @@ class DriverDashboardDeliveryCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              sekolahSummary.nama,
+              sekolahSummary.nama!,
               style: Theme.of(
                 context,
               ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
@@ -131,7 +131,7 @@ class DriverDashboardDeliveryCard extends StatelessWidget {
                     child: Text(
                       DateFormat(
                         'dd MMM yyyy, HH:mm',
-                      ).format(delivery.createdAt.toLocal()),
+                      ).format(delivery.createdAt!.toLocal()),
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                   ),
@@ -147,7 +147,7 @@ class DriverDashboardDeliveryCard extends StatelessWidget {
                   child: OutlinedButton.icon(
                     onPressed: () {
                       final qrCodeUrl = delivery.qrCodeUrl;
-                      if (qrCodeUrl.isNotEmpty) {
+                      if (qrCodeUrl != null && qrCodeUrl.isNotEmpty) {
                         MBGImagePreviewDialog.showData(
                           context: context,
                           imageData: qrCodeUrl,
@@ -170,8 +170,8 @@ class DriverDashboardDeliveryCard extends StatelessWidget {
                 Expanded(
                   child: ElevatedButton.icon(
                     onPressed: () {
-                      final latitude = delivery.sekolah.latitude;
-                      final longitude = delivery.sekolah.longitude;
+                      final latitude = delivery.sekolah!.latitude;
+                      final longitude = delivery.sekolah!.longitude;
                       if (latitude == null || longitude == null) {
                         MBGLoaders.errorSnackBar(
                           title: 'Lokasi belum tersedia',

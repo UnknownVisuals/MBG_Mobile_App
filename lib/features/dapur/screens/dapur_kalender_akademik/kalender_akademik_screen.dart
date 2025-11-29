@@ -52,7 +52,7 @@ class KalenderAkademikScreen extends StatelessWidget {
                               controller.getEventsForDate(day),
                           calendarStyle: CalendarStyle(
                             todayDecoration: BoxDecoration(
-                              color: Colors.blue.withOpacity(0.5),
+                              color: Colors.blue.withValues(alpha: 0.5),
                               shape: BoxShape.circle,
                             ),
                             selectedDecoration: const BoxDecoration(
@@ -181,8 +181,8 @@ class KalenderAkademikScreen extends StatelessWidget {
     KalenderAkademikController controller,
     KalenderAkademikModel event,
   ) {
-    final color = controller.getEventColor(event.jenis);
-    final icon = controller.getEventIcon(event.jenis);
+    final color = controller.getEventColor(event.jenis!);
+    final icon = controller.getEventIcon(event.jenis!);
 
     showDialog(
       context: context,
@@ -200,7 +200,7 @@ class KalenderAkademikScreen extends StatelessWidget {
                     width: 48,
                     height: 48,
                     decoration: BoxDecoration(
-                      color: color.withOpacity(0.1),
+                      color: color.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Icon(icon, color: color, size: 24),
@@ -208,7 +208,7 @@ class KalenderAkademikScreen extends StatelessWidget {
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      event.nama,
+                      event.nama!,
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -225,18 +225,18 @@ class KalenderAkademikScreen extends StatelessWidget {
               EventDetailRowWidget(
                 icon: Icons.calendar_today,
                 label: 'Tanggal',
-                value: DateFormat('dd MMMM yyyy').format(event.tanggal),
+                value: DateFormat('dd MMMM yyyy').format(event.tanggal!),
               ),
               EventDetailRowWidget(
                 icon: Icons.category,
                 label: 'Jenis',
-                value: controller.getEventLabel(event.jenis),
+                value: controller.getEventLabel(event.jenis!),
               ),
-              if (event.deskripsi.isNotEmpty)
+              if (event.deskripsi!.isNotEmpty)
                 EventDetailRowWidget(
                   icon: Icons.description,
                   label: 'Deskripsi',
-                  value: event.deskripsi,
+                  value: event.deskripsi!,
                 ),
               const SizedBox(height: 16),
               Row(

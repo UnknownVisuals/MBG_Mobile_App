@@ -45,14 +45,14 @@ class SekolahEventCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [MBGColors.primary, MBGColors.primary.withOpacity(0.3)],
+          colors: [MBGColors.primary, MBGColors.primary.withValues(alpha: 0.3)],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         ),
         borderRadius: BorderRadius.circular(MBGSizes.cardRadiusMd),
         boxShadow: [
           BoxShadow(
-            color: MBGColors.dark.withOpacity(0.1),
+            color: MBGColors.dark.withValues(alpha: 0.1),
             blurRadius: 12,
             offset: const Offset(0, 6),
           ),
@@ -89,7 +89,7 @@ class SekolahEventCard extends StatelessWidget {
       padding: const EdgeInsets.all(MBGSizes.xs),
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: MBGColors.primary.withOpacity(0.15),
+        color: MBGColors.primary.withValues(alpha: 0.15),
       ),
       child: Icon(
         Iconsax.calendar_tick,
@@ -118,7 +118,7 @@ class SekolahEventCard extends StatelessWidget {
             horizontal: MBGSizes.sm,
           ),
           decoration: BoxDecoration(
-            color: MBGColors.primary.withOpacity(0.18),
+            color: MBGColors.primary.withValues(alpha: 0.18),
             borderRadius: BorderRadius.circular(MBGSizes.cardRadiusSm),
           ),
           child: Text(

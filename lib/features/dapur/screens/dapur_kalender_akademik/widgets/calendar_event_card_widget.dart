@@ -17,8 +17,8 @@ class CalendarEventCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = controller.getEventColor(event.jenis);
-    final icon = controller.getEventIcon(event.jenis);
+    final color = controller.getEventColor(event.jenis!);
+    final icon = controller.getEventIcon(event.jenis!);
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
@@ -35,7 +35,7 @@ class CalendarEventCardWidget extends StatelessWidget {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(icon, color: color, size: 24),
@@ -46,16 +46,16 @@ class CalendarEventCardWidget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      event.nama,
+                      event.nama!,
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 15,
                       ),
                     ),
-                    if (event.deskripsi.isNotEmpty) ...[
+                    if (event.deskripsi!.isNotEmpty) ...[
                       const SizedBox(height: 4),
                       Text(
-                        event.deskripsi,
+                        event.deskripsi!,
                         style: TextStyle(fontSize: 13, color: Colors.grey[600]),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -68,12 +68,12 @@ class CalendarEventCardWidget extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: color),
                 ),
                 child: Text(
-                  controller.getEventLabel(event.jenis),
+                  controller.getEventLabel(event.jenis!),
                   style: TextStyle(
                     color: color,
                     fontSize: 11,

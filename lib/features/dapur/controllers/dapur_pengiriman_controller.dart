@@ -38,7 +38,11 @@ class DapurPengirimanController extends GetxController {
     'DIANTAR',
   };
 
-  static const Set<String> _completedStatuses = {'DITERIMA', 'SELESAI'};
+  static const Set<String> _completedStatuses = {
+    'DITERIMA',
+    'SELESAI',
+    'TELAH_SAMPAI',
+  };
 
   @override
   void onInit() {
@@ -64,11 +68,9 @@ class DapurPengirimanController extends GetxController {
 
   String? get sekolahId {
     if (sekolahList.isEmpty) {
-      print('DapurPengirimanController: sekolahList is empty');
       return null;
     }
     final id = sekolahList.first.id;
-    print('DapurPengirimanController: sekolahId = $id (from sekolahList)');
     return id;
   }
 
@@ -104,9 +106,20 @@ class DapurPengirimanController extends GetxController {
   }
 
   // Helper methods for status checking
-  bool _isPending(String status) => _pendingStatuses.contains(status);
-  bool _isInTransit(String status) => _inTransitStatuses.contains(status);
-  bool _isCompleted(String status) => _completedStatuses.contains(status);
+  bool _isPending(String? status) {
+    if (status == null) return false;
+    return _pendingStatuses.contains(status);
+  }
+
+  bool _isInTransit(String? status) {
+    if (status == null) return false;
+    return _inTransitStatuses.contains(status);
+  }
+
+  bool _isCompleted(String? status) {
+    if (status == null) return false;
+    return _completedStatuses.contains(status);
+  }
 
   // ===============
   // GET ALL SEKOLAH
@@ -137,18 +150,12 @@ class DapurPengirimanController extends GetxController {
       final currentSekolahId = sekolahId;
       if (currentSekolahId == null) {
         pengirimanList.clear();
-        print('DapurPengirimanController: No sekolah ID available');
         return;
       }
 
-      print(
-        'DapurPengirimanController: Fetching pengiriman for sekolah: $currentSekolahId',
-      );
       final data = await _dapurService.getPengirimanBySekolah(currentSekolahId);
-      print('DapurPengirimanController: Received ${data.length} pengiriman');
       pengirimanList.assignAll(data);
     } catch (e) {
-      print('DapurPengirimanController: Error fetching pengiriman: $e');
       MBGLoaders.errorSnackBar(
         title: 'Gagal memuat data pengiriman',
         message: e.toString(),

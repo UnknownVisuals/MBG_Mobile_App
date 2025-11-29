@@ -70,15 +70,17 @@ class DapurInfoScreen extends StatelessWidget {
               MBGInfoRow(
                 title: 'Dibuat pada',
                 value: dapur?.createdAt != null
-                    ? DateFormat('dd MMMM yyyy, HH:mm')
-                        .format(dapur!.createdAt.toLocal())
+                    ? DateFormat(
+                        'dd MMMM yyyy, HH:mm',
+                      ).format(dapur!.createdAt!.toLocal())
                     : '-',
               ),
               MBGInfoRow(
                 title: 'Diperbarui pada',
                 value: dapur?.updatedAt != null
-                    ? DateFormat('dd MMMM yyyy, HH:mm')
-                        .format(dapur!.updatedAt.toLocal())
+                    ? DateFormat(
+                        'dd MMMM yyyy, HH:mm',
+                      ).format(dapur!.updatedAt!.toLocal())
                     : '-',
               ),
               const SizedBox(height: MBGSizes.spaceBtwSections),

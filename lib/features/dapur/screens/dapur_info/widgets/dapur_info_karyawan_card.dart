@@ -52,7 +52,7 @@ class DapurInfoKaryawanCard extends StatelessWidget {
               const SizedBox(width: MBGSizes.spaceBtwItems / 2),
               Expanded(
                 child: Text(
-                  karyawan.nama,
+                  karyawan.nama!,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     color: MBGColors.textWhite,
                     fontWeight: FontWeight.bold,
@@ -76,7 +76,7 @@ class DapurInfoKaryawanCard extends StatelessWidget {
               const SizedBox(width: MBGSizes.spaceBtwItems / 2),
               Expanded(
                 child: Text(
-                  karyawan.posisi,
+                  karyawan.posisi!,
                   style: Theme.of(
                     context,
                   ).textTheme.bodyMedium?.copyWith(color: MBGColors.textWhite),

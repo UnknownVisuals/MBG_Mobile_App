@@ -17,10 +17,10 @@ class SekolahDeliveryController extends GetxController {
   final RxString selectedFilter = 'all'.obs;
 
   String? get sekolahId =>
-      _userController.userModel.value?.sekolahAsPIC.first.id;
+      _userController.userModel.value?.sekolahAsPIC?.first.id;
 
   String get sekolahName =>
-      _userController.userModel.value?.sekolahAsPIC.first.nama ?? 'Sekolah';
+      _userController.userModel.value?.sekolahAsPIC?.first.nama ?? 'Sekolah';
 
   @override
   void onInit() {

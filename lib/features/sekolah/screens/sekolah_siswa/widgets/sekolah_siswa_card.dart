@@ -57,7 +57,7 @@ class SekolahSiswaCardWidget extends StatelessWidget {
         vertical: MBGSizes.xs,
       ),
       decoration: BoxDecoration(
-        color: MBGColors.light.withOpacity(0.4),
+        color: MBGColors.light.withValues(alpha: 0.4),
         borderRadius: BorderRadius.circular(MBGSizes.cardRadiusSm),
       ),
       child: Row(
@@ -99,7 +99,7 @@ class SekolahSiswaCardWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(MBGSizes.cardRadiusLg),
         boxShadow: [
           BoxShadow(
-            color: MBGColors.primary.withOpacity(0.15),
+            color: MBGColors.primary.withValues(alpha: 0.15),
             blurRadius: 18,
             offset: const Offset(0, 8),
           ),
@@ -124,8 +124,8 @@ class SekolahSiswaCardWidget extends StatelessWidget {
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                         colors: [
-                          MBGColors.primary.withOpacity(0.35),
-                          MBGColors.primary.withOpacity(0.05),
+                          MBGColors.primary.withValues(alpha: 0.35),
+                          MBGColors.primary.withValues(alpha: 0.05),
                         ],
                       ),
                     ),
@@ -251,7 +251,7 @@ class SekolahSiswaCardWidget extends StatelessWidget {
                       vertical: MBGSizes.xs,
                     ),
                     decoration: BoxDecoration(
-                      color: statusColor.withOpacity(0.15),
+                      color: statusColor.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(
                         MBGSizes.cardRadiusSm,
                       ),

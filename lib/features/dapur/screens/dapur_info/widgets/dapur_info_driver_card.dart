@@ -50,11 +50,11 @@ class DapurInfoDriverCard extends StatelessWidget {
 
               Expanded(
                 child: Text(
-                  driver.name,
+                  driver.name!,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: MBGColors.textWhite,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    color: MBGColors.textWhite,
+                    fontWeight: FontWeight.bold,
+                  ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -63,23 +63,25 @@ class DapurInfoDriverCard extends StatelessWidget {
           ),
 
           const SizedBox(height: MBGSizes.xs),
-          Divider(color: MBGColors.white.withOpacity(0.3), height: 1),
+          Divider(color: MBGColors.white.withValues(alpha: 0.3), height: 1),
           const SizedBox(height: MBGSizes.xs),
 
           /// ==== EMAIL ====
           Row(
             children: [
-              const Icon(Iconsax.direct_right,
-                  color: MBGColors.white, size: MBGSizes.iconSm),
+              const Icon(
+                Iconsax.direct_right,
+                color: MBGColors.white,
+                size: MBGSizes.iconSm,
+              ),
               const SizedBox(width: MBGSizes.xs),
 
               Expanded(
                 child: Text(
-                  driver.email,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium
-                      ?.copyWith(color: MBGColors.textWhite),
+                  driver.email!,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(color: MBGColors.textWhite),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -92,17 +94,19 @@ class DapurInfoDriverCard extends StatelessWidget {
           /// ==== PHONE ====
           Row(
             children: [
-              const Icon(Iconsax.call,
-                  color: MBGColors.white, size: MBGSizes.iconSm),
+              const Icon(
+                Iconsax.call,
+                color: MBGColors.white,
+                size: MBGSizes.iconSm,
+              ),
               const SizedBox(width: MBGSizes.xs),
 
               Expanded(
                 child: Text(
-                  driver.phone,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium
-                      ?.copyWith(color: MBGColors.textWhite),
+                  driver.phone!,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(color: MBGColors.textWhite),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -133,12 +137,12 @@ class DapurInfoDriverCard extends StatelessWidget {
 
                 Expanded(
                   child: Text(
-                    driver.nomorKendaraan,
+                    driver.nomorKendaraan!,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: MBGColors.textWhite,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 1.1,
-                        ),
+                      color: MBGColors.textWhite,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.1,
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),

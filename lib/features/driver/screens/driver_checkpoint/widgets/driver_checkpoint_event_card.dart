@@ -45,7 +45,7 @@ class DriverCheckpointEventCard extends StatelessWidget {
         break;
 
       case 'active':
-        backgroundColor = colorScheme.primary.withOpacity(0.08);
+        backgroundColor = colorScheme.primary.withValues(alpha: 0.08);
         borderColor = colorScheme.primary;
         borderWidth = 2;
         showButton = true;
@@ -54,7 +54,9 @@ class DriverCheckpointEventCard extends StatelessWidget {
 
       case 'future':
       default:
-        backgroundColor = colorScheme.surfaceVariant.withOpacity(0.4);
+        backgroundColor = colorScheme.surfaceContainerHighest.withValues(
+          alpha: 0.4,
+        );
         borderColor = colorScheme.outlineVariant;
         borderWidth = 1;
         showButton = false;
@@ -70,7 +72,7 @@ class DriverCheckpointEventCard extends StatelessWidget {
         boxShadow: showShadow
             ? [
                 BoxShadow(
-                  color: colorScheme.primary.withOpacity(0.15),
+                  color: colorScheme.primary.withValues(alpha: 0.15),
                   blurRadius: MBGSizes.sm,
                   offset: const Offset(0, 2),
                 ),
@@ -93,7 +95,7 @@ class DriverCheckpointEventCard extends StatelessWidget {
             const SizedBox(height: MBGSizes.spaceBtwItems / 2),
 
             if (checkpoint?.fotoUrl != null)
-              DapurCheckpointEventCardImage(imageUrl: checkpoint!.fotoUrl),
+              DapurCheckpointEventCardImage(imageUrl: checkpoint!.fotoUrl!),
 
             if (checkpoint!.deskripsi != null) ...[
               const SizedBox(height: MBGSizes.spaceBtwItems / 2),
@@ -105,7 +107,7 @@ class DriverCheckpointEventCard extends StatelessWidget {
 
             const SizedBox(height: MBGSizes.spaceBtwItems / 2),
             DapurCheckpointEventCardTimestamp(
-              timestamp: checkpoint!.timestamp,
+              timestamp: checkpoint!.timestamp!,
               durasi: checkpoint!.durasi,
             ),
           ],

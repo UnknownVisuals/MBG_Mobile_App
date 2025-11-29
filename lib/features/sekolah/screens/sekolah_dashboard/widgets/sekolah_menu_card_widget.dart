@@ -16,13 +16,13 @@ class SekolahMenuCardWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(MBGSizes.cardRadiusLg),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             spreadRadius: 2,
             offset: const Offset(0, 4),
           ),
         ],
-        border: Border.all(color: MBGColors.grey.withOpacity(0.3)),
+        border: Border.all(color: MBGColors.grey.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -33,7 +33,7 @@ class SekolahMenuCardWidget extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: MBGColors.primary.withOpacity(0.1),
+                  color: MBGColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(Iconsax.note, color: MBGColors.primary, size: 22),
@@ -109,16 +109,16 @@ class _MenuItem extends StatelessWidget {
       ),
       subtitle: Text(
         calories,
-        style: const TextStyle(
-          fontSize: 12,
-          color: MBGColors.grey,
-        ),
+        style: const TextStyle(fontSize: 12, color: MBGColors.grey),
       ),
-      trailing: const Icon(Iconsax.arrow_right_3, size: 18, color: MBGColors.grey),
+      trailing: const Icon(
+        Iconsax.arrow_right_3,
+        size: 18,
+        color: MBGColors.grey,
+      ),
     );
   }
 }
-
 
 // import 'package:flutter/material.dart';
 // import 'package:iconsax/iconsax.dart';

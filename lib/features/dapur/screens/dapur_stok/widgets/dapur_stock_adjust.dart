@@ -76,7 +76,7 @@ class DapurStockAdjust extends StatelessWidget {
                   if (adjustment == 0) {
                     return 'Nilai penyesuaian tidak boleh nol';
                   }
-                  final newStok = stok.stokKg + adjustment;
+                  final newStok = stok.stokKg! + adjustment;
                   if (newStok < 0) {
                     return 'Stok tidak boleh kurang dari 0 kg';
                   }

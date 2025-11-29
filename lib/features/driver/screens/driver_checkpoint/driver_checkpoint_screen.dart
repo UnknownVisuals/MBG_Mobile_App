@@ -89,8 +89,8 @@ class DriverCheckpointScreen extends StatelessWidget {
                                       ),
                                 ),
                                 Text(
-                                  '${DateFormat('dd MMM yyyy').format(planning.tanggalMulai)} - '
-                                  '${DateFormat('dd MMM yyyy').format(planning.tanggalSelesai)}',
+                                  '${DateFormat('dd MMM yyyy').format(planning.tanggalMulai!)} - '
+                                  '${DateFormat('dd MMM yyyy').format(planning.tanggalSelesai!)}',
                                   style: Theme.of(context).textTheme.bodySmall
                                       ?.copyWith(
                                         color: Theme.of(
@@ -140,7 +140,7 @@ class DriverCheckpointScreen extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              menuHarian.namaMenu,
+                              menuHarian.namaMenu!,
                               style: Theme.of(context).textTheme.titleSmall
                                   ?.copyWith(fontWeight: FontWeight.w600),
                               maxLines: 1,
@@ -149,7 +149,7 @@ class DriverCheckpointScreen extends StatelessWidget {
                             Text(
                               DateFormat(
                                 'dd MMM yyyy',
-                              ).format(menuHarian.tanggal),
+                              ).format(menuHarian.tanggal!),
                               style: Theme.of(context).textTheme.bodySmall
                                   ?.copyWith(
                                     color: Theme.of(
@@ -277,10 +277,10 @@ class DriverCheckpointScreen extends StatelessWidget {
       margin: const EdgeInsets.only(top: MBGSizes.sm),
       padding: const EdgeInsets.all(MBGSizes.md),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceVariant,
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(MBGSizes.cardRadiusMd),
         border: Border.all(
-          color: Theme.of(context).dividerColor.withOpacity(0.3),
+          color: Theme.of(context).dividerColor.withValues(alpha: 0.3),
         ),
       ),
       child: Text(

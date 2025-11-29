@@ -2,23 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
+import 'package:mbg_mobile_app/utils/helpers/helper_functions.dart';
 
-/// Delivery card widget for pending deliveries
-class DapurDashboardDeliveryCardWidget extends StatelessWidget {
-  const DapurDashboardDeliveryCardWidget({super.key});
+class DapurDashboardDeliveryCard extends StatelessWidget {
+  const DapurDashboardDeliveryCard({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final bool isDarkMode = MBGHelperFunctions.isDarkMode(context);
+
     final delivery = {
       'sekolahNama': 'SD Negeri 01 Jakarta',
       'jumlahTray': 10,
       'jumlahKeranjang': 5,
       'status': 'PENDING',
-
     };
 
-    final statusColor = delivery['status'] == 'PENDING'
+    final Color statusColor = delivery['status'] == 'PENDING'
         ? MBGColors.warning
         : MBGColors.info;
 
@@ -26,9 +26,13 @@ class DapurDashboardDeliveryCardWidget extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: MBGSizes.spaceBtwItems),
       padding: const EdgeInsets.all(MBGSizes.md),
       decoration: BoxDecoration(
-        color: theme.cardColor,
+        color: isDarkMode ? MBGColors.dark : MBGColors.light,
         borderRadius: BorderRadius.circular(MBGSizes.cardRadiusMd),
-        border: Border.all(color: theme.colorScheme.onSurface.withOpacity(0.4)),
+        border: Border.all(
+          color: isDarkMode
+              ? MBGColors.lightGrey.withValues(alpha: 0.4)
+              : MBGColors.darkGrey.withValues(alpha: 0.4),
+        ),
       ),
       child: Row(
         children: [
@@ -36,7 +40,7 @@ class DapurDashboardDeliveryCardWidget extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(MBGSizes.md),
             decoration: BoxDecoration(
-               color: statusColor.withOpacity(0.12),
+              color: statusColor.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(MBGSizes.borderRadiusMd),
             ),
             child: Icon(Iconsax.truck, color: statusColor),
@@ -51,13 +55,13 @@ class DapurDashboardDeliveryCardWidget extends StatelessWidget {
               children: [
                 Text(
                   delivery['sekolahNama'].toString(),
-                  style: theme.textTheme.bodyMedium,
+                  style: Theme.of(context).textTheme.bodyMedium,
                 ),
                 const SizedBox(height: 4),
                 Text(
                   '${delivery['jumlahTray']} trays • ${delivery['jumlahKeranjang']} baskets',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                     color: theme.hintColor,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(context).hintColor,
                   ),
                 ),
               ],

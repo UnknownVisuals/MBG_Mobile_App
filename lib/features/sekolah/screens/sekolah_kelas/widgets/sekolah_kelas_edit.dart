@@ -71,10 +71,12 @@ class SekolahKelasEdit extends StatelessWidget {
                     );
                     if (error != null) return error;
                     final parsed = int.tryParse(value!.trim());
-                    if (parsed == null)
+                    if (parsed == null) {
                       return 'Tingkat harus berupa angka bulat';
-                    if (parsed < 1 || parsed > 12)
+                    }
+                    if (parsed < 1 || parsed > 12) {
                       return 'Tingkat harus antara 1 dan 12';
+                    }
                     return null;
                   },
                 ),

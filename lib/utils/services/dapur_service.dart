@@ -498,21 +498,12 @@ class DapurService extends GetxService {
     required File foto,
     String? deskripsi,
   }) async {
-    print('🔵 [SERVICE] Starting createCheckpoint...');
-    print('🔵 [SERVICE] menuHarianId: $menuHarianId');
-    print('🔵 [SERVICE] tipe: $tipe');
-    print('🔵 [SERVICE] deskripsi: $deskripsi');
-    print('🔵 [SERVICE] foto path: ${foto.path}');
-
     MBGHttpHelper.loadSessionToken();
 
     final fields = <String, String>{'tipe': tipe};
     if (deskripsi != null && deskripsi.isNotEmpty) {
       fields['deskripsi'] = deskripsi;
     }
-
-    print('🔵 [SERVICE] Fields prepared: $fields');
-    print('🔵 [SERVICE] Calling postMultipartRequest...');
 
     final response = await _httpHelper.postMultipartRequest(
       'menu-harian/$menuHarianId/checkpoint',
@@ -521,23 +512,13 @@ class DapurService extends GetxService {
       fileFieldName: 'foto',
     );
 
-    print('✅ [SERVICE] Response received');
-    print('🔵 [SERVICE] Status Code: ${response.statusCode}');
-    print('🔵 [SERVICE] Response Body Type: ${response.body.runtimeType}');
-    print('🔵 [SERVICE] Response Body: ${response.body}');
-
     if (response.statusCode != 201 || !_isSuccess(response)) {
-      print('❌ [SERVICE] Invalid response');
       throw Exception(_responseMessage(response, 'Gagal membuat checkpoint'));
     }
 
-    print('🔵 [SERVICE] Extracting data object...');
     final data = _extractDataObject(response);
-    print('✅ [SERVICE] Data extracted: $data');
 
-    print('🔵 [SERVICE] Parsing to DapurCheckpointModel...');
     final model = DapurCheckpointModel.fromJson(data);
-    print('✅ [SERVICE] Model created successfully');
 
     return model;
   }

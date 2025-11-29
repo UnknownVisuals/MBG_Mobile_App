@@ -1,53 +1,52 @@
 class UserModel {
   UserModel({
     required this.id,
-    required this.email,
-    required this.name,
-    required this.phone,
-    required this.role,
+    this.email,
+    this.name,
+    this.phone,
+    this.role,
     this.nomorKendaraan,
-    required this.dapurAsPIC,
-    required this.sekolahAsPIC,
-    required this.createdAt,
-    required this.updatedAt,
+    this.dapurAsPIC,
+    this.sekolahAsPIC,
+    this.createdAt,
+    this.updatedAt,
   });
 
   final String id;
-  final String email;
-  final String name;
-  final String phone;
-  final String role;
+  final String? email;
+  final String? name;
+  final String? phone;
+  final String? role;
   final String? nomorKendaraan;
-  final List<AssignedDapur> dapurAsPIC;
-  final List<AssignedSekolah> sekolahAsPIC;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final List<UserDapurAsPIC>? dapurAsPIC;
+  final List<UserSekolahAsPIC>? sekolahAsPIC;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
-    final dapurData = json['dapurAsPIC'] as List<dynamic>?;
-    final sekolahData = json['sekolahAsPIC'] as List<dynamic>?;
+    final dapurList = (json['dapurAsPIC'] as List<dynamic>?)
+        ?.map((e) => UserDapurAsPIC.fromJson(e as Map<String, dynamic>))
+        .toList();
+
+    final sekolahList = (json['sekolahAsPIC'] as List<dynamic>?)
+        ?.map((e) => UserSekolahAsPIC.fromJson(e as Map<String, dynamic>))
+        .toList();
 
     return UserModel(
       id: json['id'] as String,
-      email: json['email'] as String,
-      name: json['name'] as String,
-      phone: json['phone'] as String,
-      role: json['role'] as String,
+      email: json['email'] as String?,
+      name: json['name'] as String?,
+      phone: json['phone'] as String?,
+      role: json['role'] as String?,
       nomorKendaraan: json['nomorKendaraan'] as String?,
-      dapurAsPIC: dapurData == null
-          ? <AssignedDapur>[]
-          : dapurData
-                .whereType<Map<String, dynamic>>()
-                .map(AssignedDapur.fromJson)
-                .toList(),
-      sekolahAsPIC: sekolahData == null
-          ? <AssignedSekolah>[]
-          : sekolahData
-                .whereType<Map<String, dynamic>>()
-                .map(AssignedSekolah.fromJson)
-                .toList(),
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      updatedAt: DateTime.parse(json['updatedAt'] as String),
+      dapurAsPIC: dapurList,
+      sekolahAsPIC: sekolahList,
+      createdAt: json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'] as String)
+          : null,
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.parse(json['updatedAt'] as String)
+          : null,
     );
   }
 
@@ -59,32 +58,28 @@ class UserModel {
       'phone': phone,
       'role': role,
       'nomorKendaraan': nomorKendaraan,
-      'dapurAsPIC': dapurAsPIC.map((dapur) => dapur.toJson()).toList(),
-      'sekolahAsPIC': sekolahAsPIC.map((sekolah) => sekolah.toJson()).toList(),
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt.toIso8601String(),
+      'dapurAsPIC': dapurAsPIC?.map((e) => e.toJson()).toList(),
+      'sekolahAsPIC': sekolahAsPIC?.map((e) => e.toJson()).toList(),
+      'createdAt': createdAt?.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
     };
   }
 }
 
-/// Model for AssignedDapur
-class AssignedDapur {
-  AssignedDapur({
-    required this.id,
-    required this.nama,
-    this.alamat,
-    this.status,
-  });
+// ============================================================
+
+class UserDapurAsPIC {
+  UserDapurAsPIC({required this.id, this.nama, this.alamat, this.status});
 
   final String id;
-  final String nama;
+  final String? nama;
   final String? alamat;
   final String? status;
 
-  factory AssignedDapur.fromJson(Map<String, dynamic> json) {
-    return AssignedDapur(
+  factory UserDapurAsPIC.fromJson(Map<String, dynamic> json) {
+    return UserDapurAsPIC(
       id: json['id'] as String,
-      nama: (json['nama'] ?? json['name']) as String,
+      nama: (json['nama'] ?? json['name']) as String?,
       alamat: json['alamat'] as String?,
       status: json['status'] as String?,
     );
@@ -95,18 +90,19 @@ class AssignedDapur {
   }
 }
 
-/// Model for AssignedSekolah
-class AssignedSekolah {
-  AssignedSekolah({required this.id, required this.nama, this.alamat});
+// ============================================================
+
+class UserSekolahAsPIC {
+  UserSekolahAsPIC({required this.id, this.nama, this.alamat});
 
   final String id;
-  final String nama;
+  final String? nama;
   final String? alamat;
 
-  factory AssignedSekolah.fromJson(Map<String, dynamic> json) {
-    return AssignedSekolah(
+  factory UserSekolahAsPIC.fromJson(Map<String, dynamic> json) {
+    return UserSekolahAsPIC(
       id: json['id'] as String,
-      nama: (json['nama'] ?? json['name']) as String,
+      nama: (json['nama'] ?? json['name']) as String?,
       alamat: json['alamat'] as String?,
     );
   }

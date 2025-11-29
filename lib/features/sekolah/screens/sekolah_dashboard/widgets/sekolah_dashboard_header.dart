@@ -18,17 +18,17 @@ class SekolahDashboardHeader extends StatelessWidget {
             children: [
               Text(
                 'Selamat Datang,',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: MBGColors.darkGrey,
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(color: MBGColors.darkGrey),
               ),
               const SizedBox(height: 4),
               Text(
                 'Dashboard Sekolah',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: MBGColors.primary,
-                    ),
+                  fontWeight: FontWeight.bold,
+                  color: MBGColors.primary,
+                ),
               ),
             ],
           ),
@@ -42,16 +42,13 @@ class SekolahDashboardHeader extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 5,
                 offset: const Offset(0, 2),
               ),
             ],
           ),
-          child: const Icon(
-            Iconsax.notification,
-            color: MBGColors.primary,
-          ),
+          child: const Icon(Iconsax.notification, color: MBGColors.primary),
         ),
       ],
     );

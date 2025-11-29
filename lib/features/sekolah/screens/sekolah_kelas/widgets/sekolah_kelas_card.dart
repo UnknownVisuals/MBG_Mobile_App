@@ -49,7 +49,7 @@ class SekolahKelasCard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(MBGSizes.sm),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.25),
+                      color: Colors.white.withValues(alpha: 0.25),
                       borderRadius: BorderRadius.circular(
                         MBGSizes.borderRadiusMd,
                       ),
@@ -124,7 +124,7 @@ class SekolahKelasCard extends StatelessWidget {
               vertical: MBGSizes.xs,
             ),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(MBGSizes.borderRadiusSm),
             ),
             child: Text(

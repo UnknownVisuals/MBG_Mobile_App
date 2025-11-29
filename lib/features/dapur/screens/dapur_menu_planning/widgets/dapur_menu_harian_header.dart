@@ -52,7 +52,7 @@ class DapurMenuHarianHeader extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: colorScheme.primaryContainer,
                   border: Border.all(
-                    color: colorScheme.primary.withOpacity(0.5),
+                    color: colorScheme.primary.withValues(alpha: 0.5),
                   ),
                   borderRadius: BorderRadius.circular(MBGSizes.borderRadiusSm),
                 ),
@@ -74,7 +74,7 @@ class DapurMenuHarianHeader extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                selectedPlanning.sekolah.nama,
+                selectedPlanning.sekolah!.nama!,
                 style: textTheme.bodySmall?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -82,8 +82,8 @@ class DapurMenuHarianHeader extends StatelessWidget {
 
               Text(
                 MBGFormatter.formatDateRange(
-                  selectedPlanning.tanggalMulai,
-                  selectedPlanning.tanggalSelesai,
+                  selectedPlanning.tanggalMulai!,
+                  selectedPlanning.tanggalSelesai!,
                 ),
                 style: textTheme.bodySmall?.copyWith(
                   color: colorScheme.onSurfaceVariant,

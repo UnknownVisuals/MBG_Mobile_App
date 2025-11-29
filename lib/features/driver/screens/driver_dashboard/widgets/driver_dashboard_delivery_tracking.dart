@@ -60,8 +60,8 @@ class _DriverDashboardDeliveryTrackingState
   }
 
   LatLng? _resolveSchoolLocation() {
-    final latitude = widget.delivery.sekolah.latitude;
-    final longitude = widget.delivery.sekolah.longitude;
+    final latitude = widget.delivery.sekolah!.latitude;
+    final longitude = widget.delivery.sekolah!.longitude;
     if (latitude == null || longitude == null) {
       return null;
     }
@@ -639,7 +639,7 @@ class _DriverDashboardDeliveryTrackingState
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              school.nama,
+                              school!.nama!,
                               style: Theme.of(context).textTheme.titleMedium
                                   ?.copyWith(
                                     fontWeight: FontWeight.w600,

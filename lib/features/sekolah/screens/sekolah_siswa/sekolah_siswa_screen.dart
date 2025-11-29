@@ -76,7 +76,7 @@ class SekolahSiswaScreen extends StatelessWidget {
             padding: MBGSpacingStyles.homeScreenPadding,
             physics: const AlwaysScrollableScrollPhysics(),
             itemCount: controller.siswaList.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 12),
+            separatorBuilder: (_, _) => const SizedBox(height: 12),
             itemBuilder: (context, index) {
               final siswa = controller.siswaList[index];
               return SekolahSiswaCardWidget(

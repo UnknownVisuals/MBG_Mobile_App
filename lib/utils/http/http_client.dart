@@ -97,14 +97,6 @@ class MBGHttpHelper extends GetConnect {
 
     final statusCode = response.statusCode ?? 0;
 
-    // Log for debugging
-    if (statusCode == 0 || statusCode < 200 || statusCode >= 300) {
-      print('HTTP Error Debug:');
-      print('Status Code: $statusCode');
-      print('Status Text: ${response.statusText}');
-      print('Body: ${response.bodyString}');
-    }
-
     if (statusCode == 401) {
       throw Exception(message ?? 'Unauthorized request.');
     } else if (statusCode < 200 || statusCode >= 300) {

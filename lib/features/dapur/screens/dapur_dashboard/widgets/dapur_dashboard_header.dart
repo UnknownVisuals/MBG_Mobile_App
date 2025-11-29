@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
+import 'package:mbg_mobile_app/features/dapur/controllers/dapur_dashboard_controller.dart';
 import 'package:mbg_mobile_app/features/dapur/screens/dapur_dashboard/widgets/dapur_dashboard_header_selector.dart';
 import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
@@ -10,6 +12,8 @@ class DapurDashboardHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(DapurDashboardController());
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -23,9 +27,11 @@ class DapurDashboardHeader extends StatelessWidget {
               color: MBGColors.primary,
             ),
             const SizedBox(width: MBGSizes.spaceBtwItems / 2),
-            Text(
-              DateFormat('EEEE, dd MMMM yyyy').format(DateTime.now()),
-              style: Theme.of(context).textTheme.bodyMedium,
+            Obx(
+              () => Text(
+                DateFormat('EEEE, dd MMMM yyyy').format(controller.currentTime),
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
             ),
 
             const Spacer(),
@@ -43,11 +49,13 @@ class DapurDashboardHeader extends StatelessWidget {
                 ),
                 borderRadius: BorderRadius.circular(MBGSizes.borderRadiusMd),
               ),
-              child: Text(
-                DateFormat('HH:mm:ss').format(DateTime.now()),
-                style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                  color: MBGColors.primary,
-                  fontWeight: FontWeight.bold,
+              child: Obx(
+                () => Text(
+                  DateFormat('HH:mm:ss').format(controller.currentTime),
+                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                    color: MBGColors.primary,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),

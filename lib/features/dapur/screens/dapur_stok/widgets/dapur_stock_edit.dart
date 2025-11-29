@@ -26,7 +26,7 @@ class DapurStokEdit extends StatelessWidget {
     final TextEditingController namaController = TextEditingController(
       text: stok.nama,
     );
-    final Rx<KategoriStok> selectedCategory = stok.kategori.obs;
+    final Rx<KategoriStok> selectedCategory = stok.kategori!.obs;
     final TextEditingController stokController = TextEditingController(
       text: stok.stokKg.toString(),
     );

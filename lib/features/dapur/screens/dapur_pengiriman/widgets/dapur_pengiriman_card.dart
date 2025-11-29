@@ -17,9 +17,9 @@ class DapurPengirimanCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final statusColor = _getStatusColor(pengiriman.status);
-    final statusText = _getStatusText(pengiriman.status);
-    final statusIcon = _getStatusIcon(pengiriman.status);
+    final statusColor = _getStatusColor(pengiriman.status!);
+    final statusText = _getStatusText(pengiriman.status!);
+    final statusIcon = _getStatusIcon(pengiriman.status!);
 
     return Container(
       margin: const EdgeInsets.only(bottom: MBGSizes.spaceBtwItems),
@@ -48,14 +48,16 @@ class DapurPengirimanCard extends StatelessWidget {
                 Icon(
                   Iconsax.location,
                   size: MBGSizes.iconSm,
-                  color: theme.iconTheme.color?.withOpacity(0.7),
+                  color: theme.iconTheme.color?.withValues(alpha: 0.7),
                 ),
                 const SizedBox(width: 6),
                 Expanded(
                   child: Text(
                     pengiriman.sekolahAlamat ?? '---',
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.textTheme.bodyMedium!.color!.withOpacity(0.7),
+                      color: theme.textTheme.bodyMedium!.color!.withValues(
+                        alpha: 0.7,
+                      ),
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -70,7 +72,7 @@ class DapurPengirimanCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: statusColor.withOpacity(0.12),
+                color: statusColor.withValues(alpha: 0.12),
                 border: Border.all(color: statusColor),
                 borderRadius: BorderRadius.circular(MBGSizes.borderRadiusLg),
               ),
@@ -96,9 +98,23 @@ class DapurPengirimanCard extends StatelessWidget {
             // --- TRAY & KERANJANG ---
             Row(
               children: [
-                Expanded(child: _infoBox(theme, 'Tray', pengiriman.jumlahTray, MBGColors.primary)),
+                Expanded(
+                  child: _infoBox(
+                    theme,
+                    'Tray',
+                    pengiriman.jumlahTray!,
+                    MBGColors.primary,
+                  ),
+                ),
                 const SizedBox(width: MBGSizes.spaceBtwItems),
-                Expanded(child: _infoBox(theme, 'Keranjang', pengiriman.jumlahKeranjang, MBGColors.success)),
+                Expanded(
+                  child: _infoBox(
+                    theme,
+                    'Keranjang',
+                    pengiriman.jumlahKeranjang!,
+                    MBGColors.success,
+                  ),
+                ),
               ],
             ),
 
@@ -108,16 +124,22 @@ class DapurPengirimanCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(MBGSizes.defaultSpace / 2),
               decoration: BoxDecoration(
-                color: theme.colorScheme.primary.withOpacity(0.06),
+                color: theme.colorScheme.primary.withValues(alpha: 0.06),
                 borderRadius: BorderRadius.circular(MBGSizes.borderRadiusMd),
               ),
               child: Row(
                 children: [
-                  Icon(Iconsax.calendar_1, size: MBGSizes.iconSm, color: theme.iconTheme.color),
+                  Icon(
+                    Iconsax.calendar_1,
+                    size: MBGSizes.iconSm,
+                    color: theme.iconTheme.color,
+                  ),
                   const SizedBox(width: 6),
                   Expanded(
                     child: Text(
-                      DateFormat('dd MMM yyyy, HH:mm').format(pengiriman.createdAt.toLocal()),
+                      DateFormat(
+                        'dd MMM yyyy, HH:mm',
+                      ).format(pengiriman.createdAt!.toLocal()),
                       style: theme.textTheme.bodySmall,
                     ),
                   ),
@@ -133,18 +155,21 @@ class DapurPengirimanCard extends StatelessWidget {
                 Expanded(
                   child: OutlinedButton.icon(
                     onPressed: () {
-                      if (pengiriman.qrCodeUrl.isNotEmpty) {
+                      if (pengiriman.qrCodeUrl!.isNotEmpty) {
                         MBGImagePreviewDialog.showData(
                           context: context,
-                          imageData: pengiriman.qrCodeUrl,
+                          imageData: pengiriman.qrCodeUrl!,
                         );
                       }
                     },
-                    icon: Icon(Iconsax.scan_barcode, color: theme.iconTheme.color),
+                    icon: Icon(
+                      Iconsax.scan_barcode,
+                      color: theme.iconTheme.color,
+                    ),
                     label: Text('QR Code'),
                   ),
                 ),
-                if (_isPendingStatus(pengiriman.status)) ...[
+                if (_isPendingStatus(pengiriman.status!)) ...[
                   const SizedBox(width: MBGSizes.spaceBtwItems),
                   IconButton(
                     onPressed: () {
@@ -158,10 +183,10 @@ class DapurPengirimanCard extends StatelessWidget {
                       );
                     },
                     icon: const Icon(Iconsax.trash, color: MBGColors.error),
-                  )
-                ]
+                  ),
+                ],
               ],
-            )
+            ),
           ],
         ),
       ),
@@ -173,7 +198,7 @@ class DapurPengirimanCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(MBGSizes.defaultSpace / 2),
       decoration: BoxDecoration(
-        color: brandColor.withOpacity(0.12),
+        color: brandColor.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -183,10 +208,14 @@ class DapurPengirimanCard extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.textTheme.bodySmall!.color!.withOpacity(0.7),
-                  )),
+              Text(
+                title,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.textTheme.bodySmall!.color!.withValues(
+                    alpha: 0.7,
+                  ),
+                ),
+              ),
               Text(
                 '$value',
                 style: theme.textTheme.bodyMedium?.copyWith(
@@ -195,7 +224,7 @@ class DapurPengirimanCard extends StatelessWidget {
                 ),
               ),
             ],
-          )
+          ),
         ],
       ),
     );
@@ -238,6 +267,8 @@ class DapurPengirimanCard extends StatelessWidget {
       case 'SEDANG_DIANTAR':
       case 'DIANTAR':
         return 'Sedang Diantar';
+      case 'TELAH_SAMPAI':
+        return 'Telah Sampai';
       case 'DITERIMA':
         return 'Diterima';
       case 'SELESAI':

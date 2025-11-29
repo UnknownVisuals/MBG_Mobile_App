@@ -43,10 +43,10 @@ class DapurMenuHarianCheckpointStatus extends StatelessWidget {
           spacing: MBGSizes.xs,
           runSpacing: MBGSizes.xs,
           children: checkpoints
-              .where((checkpoint) => checkpoint.tipe.isNotEmpty)
+              .where((checkpoint) => checkpoint.tipe!.isNotEmpty)
               .map((checkpoint) {
                 // Format checkpoint type for display
-                final displayText = checkpoint.tipe.replaceAll('_', ' ');
+                final displayText = checkpoint.tipe!.replaceAll('_', ' ');
 
                 // Determine color based on checkpoint type
                 final Color badgeColor;

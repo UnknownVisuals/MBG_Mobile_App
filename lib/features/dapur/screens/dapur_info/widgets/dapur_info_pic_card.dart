@@ -46,7 +46,7 @@ class DapurInfoPicCard extends StatelessWidget {
               const SizedBox(width: MBGSizes.spaceBtwItems / 2),
               Expanded(
                 child: Text(
-                  pic.name,
+                  pic.name!,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     color: MBGColors.textWhite,
                     fontWeight: FontWeight.bold,
@@ -73,7 +73,7 @@ class DapurInfoPicCard extends StatelessWidget {
               const SizedBox(width: MBGSizes.spaceBtwItems / 2),
               Expanded(
                 child: Text(
-                  pic.email,
+                  pic.email ?? '-',
                   style: Theme.of(
                     context,
                   ).textTheme.bodyMedium?.copyWith(color: MBGColors.textWhite),
@@ -93,7 +93,7 @@ class DapurInfoPicCard extends StatelessWidget {
               ),
               const SizedBox(width: MBGSizes.spaceBtwItems / 2),
               Text(
-                pic.phone,
+                pic.phone ?? '-',
                 style: Theme.of(
                   context,
                 ).textTheme.bodyMedium?.copyWith(color: MBGColors.textWhite),

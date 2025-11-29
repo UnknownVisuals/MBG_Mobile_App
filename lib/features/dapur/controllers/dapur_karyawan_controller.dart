@@ -15,7 +15,7 @@ class DapurKaryawanController extends GetxController {
   // Getter for dapurId
   final UserModel userModel = Get.find<UserController>().userModel.value!;
   String get dapurId {
-    return userModel.dapurAsPIC.first.id;
+    return userModel.dapurAsPIC!.first.id;
   }
 
   // Data Variables

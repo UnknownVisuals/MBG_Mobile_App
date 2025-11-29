@@ -58,7 +58,7 @@ class DapurKaryawanCard extends StatelessWidget {
               children: [
                 // Nama
                 Text(
-                  karyawan.nama,
+                  karyawan.nama!,
                   style: Theme.of(
                     context,
                   ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
@@ -80,7 +80,7 @@ class DapurKaryawanCard extends StatelessWidget {
                     const SizedBox(width: MBGSizes.spaceBtwItems / 2),
                     Expanded(
                       child: Text(
-                        karyawan.posisi,
+                        karyawan.posisi!,
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: MBGColors.textSecondary,
                         ),
@@ -113,7 +113,7 @@ class DapurKaryawanCard extends StatelessWidget {
                     ),
                   ),
                   child: Text(
-                    karyawan.status.displayName,
+                    karyawan.status!.displayName,
                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: karyawan.status == KaryawanStatus.AKTIF

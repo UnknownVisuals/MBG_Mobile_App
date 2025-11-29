@@ -65,7 +65,7 @@ class MBGDrawerHeader extends StatelessWidget {
                     ),
                   ),
                   child: Text(
-                    user?.role.toUpperCase() ?? 'USER',
+                    user?.role?.toUpperCase() ?? 'USER',
                     style: Theme.of(
                       context,
                     ).textTheme.labelSmall?.copyWith(color: MBGColors.white),

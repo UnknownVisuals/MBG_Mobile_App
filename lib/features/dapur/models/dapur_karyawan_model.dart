@@ -29,35 +29,35 @@ enum JenisKelamin {
 class DapurKaryawanModel {
   DapurKaryawanModel({
     required this.id,
-    required this.nama,
-    required this.posisi,
-    required this.status,
+    this.nama,
+    this.posisi,
+    this.status,
     this.fotoUrl,
     this.jenisKelamin,
     this.umur,
-    required this.createdAt,
-    required this.updatedAt,
-    required this.dapurId,
-    required this.dapurSummary,
+    this.createdAt,
+    this.updatedAt,
+    this.dapurId,
+    this.dapurSummary,
   });
 
   final String id;
-  final String nama;
-  final String posisi;
-  final KaryawanStatus status;
+  final String? nama;
+  final String? posisi;
+  final KaryawanStatus? status;
   final String? fotoUrl;
   final JenisKelamin? jenisKelamin;
   final int? umur;
-  final DateTime createdAt;
-  final DateTime updatedAt;
-  final String dapurId;
-  final KaryawanDapurSummary dapurSummary;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+  final String? dapurId;
+  final KaryawanDapurSummary? dapurSummary;
 
   factory DapurKaryawanModel.fromJson(Map<String, dynamic> json) {
     return DapurKaryawanModel(
       id: json['id'] as String,
-      nama: json['nama'] as String,
-      posisi: json['posisi'] as String,
+      nama: json['nama'] as String?,
+      posisi: json['posisi'] as String?,
       fotoUrl: json['fotoUrl'] as String?,
       jenisKelamin: json['jenisKelamin'] != null
           ? JenisKelamin.values.firstWhere(
@@ -65,47 +65,53 @@ class DapurKaryawanModel {
             )
           : null,
       umur: json['umur'] is num ? (json['umur'] as num).toInt() : null,
-      dapurId: json['dapurId'] as String,
-      status: KaryawanStatus.values.firstWhere((e) => e.name == json['status']),
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      updatedAt: DateTime.parse(json['updatedAt'] as String),
-      dapurSummary: KaryawanDapurSummary.fromJson(
-        json['dapur'] as Map<String, dynamic>,
-      ),
+      dapurId: json['dapurId'] as String?,
+      status: json['status'] != null
+          ? KaryawanStatus.values.firstWhere((e) => e.name == json['status'])
+          : null,
+      createdAt: json['createdAt'] != null
+          ? DateTime.tryParse(json['createdAt'] as String)
+          : null,
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.tryParse(json['updatedAt'] as String)
+          : null,
+      dapurSummary: json['dapur'] != null
+          ? KaryawanDapurSummary.fromJson(json['dapur'] as Map<String, dynamic>)
+          : null,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'nama': nama,
-      'posisi': posisi,
-      'status': status.name,
-      'fotoUrl': fotoUrl,
+      if (nama != null) 'nama': nama,
+      if (posisi != null) 'posisi': posisi,
+      if (status != null) 'status': status!.name,
+      if (fotoUrl != null) 'fotoUrl': fotoUrl,
       if (jenisKelamin != null) 'jenisKelamin': jenisKelamin!.name,
       if (umur != null) 'umur': umur,
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt.toIso8601String(),
-      'dapurId': dapurId,
-      'dapur': dapurSummary.toJson(),
+      if (createdAt != null) 'createdAt': createdAt!.toIso8601String(),
+      if (updatedAt != null) 'updatedAt': updatedAt!.toIso8601String(),
+      if (dapurId != null) 'dapurId': dapurId,
+      if (dapurSummary != null) 'dapur': dapurSummary!.toJson(),
     };
   }
 }
 
 class KaryawanDapurSummary {
-  KaryawanDapurSummary({required this.id, required this.nama});
+  KaryawanDapurSummary({required this.id, this.nama});
 
   final String id;
-  final String nama;
+  final String? nama;
 
   factory KaryawanDapurSummary.fromJson(Map<String, dynamic> json) {
     return KaryawanDapurSummary(
       id: json['id'] as String,
-      nama: json['nama'] as String,
+      nama: json['nama'] as String?,
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {'id': id, 'nama': nama};
+    return {'id': id, if (nama != null) 'nama': nama};
   }
 }

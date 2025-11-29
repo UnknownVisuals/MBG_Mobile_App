@@ -12,8 +12,10 @@ class DapurPengirimanEmpty extends StatelessWidget {
     return Center(
       child: LayoutBuilder(
         builder: (context, constraints) {
-          final scale =
-              (constraints.maxWidth / 400).clamp(0.7, 1.2); // Responsif
+          final scale = (constraints.maxWidth / 400).clamp(
+            0.7,
+            1.2,
+          ); // Responsif
 
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -21,7 +23,7 @@ class DapurPengirimanEmpty extends StatelessWidget {
               Icon(
                 Iconsax.truck_fast,
                 size: MBGSizes.iconLg * scale,
-                color: theme.colorScheme.onSurface.withOpacity(0.5),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
               ),
 
               SizedBox(height: MBGSizes.spaceBtwItems * scale),
@@ -32,7 +34,7 @@ class DapurPengirimanEmpty extends StatelessWidget {
                   'Belum ada pengiriman',
                   textAlign: TextAlign.center,
                   style: theme.textTheme.titleLarge?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.8),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
                   ),
                 ),
               ),
@@ -41,14 +43,15 @@ class DapurPengirimanEmpty extends StatelessWidget {
 
               // Subtitle adaptif
               ConstrainedBox(
-                constraints:
-                    BoxConstraints(maxWidth: constraints.maxWidth * 0.8),
+                constraints: BoxConstraints(
+                  maxWidth: constraints.maxWidth * 0.8,
+                ),
                 child: Text(
                   'Buat pengiriman baru dengan tombol + di bawah',
                   textAlign: TextAlign.center,
                   softWrap: true,
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.6),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                 ),
               ),

@@ -36,7 +36,10 @@ class DapurCheckpointController extends GetxController {
 
   // Get checkpoint status: 'completed', 'active', 'future'
   String getCheckpointStatus(String tipe) {
-    final completedTypes = checkpointList.map((c) => c.tipe).toList();
+    final completedTypes = checkpointList
+        .map((c) => c.tipe)
+        .whereType<String>()
+        .toList();
 
     if (completedTypes.contains(tipe)) {
       return 'completed';
@@ -185,44 +188,27 @@ class DapurCheckpointController extends GetxController {
   }) async {
     try {
       isLoading.value = true;
-      print('🔵 [CHECKPOINT] Starting createCheckpoint...');
-      print('🔵 [CHECKPOINT] menuHarianId: $menuHarianId');
-      print('🔵 [CHECKPOINT] tipe: $tipe');
-      print('🔵 [CHECKPOINT] deskripsi: $deskripsi');
-      print('🔵 [CHECKPOINT] foto path: ${foto.path}');
 
-      print('🔵 [CHECKPOINT] Calling _dapurService.createCheckpoint...');
       await _dapurService.createCheckpoint(
         menuHarianId: menuHarianId,
         tipe: tipe,
         foto: foto,
         deskripsi: deskripsi,
       );
-      print('✅ [CHECKPOINT] Service call completed successfully');
 
       // Fetch updated checkpoint list
-      print('🔵 [CHECKPOINT] Fetching updated checkpoint list...');
       await fetchCheckpointsByMenuHarian(menuHarianId);
-      print('✅ [CHECKPOINT] Checkpoint list refreshed');
 
-      print('✅ [CHECKPOINT] Showing success message');
       MBGLoaders.successSnackBar(
         title: 'Berhasil',
         message: 'Checkpoint berhasil ditambahkan',
       );
 
       // Wait briefly for success message to show, then navigate back
-      print('🔵 [CHECKPOINT] Waiting before navigation...');
       await Future.delayed(const Duration(milliseconds: 500));
 
-      print('🔵 [CHECKPOINT] Navigating back...');
       Get.back();
-      print('✅ [CHECKPOINT] createCheckpoint completed successfully');
-    } catch (e, stackTrace) {
-      print('❌ [CHECKPOINT] Error in createCheckpoint: $e');
-      print('❌ [CHECKPOINT] Error type: ${e.runtimeType}');
-      print('❌ [CHECKPOINT] Stack trace: $stackTrace');
-
+    } catch (e) {
       MBGLoaders.errorSnackBar(
         title: 'Gagal menambahkan checkpoint',
         message: e.toString(),
@@ -230,7 +216,6 @@ class DapurCheckpointController extends GetxController {
       // Don't rethrow - error already handled with snackbar
     } finally {
       isLoading.value = false;
-      print('🔵 [CHECKPOINT] isLoading set to false');
     }
   }
 
@@ -240,18 +225,11 @@ class DapurCheckpointController extends GetxController {
   Future<void> fetchCheckpointsByMenuHarian(String menuHarianId) async {
     try {
       isLoading.value = true;
-      print('🔵 [FETCH] Fetching checkpoints for menuHarianId: $menuHarianId');
 
       final data = await _dapurService.getCheckpointsByMenuHarian(menuHarianId);
-      print('✅ [FETCH] Received ${data.length} checkpoints');
 
       checkpointList.assignAll(data);
-      print('✅ [FETCH] Checkpoint list updated');
-    } catch (e, stackTrace) {
-      print('❌ [FETCH] Error fetching checkpoints: $e');
-      print('❌ [FETCH] Error type: ${e.runtimeType}');
-      print('❌ [FETCH] Stack trace: $stackTrace');
-
+    } catch (e) {
       MBGLoaders.errorSnackBar(
         title: 'Gagal memuat data checkpoint',
         message: e.toString(),
@@ -259,7 +237,6 @@ class DapurCheckpointController extends GetxController {
       rethrow; // Rethrow to propagate error
     } finally {
       isLoading.value = false;
-      print('🔵 [FETCH] isLoading set to false');
     }
   }
 }

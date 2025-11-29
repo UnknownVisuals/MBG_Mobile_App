@@ -42,9 +42,9 @@ class KalenderAkademikController extends GetxController {
       kalenderByDate.clear();
       for (var event in kalenderList) {
         final dateKey = DateTime(
-          event.tanggal.year,
-          event.tanggal.month,
-          event.tanggal.day,
+          event.tanggal!.year,
+          event.tanggal!.month,
+          event.tanggal!.day,
         );
         if (!kalenderByDate.containsKey(dateKey)) {
           kalenderByDate[dateKey] = [];

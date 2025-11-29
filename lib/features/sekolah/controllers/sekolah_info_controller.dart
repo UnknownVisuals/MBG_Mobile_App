@@ -12,7 +12,7 @@ class SekolahInfoController extends GetxController {
   final RxBool isLoading = false.obs;
 
   String? get sekolahId =>
-      _userController.userModel.value?.sekolahAsPIC.first.id;
+      _userController.userModel.value?.sekolahAsPIC?.first.id;
 
   @override
   Future<void> onInit() async {

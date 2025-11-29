@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
 
 /// Widget untuk menampilkan menu hari ini (UI Only)
@@ -30,7 +29,7 @@ class SekolahDashboardTodayMenu extends StatelessWidget {
             color: scheme.surfaceContainerHighest, // adaptive M3 container
             borderRadius: BorderRadius.circular(MBGSizes.cardRadiusMd),
             border: Border.all(
-              color: scheme.outline.withOpacity(0.3), // soft border
+              color: scheme.outline.withValues(alpha: 0.3), // soft border
             ),
           ),
           child: Column(
