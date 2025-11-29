@@ -20,114 +20,132 @@ class SekolahDrawer extends StatelessWidget {
     final logoutController = Get.put(LogoutController());
     final sekolahController = Get.put(SekolahController());
 
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
+
     return Drawer(
-      child: Expanded(
-        child: Obx(
-          () => SidebarX(
-            controller: SidebarXController(
-              selectedIndex: sekolahController.drawerSelectedIndex.value,
-              extended: true,
-            ),
-            theme: SidebarXTheme(
-              // Icon Styles
-              iconTheme: const IconThemeData(color: MBGColors.dark),
-              selectedIconTheme: const IconThemeData(color: MBGColors.white),
-
-              // Text Styles
-              textStyle: const TextStyle(color: MBGColors.dark),
-              selectedTextStyle: const TextStyle(color: MBGColors.white),
-
-              // Item Text Padding
-              itemTextPadding: const EdgeInsets.only(
-                left: MBGSizes.spaceBtwItems,
-              ),
-              selectedItemTextPadding: const EdgeInsets.only(
-                left: MBGSizes.spaceBtwItems,
-              ),
-
-              // Item Padding
-              itemPadding: const EdgeInsets.all(MBGSizes.md),
-              selectedItemPadding: const EdgeInsets.all(MBGSizes.md),
-
-              // Item Margin
-              itemMargin: const EdgeInsets.symmetric(
-                horizontal: MBGSizes.md,
-                vertical: MBGSizes.xs,
-              ),
-              selectedItemMargin: const EdgeInsets.symmetric(
-                horizontal: MBGSizes.md,
-                vertical: MBGSizes.xs,
-              ),
-
-              // Item Decoration
-              selectedItemDecoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(MBGSizes.borderRadiusMd),
-                gradient: MBGColors.primaryGradient,
-              ),
-            ),
-
-            // Header
-            headerBuilder: (context, extended) =>
-                MBGDrawerHeader(userController: userController),
-
-            // Menu Items
-            items: [
-              SidebarXItem(
-                icon: Iconsax.home,
-                label: 'Dashboard',
-                onTap: () {
-                  sekolahController.drawerSelectedIndex.value = 0;
-                  Navigator.pop(context);
-                },
-              ),
-              SidebarXItem(
-                icon: Iconsax.teacher,
-                label: 'Sekolah Info',
-                onTap: () {
-                  sekolahController.drawerSelectedIndex.value = 1;
-                  Navigator.pop(context);
-                },
-              ),
-              SidebarXItem(
-                icon: Iconsax.buildings,
-                label: 'Kelas',
-                onTap: () {
-                  sekolahController.drawerSelectedIndex.value = 2;
-                  Navigator.pop(context);
-                },
-              ),
-              SidebarXItem(
-                icon: Iconsax.profile_2user,
-                label: 'Siswa',
-                onTap: () {
-                  sekolahController.drawerSelectedIndex.value = 3;
-                  Navigator.pop(context);
-                },
-              ),
-              SidebarXItem(
-                icon: Iconsax.calendar_1,
-                label: 'Kalender Akademik',
-                onTap: () {
-                  sekolahController.drawerSelectedIndex.value = 4;
-                  Navigator.pop(context);
-                },
-              ),
-
-              SidebarXItem(
-                icon: Iconsax.box,
-                label: 'Delivery',
-                onTap: () {
-                  sekolahController.drawerSelectedIndex.value = 5;
-                  Navigator.pop(context);
-                },
-              ),
-            ],
-
-            // Drawer Footer
-            footerBuilder: (context, extended) =>
-                MBGDrawerFooter(logoutController: logoutController),
-            showToggleButton: false,
+      child: Obx(
+        () => SidebarX(
+          controller: SidebarXController(
+            selectedIndex: sekolahController.drawerSelectedIndex.value,
+            extended: true,
           ),
+          theme: SidebarXTheme(
+            decoration: BoxDecoration(
+              color: colorScheme.surface,
+              border: Border(
+                right: BorderSide(
+                  width: 1,
+                  color: colorScheme.outline.withOpacity(0.3),
+                ),
+              ),
+            ),
+            // Icon Styles
+            iconTheme: IconThemeData(
+              color: isDark ? colorScheme.onSurface : MBGColors.dark,
+            ),
+            selectedIconTheme: const IconThemeData(color: MBGColors.white),
+
+            // Text Styles
+            textStyle: TextStyle(
+              color: isDark ? colorScheme.onSurface : MBGColors.dark,
+            ),
+            selectedTextStyle: const TextStyle(
+              color: MBGColors.white,
+              fontWeight: FontWeight.w600,
+            ),
+
+            // Item Text Padding
+            itemTextPadding: const EdgeInsets.only(
+              left: MBGSizes.spaceBtwItems,
+            ),
+            selectedItemTextPadding: const EdgeInsets.only(
+              left: MBGSizes.spaceBtwItems,
+            ),
+
+            // Item Padding
+            itemPadding: const EdgeInsets.all(MBGSizes.md),
+            selectedItemPadding: const EdgeInsets.all(MBGSizes.md),
+
+            // Item Margin
+            itemMargin: const EdgeInsets.symmetric(
+              horizontal: MBGSizes.md,
+              vertical: MBGSizes.xs,
+            ),
+            selectedItemMargin: const EdgeInsets.symmetric(
+              horizontal: MBGSizes.md,
+              vertical: MBGSizes.xs,
+            ),
+
+            // Item Decoration
+            selectedItemDecoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(MBGSizes.borderRadiusMd),
+              gradient: MBGColors.primaryGradient,
+            ),
+          ),
+
+          // Header
+          headerBuilder: (context, extended) =>
+              MBGDrawerHeader(userController: userController),
+
+          // Menu Items
+          items: [
+            SidebarXItem(
+              icon: Iconsax.home,
+              label: 'Dashboard',
+              onTap: () {
+                sekolahController.drawerSelectedIndex.value = 0;
+                Navigator.pop(context);
+              },
+            ),
+            SidebarXItem(
+              icon: Iconsax.teacher,
+              label: 'Sekolah Info',
+              onTap: () {
+                sekolahController.drawerSelectedIndex.value = 1;
+                Navigator.pop(context);
+              },
+            ),
+            SidebarXItem(
+              icon: Iconsax.buildings,
+              label: 'Kelas',
+              onTap: () {
+                sekolahController.drawerSelectedIndex.value = 2;
+                Navigator.pop(context);
+              },
+            ),
+            SidebarXItem(
+              icon: Iconsax.profile_2user,
+              label: 'Siswa',
+              onTap: () {
+                sekolahController.drawerSelectedIndex.value = 3;
+                Navigator.pop(context);
+              },
+            ),
+            SidebarXItem(
+              icon: Iconsax.calendar_1,
+              label: 'Kalender Akademik',
+              onTap: () {
+                sekolahController.drawerSelectedIndex.value = 4;
+                Navigator.pop(context);
+              },
+            ),
+
+            SidebarXItem(
+              icon: Iconsax.box,
+              label: 'Delivery',
+              onTap: () {
+                sekolahController.drawerSelectedIndex.value = 5;
+                Navigator.pop(context);
+              },
+            ),
+          ],
+
+          // Drawer Footer
+          footerBuilder: (context, extended) =>
+              MBGDrawerFooter(logoutController: logoutController),
+          showToggleButton: false,
         ),
       ),
     );

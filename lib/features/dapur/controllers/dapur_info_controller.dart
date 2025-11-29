@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import 'package:mbg_mobile_app/features/authentication/controllers/user_controller.dart';
-import 'package:mbg_mobile_app/features/authentication/models/user_model.dart';
+
 import 'package:mbg_mobile_app/features/dapur/models/dapur_info_model.dart';
 import 'package:mbg_mobile_app/utils/services/dapur_service.dart';
 import 'package:mbg_mobile_app/utils/popups/loaders.dart';
@@ -10,9 +10,12 @@ class DapurInfoController extends GetxController {
   final DapurService dapurService = Get.put(DapurService());
 
   // Getter for dapurId
-  final UserModel userModel = Get.find<UserController>().userModel.value!;
-  String get dapurId {
-    return userModel.dapurAsPIC!.first.id;
+  // Getter for dapurId
+  String? get dapurId {
+    final userModel = Get.find<UserController>().userModel.value;
+    final list = userModel?.dapurAsPIC;
+    if (list == null || list.isEmpty) return null;
+    return list.first.id;
   }
 
   // Data Variables
@@ -24,14 +27,27 @@ class DapurInfoController extends GetxController {
   @override
   Future<void> onInit() async {
     super.onInit();
-    await fetchDapurInfo(dapurId: dapurId);
+
+    // Listen to user model changes
+    ever(Get.find<UserController>().userModel, (_) {
+      if (dapurId != null) {
+        fetchDapurInfo(dapurId: dapurId!);
+      }
+    });
+
+    // Initial fetch
+    if (dapurId != null) {
+      await fetchDapurInfo(dapurId: dapurId!);
+    }
   }
 
   // =======================
   // REFRESH DAPUR INFO DATA
   // =======================
   Future<void> refreshDapurInfo() async {
-    await fetchDapurInfo(dapurId: dapurId);
+    if (dapurId != null) {
+      await fetchDapurInfo(dapurId: dapurId!);
+    }
   }
 
   // ===================

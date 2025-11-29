@@ -26,8 +26,12 @@ class SekolahSiswaController extends GetxController {
   final RxBool isLoading = false.obs;
   final RxnString deletingSiswaId = RxnString();
 
-  String? get sekolahId =>
-      _userController.userModel.value?.sekolahAsPIC?.first.id;
+  String? get sekolahId {
+    final sekolahList = _userController.userModel.value?.sekolahAsPIC;
+    return (sekolahList != null && sekolahList.isNotEmpty)
+        ? sekolahList.first.id
+        : null;
+  }
 
   @override
   void onInit() {

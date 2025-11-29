@@ -98,6 +98,28 @@ class DapurStokCard extends StatelessWidget {
         // Stock list
         Expanded(
           child: Obx(() {
+            if (dapurStokController.dapurId == null) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Iconsax.building_3,
+                      size: MBGSizes.iconLg * 2,
+                      color: MBGColors.textSecondary,
+                    ),
+                    const SizedBox(height: MBGSizes.spaceBtwItems),
+                    Text(
+                      'Belum ada dapur yang ditugaskan',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: MBGColors.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
+
             if (dapurStokController.isLoading.value) {
               return Center(
                 child: CircularProgressIndicator(color: MBGColors.primary),
@@ -107,23 +129,29 @@ class DapurStokCard extends StatelessWidget {
             if (dapurStokController.filteredStokList.isEmpty) {
               return RefreshIndicator(
                 onRefresh: () => dapurStokController.refreshStok(),
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Iconsax.box_remove,
-                        size: MBGSizes.iconLg * 2,
-                        color: colorScheme.onSurfaceVariant,
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: SizedBox(
+                    height: 400, // Fixed height or use MediaQuery if needed
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Iconsax.box_remove,
+                            size: MBGSizes.iconLg * 2,
+                            color: colorScheme.onSurfaceVariant,
+                          ),
+                          const SizedBox(height: MBGSizes.md),
+                          Text(
+                            'Belum ada data stok',
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              color: colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: MBGSizes.md),
-                      Text(
-                        'Belum ada data stok',
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          color: colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               );

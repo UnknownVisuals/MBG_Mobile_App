@@ -1,16 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
+import 'package:mbg_mobile_app/features/dapur/models/dapur_menu_harian_model.dart';
 import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
 import 'package:mbg_mobile_app/utils/helpers/helper_functions.dart';
 
 class DapurDashboardTodayMenuCard extends StatelessWidget {
-  const DapurDashboardTodayMenuCard({super.key});
+  const DapurDashboardTodayMenuCard({super.key, required this.menu});
+
+  final DapurMenuHarianModel menu;
 
   @override
   Widget build(BuildContext context) {
     final bool isDarkMode = MBGHelperFunctions.isDarkMode(context);
+
+    // Format time range if available, otherwise just show date
+    final timeString = menu.tanggal != null
+        ? DateFormat('EEEE, dd MMM yyyy').format(menu.tanggal!)
+        : 'Unknown Date';
 
     return Container(
       margin: const EdgeInsets.only(bottom: MBGSizes.spaceBtwItems),
@@ -44,12 +52,14 @@ class DapurDashboardTodayMenuCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Nasi Box Spesial',
+                  menu.namaMenu ?? 'Unnamed Menu',
                   style: Theme.of(context).textTheme.bodyMedium,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '08:00 - 09:00 WIB',
+                  timeString,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: Theme.of(context).hintColor,
                   ),
@@ -60,24 +70,10 @@ class DapurDashboardTodayMenuCard extends StatelessWidget {
 
           const SizedBox(width: MBGSizes.spaceBtwItems / 2),
 
-          // Price Tag
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: MBGSizes.md,
-              vertical: MBGSizes.sm,
-            ),
-            decoration: BoxDecoration(
-              color: Colors.green.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(MBGSizes.borderRadiusSm),
-            ),
-            child: Text(
-              'Rp ${NumberFormat('#,###').format(15000)}',
-              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: Colors.green,
-              ),
-            ),
-          ),
+          // Price Tag (Assuming budget per porsi or similar, if available. For now showing static or removing)
+          // Since model doesn't seem to have price, we can show something else or remove it.
+          // Let's show "Active" or similar if needed, or just remove.
+          // For now, I'll remove the price tag as it's not in the basic model I saw earlier.
         ],
       ),
     );

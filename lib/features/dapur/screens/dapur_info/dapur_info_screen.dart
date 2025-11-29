@@ -43,6 +43,28 @@ class DapurInfoScreen extends StatelessWidget {
         );
       }
 
+      if (dapurInfoController.dapurId == null) {
+        return Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Iconsax.building_3,
+                size: MBGSizes.iconLg * 2,
+                color: MBGColors.textSecondary,
+              ),
+              const SizedBox(height: MBGSizes.spaceBtwItems),
+              Text(
+                'Belum ada dapur yang ditugaskan',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: MBGColors.textSecondary,
+                ),
+              ),
+            ],
+          ),
+        );
+      }
+
       return RefreshIndicator(
         color: MBGColors.primary,
         onRefresh: dapurInfoController.refreshDapurInfo,
@@ -88,14 +110,16 @@ class DapurInfoScreen extends StatelessWidget {
               // =========================
               // LOKASI DAPUR
               // =========================
-              MBGSectionHeading(
-                showLeadingIcon: true,
-                leadingIcon: Iconsax.location,
-                title: 'Lokasi Dapur',
-              ),
-              const SizedBox(height: MBGSizes.spaceBtwItems),
-              DapurInfoMapPreview(),
-              const SizedBox(height: MBGSizes.spaceBtwSections),
+              if (dapur != null) ...[
+                MBGSectionHeading(
+                  showLeadingIcon: true,
+                  leadingIcon: Iconsax.location,
+                  title: 'Lokasi Dapur',
+                ),
+                const SizedBox(height: MBGSizes.spaceBtwItems),
+                DapurInfoMapPreview(),
+                const SizedBox(height: MBGSizes.spaceBtwSections),
+              ],
 
               // =========================
               // PIC DAPUR

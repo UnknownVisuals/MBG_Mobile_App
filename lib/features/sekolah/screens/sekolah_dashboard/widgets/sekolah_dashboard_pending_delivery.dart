@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:mbg_mobile_app/features/sekolah/controllers/sekolah_dashboard_controller.dart';
+import 'package:mbg_mobile_app/features/sekolah/models/sekolah_delivery_model.dart';
 import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
 
@@ -9,82 +12,91 @@ class SekolahDashboardPendingDelivery extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.find<SekolahDashboardController>();
     final theme = Theme.of(context);
     final color = theme.colorScheme;
 
-    return Container(
-      padding: const EdgeInsets.all(MBGSizes.md),
-      decoration: BoxDecoration(
-        color: color.surface, // adaptif
-        borderRadius: BorderRadius.circular(MBGSizes.cardRadiusLg),
-        boxShadow: [
-          if (theme.brightness == Brightness.light)
-            BoxShadow(
-              color: color.shadow.withValues(alpha: 0.08),
-              blurRadius: 10,
-              spreadRadius: 2,
-              offset: const Offset(0, 4),
-            ),
-        ],
-        border: Border.all(
-          color: color.outlineVariant.withValues(alpha: 0.4), // adaptif
+    return Obx(() {
+      final deliveries = controller.pendingDeliveries;
+
+      if (deliveries.isEmpty) {
+        return const SizedBox.shrink();
+      }
+
+      return Container(
+        padding: const EdgeInsets.all(MBGSizes.md),
+        decoration: BoxDecoration(
+          color: color.surface, // adaptif
+          borderRadius: BorderRadius.circular(MBGSizes.cardRadiusLg),
+          boxShadow: [
+            if (theme.brightness == Brightness.light)
+              BoxShadow(
+                color: color.shadow.withValues(alpha: 0.08),
+                blurRadius: 10,
+                spreadRadius: 2,
+                offset: const Offset(0, 4),
+              ),
+          ],
+          border: Border.all(
+            color: color.outlineVariant.withValues(alpha: 0.4), // adaptif
+          ),
         ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // === Header ===
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: MBGColors.warning.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // === Header ===
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: MBGColors.warning.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(
+                    Iconsax.truck_fast,
+                    color: MBGColors.warning,
+                    size: 22,
+                  ),
                 ),
-                child: const Icon(
-                  Iconsax.truck_fast,
-                  color: MBGColors.warning,
-                  size: 22,
+                const SizedBox(width: MBGSizes.spaceBtwItems),
+                Text(
+                  'Pending Deliveries',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: color.onSurface, // adaptif
+                  ),
                 ),
-              ),
-              const SizedBox(width: MBGSizes.spaceBtwItems),
-              Text(
-                'Pending Deliveries',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: color.onSurface, // adaptif
-                ),
-              ),
-            ],
-          ),
+              ],
+            ),
 
-          const SizedBox(height: MBGSizes.spaceBtwItems),
+            const SizedBox(height: MBGSizes.spaceBtwItems),
 
-          // === List pengiriman dummy ===
-          _PendingItem(
-            name: 'Bahan Pokok Pagi',
-            status: 'Dalam Perjalanan',
-            icon: Iconsax.timer_1,
-            color: MBGColors.warning,
-          ),
-          Divider(color: color.outlineVariant.withValues(alpha: 0.4)),
-          _PendingItem(
-            name: 'Menu Siang',
-            status: 'Belum Diterima',
-            icon: Iconsax.truck_fast,
-            color: MBGColors.info,
-          ),
-          Divider(color: color.outlineVariant.withValues(alpha: 0.4)),
-          _PendingItem(
-            name: 'Tambahan Buah',
-            status: 'Menunggu Konfirmasi',
-            icon: Iconsax.archive_1,
-            color: MBGColors.warning,
-          ),
-        ],
-      ),
-    );
+            // === List pengiriman real ===
+            ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: deliveries.length,
+              separatorBuilder: (_, __) =>
+                  Divider(color: color.outlineVariant.withValues(alpha: 0.4)),
+              itemBuilder: (context, index) {
+                final delivery = deliveries[index];
+                return _PendingItem(
+                  name: 'Pengiriman #${delivery.qrCodeId}',
+                  status: delivery.statusLabel,
+                  icon:
+                      delivery.normalizedStatus ==
+                          SekolahDeliveryStatus.inTransit
+                      ? Iconsax.truck_fast
+                      : Iconsax.timer_1,
+                  color: delivery.statusColor,
+                );
+              },
+            ),
+          ],
+        ),
+      );
+    });
   }
 }
 

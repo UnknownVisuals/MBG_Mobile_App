@@ -11,16 +11,18 @@ class SekolahInfoController extends GetxController {
   final Rx<SekolahInfoModel?> sekolahInfo = Rx<SekolahInfoModel?>(null);
   final RxBool isLoading = false.obs;
 
-  String? get sekolahId =>
-      _userController.userModel.value?.sekolahAsPIC?.first.id;
+  String? get sekolahId {
+    final sekolahList = _userController.userModel.value?.sekolahAsPIC;
+    return (sekolahList != null && sekolahList.isNotEmpty)
+        ? sekolahList.first.id
+        : null;
+  }
 
   @override
-  Future<void> onInit() async {
+  void onInit() {
     super.onInit();
-    final id = sekolahId;
-    if (id != null && id.isNotEmpty) {
-      await fetchSekolahInfo(id);
-    }
+    ever(_userController.userModel, (_) => refreshSekolahInfo());
+    refreshSekolahInfo();
   }
 
   Future<void> refreshSekolahInfo() async {

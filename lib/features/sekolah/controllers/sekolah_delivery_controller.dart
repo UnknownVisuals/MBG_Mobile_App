@@ -16,11 +16,19 @@ class SekolahDeliveryController extends GetxController {
   final RxBool isSubmitting = false.obs;
   final RxString selectedFilter = 'all'.obs;
 
-  String? get sekolahId =>
-      _userController.userModel.value?.sekolahAsPIC?.first.id;
+  String? get sekolahId {
+    final sekolahList = _userController.userModel.value?.sekolahAsPIC;
+    return (sekolahList != null && sekolahList.isNotEmpty)
+        ? sekolahList.first.id
+        : null;
+  }
 
-  String get sekolahName =>
-      _userController.userModel.value?.sekolahAsPIC?.first.nama ?? 'Sekolah';
+  String get sekolahName {
+    final sekolahList = _userController.userModel.value?.sekolahAsPIC;
+    return (sekolahList != null && sekolahList.isNotEmpty)
+        ? (sekolahList.first.nama ?? 'Sekolah')
+        : 'Sekolah';
+  }
 
   @override
   void onInit() {

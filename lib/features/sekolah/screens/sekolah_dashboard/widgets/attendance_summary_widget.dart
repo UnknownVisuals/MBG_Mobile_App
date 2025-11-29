@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:mbg_mobile_app/features/sekolah/controllers/sekolah_dashboard_controller.dart';
 import '../../../../../utils/constants/colors.dart';
 import '../../../../../utils/constants/sizes.dart';
 
@@ -9,109 +11,117 @@ class AttendanceSummaryWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 🔹 Dummy data (sementara, nanti rekanmu ganti pakai controller)
-    final double attendanceRate = 92.5;
-    final int totalPresentToday = 28;
-    final int totalClassesToday = 30;
+    final controller = Get.find<SekolahDashboardController>();
 
-    // 🔹 Warna status berdasarkan rate
-    final Color statusColor = attendanceRate >= 90
-        ? Colors.greenAccent
-        : (attendanceRate >= 75 ? Colors.orangeAccent : Colors.redAccent);
+    return Obx(() {
+      final totalSiswa = controller.totalSiswa;
+      final totalKelas = controller.totalKelas;
 
-    return Container(
-      padding: const EdgeInsets.all(MBGSizes.md),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [MBGColors.primary, MBGColors.primary.withValues(alpha: 0.8)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+      // Placeholder for attendance rate as we don't have real attendance data yet
+      final double attendanceRate = totalSiswa > 0 ? 100.0 : 0.0;
+
+      // 🔹 Warna status berdasarkan rate
+      final Color statusColor = attendanceRate >= 90
+          ? Colors.greenAccent
+          : (attendanceRate >= 75 ? Colors.orangeAccent : Colors.redAccent);
+
+      return Container(
+        padding: const EdgeInsets.all(MBGSizes.md),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              MBGColors.primary,
+              MBGColors.primary.withValues(alpha: 0.8),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(MBGSizes.cardRadiusMd),
+          boxShadow: [
+            BoxShadow(
+              color: MBGColors.primary.withValues(alpha: 0.25),
+              spreadRadius: 1,
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
-        borderRadius: BorderRadius.circular(MBGSizes.cardRadiusMd),
-        boxShadow: [
-          BoxShadow(
-            color: MBGColors.primary.withValues(alpha: 0.25),
-            spreadRadius: 1,
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          /// 🔸 Header
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Icon(
-                  Iconsax.user_tick,
-                  color: Colors.white,
-                  size: 24,
-                ),
-              ),
-              const SizedBox(width: 12),
-              const Expanded(
-                child: Text(
-                  "Today's Attendance",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            /// 🔸 Header
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(
+                    Iconsax.user_tick,
                     color: Colors.white,
+                    size: 24,
                   ),
                 ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  '${attendanceRate.toStringAsFixed(1)}%',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: statusColor,
+                const SizedBox(width: 12),
+                const Expanded(
+                  child: Text(
+                    "Total Siswa",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 16),
-
-          /// 🔹 Statistik singkat
-          Row(
-            children: [
-              Expanded(
-                child: _WhiteStatCard(
-                  label: 'Present',
-                  value: totalPresentToday.toString(),
-                  icon: Iconsax.user_tick,
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    '${attendanceRate.toStringAsFixed(1)}%',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: statusColor,
+                    ),
+                  ),
                 ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _WhiteStatCard(
-                  label: 'Classes',
-                  value: totalClassesToday.toString(),
-                  icon: Iconsax.teacher,
+              ],
+            ),
+
+            const SizedBox(height: 16),
+
+            /// 🔹 Statistik singkat
+            Row(
+              children: [
+                Expanded(
+                  child: _WhiteStatCard(
+                    label: 'Total Siswa',
+                    value: totalSiswa.toString(),
+                    icon: Iconsax.user_tick,
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _WhiteStatCard(
+                    label: 'Total Kelas',
+                    value: totalKelas.toString(),
+                    icon: Iconsax.teacher,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
+    });
   }
 }
 

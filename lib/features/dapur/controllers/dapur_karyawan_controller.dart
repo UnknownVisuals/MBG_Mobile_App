@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:get/get.dart';
 import 'package:mbg_mobile_app/common/controllers/camera_controller.dart';
 import 'package:mbg_mobile_app/features/authentication/controllers/user_controller.dart';
-import 'package:mbg_mobile_app/features/authentication/models/user_model.dart';
+
 import 'package:mbg_mobile_app/features/dapur/models/dapur_karyawan_model.dart';
 import 'package:mbg_mobile_app/utils/services/dapur_service.dart';
 import 'package:mbg_mobile_app/utils/popups/loaders.dart';
@@ -13,9 +13,13 @@ class DapurKaryawanController extends GetxController {
   final DapurService _dapurService = Get.find<DapurService>();
 
   // Getter for dapurId
-  final UserModel userModel = Get.find<UserController>().userModel.value!;
-  String get dapurId {
-    return userModel.dapurAsPIC!.first.id;
+  // Getter for dapurId
+  // Getter for dapurId
+  String? get dapurId {
+    final userModel = Get.find<UserController>().userModel.value;
+    final list = userModel?.dapurAsPIC;
+    if (list == null || list.isEmpty) return null;
+    return list.first.id;
   }
 
   // Data Variables
@@ -27,14 +31,27 @@ class DapurKaryawanController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    fetchKaryawan(dapurId: dapurId);
+
+    // Listen to user model changes
+    ever(Get.find<UserController>().userModel, (_) {
+      if (dapurId != null) {
+        fetchKaryawan(dapurId: dapurId!);
+      }
+    });
+
+    // Initial fetch
+    if (dapurId != null) {
+      fetchKaryawan(dapurId: dapurId!);
+    }
   }
 
   // =====================
   // REFRESH KARYAWAN DATA
   // =====================
   Future<void> refreshKaryawan() async {
-    await fetchKaryawan(dapurId: dapurId);
+    if (dapurId != null) {
+      await fetchKaryawan(dapurId: dapurId!);
+    }
   }
 
   // =================
@@ -88,7 +105,9 @@ class DapurKaryawanController extends GetxController {
         Get.find<CameraController>().clearImage();
       }
 
-      await fetchKaryawan(dapurId: dapurId);
+      if (dapurId != null) {
+        await fetchKaryawan(dapurId: dapurId!);
+      }
     } catch (e) {
       MBGLoaders.errorSnackBar(
         title: 'Gagal menambahkan karyawan',
@@ -135,7 +154,9 @@ class DapurKaryawanController extends GetxController {
         Get.find<CameraController>().clearImage();
       }
 
-      await fetchKaryawan(dapurId: dapurId);
+      if (dapurId != null) {
+        await fetchKaryawan(dapurId: dapurId!);
+      }
     } catch (e) {
       MBGLoaders.errorSnackBar(
         title: 'Gagal memperbarui karyawan',
@@ -155,7 +176,9 @@ class DapurKaryawanController extends GetxController {
 
       await _dapurService.deleteKaryawan(karyawanId);
 
-      await fetchKaryawan(dapurId: dapurId);
+      if (dapurId != null) {
+        await fetchKaryawan(dapurId: dapurId!);
+      }
 
       if (Get.isDialogOpen ?? false) {
         Get.back();

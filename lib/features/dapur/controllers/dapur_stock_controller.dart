@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:mbg_mobile_app/features/authentication/controllers/user_controller.dart';
-import 'package:mbg_mobile_app/features/authentication/models/user_model.dart';
+
 import 'package:mbg_mobile_app/features/dapur/models/dapur_stock_model.dart';
 import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/popups/loaders.dart';
@@ -13,9 +13,13 @@ class DapurStokController extends GetxController {
   final DapurService _dapurService = Get.find<DapurService>();
 
   // Getter for dapurId
-  final UserModel userModel = Get.find<UserController>().userModel.value!;
-  String get dapurId {
-    return userModel.dapurAsPIC!.first.id;
+  // Getter for dapurId
+  // Getter for dapurId
+  String? get dapurId {
+    final userModel = Get.find<UserController>().userModel.value;
+    final list = userModel?.dapurAsPIC;
+    if (list == null || list.isEmpty) return null;
+    return list.first.id;
   }
 
   // Data Variables
@@ -66,7 +70,18 @@ class DapurStokController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    fetchStok(dapurId: dapurId);
+
+    // Listen to user model changes
+    ever(Get.find<UserController>().userModel, (_) {
+      if (dapurId != null) {
+        fetchStok(dapurId: dapurId!);
+      }
+    });
+
+    // Initial fetch
+    if (dapurId != null) {
+      fetchStok(dapurId: dapurId!);
+    }
   }
 
   // =================
@@ -93,7 +108,7 @@ class DapurStokController extends GetxController {
   // REFRESH STOK DATA
   // =====================
   Future<void> refreshStok() async {
-    await fetchStok(dapurId: dapurId);
+    await fetchStok(dapurId: dapurId!);
   }
 
   // =================
@@ -140,7 +155,9 @@ class DapurStokController extends GetxController {
         message: '$nama sebanyak $stokKg kg berhasil ditambahkan',
       );
 
-      await fetchStok(dapurId: dapurId);
+      if (dapurId != null) {
+        await fetchStok(dapurId: dapurId!);
+      }
     } catch (e) {
       MBGLoaders.errorSnackBar(
         title: 'Gagal Menambahkan Stok',
@@ -253,7 +270,9 @@ class DapurStokController extends GetxController {
         message: 'Data stok berhasil dihapus.',
       );
 
-      await fetchStok(dapurId: dapurId);
+      if (dapurId != null) {
+        await fetchStok(dapurId: dapurId!);
+      }
     } catch (e) {
       MBGLoaders.errorSnackBar(
         title: 'Gagal Menghapus Stok',

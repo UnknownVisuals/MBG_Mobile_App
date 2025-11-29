@@ -1,26 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:mbg_mobile_app/features/dapur/models/dapur_pengiriman_model.dart';
 import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
 import 'package:mbg_mobile_app/utils/helpers/helper_functions.dart';
 
 class DapurDashboardDeliveryCard extends StatelessWidget {
-  const DapurDashboardDeliveryCard({super.key});
+  const DapurDashboardDeliveryCard({super.key, required this.delivery});
+
+  final DapurPengirimanModel delivery;
 
   @override
   Widget build(BuildContext context) {
     final bool isDarkMode = MBGHelperFunctions.isDarkMode(context);
 
-    final delivery = {
-      'sekolahNama': 'SD Negeri 01 Jakarta',
-      'jumlahTray': 10,
-      'jumlahKeranjang': 5,
-      'status': 'PENDING',
-    };
+    final status = delivery.status?.toUpperCase() ?? 'UNKNOWN';
+    final sekolahNama = delivery.sekolah?.nama ?? 'Unknown School';
+    final trayCount = delivery.jumlahTray ?? 0;
+    final keranjangCount = delivery.jumlahKeranjang ?? 0;
 
-    final Color statusColor = delivery['status'] == 'PENDING'
+    final Color statusColor = status == 'PENDING'
         ? MBGColors.warning
-        : MBGColors.info;
+        : status == 'PROSES'
+        ? MBGColors.info
+        : MBGColors.success;
 
     return Container(
       margin: const EdgeInsets.only(bottom: MBGSizes.spaceBtwItems),
@@ -54,12 +57,14 @@ class DapurDashboardDeliveryCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  delivery['sekolahNama'].toString(),
+                  sekolahNama,
                   style: Theme.of(context).textTheme.bodyMedium,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '${delivery['jumlahTray']} trays • ${delivery['jumlahKeranjang']} baskets',
+                  '$trayCount trays • $keranjangCount baskets',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: Theme.of(context).hintColor,
                   ),
@@ -81,7 +86,7 @@ class DapurDashboardDeliveryCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(MBGSizes.borderRadiusSm),
             ),
             child: Text(
-              delivery['status'].toString(),
+              status,
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: statusColor,

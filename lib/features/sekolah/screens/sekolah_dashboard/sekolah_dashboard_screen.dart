@@ -10,17 +10,22 @@ import 'widgets/sekolah_action_cards_widget.dart';
 import 'widgets/sekolah_dashboard_today_menu.dart';
 import 'widgets/sekolah_dashboard_pending_delivery.dart';
 
+import 'package:get/get.dart';
+import 'package:mbg_mobile_app/features/sekolah/controllers/sekolah_dashboard_controller.dart';
+
 /// 📄 Sekolah Dashboard Screen — Final Version (UI Only)
 class SekolahDashboardScreen extends StatelessWidget {
   const SekolahDashboardScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(SekolahDashboardController());
+
     return Scaffold(
       body: RefreshIndicator(
         color: MBGColors.primary,
         onRefresh: () async {
-          await Future.delayed(const Duration(seconds: 1));
+          await controller.refreshData();
         },
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),

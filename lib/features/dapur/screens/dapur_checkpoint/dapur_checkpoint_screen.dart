@@ -18,8 +18,9 @@ class DapurCheckpointScreen extends StatelessWidget {
     final DapurCheckpointController dapurCheckpointController = Get.put(
       DapurCheckpointController(),
     );
-    final DapurMenuHarianController menuHarianController =
-        Get.find<DapurMenuHarianController>();
+    final DapurMenuHarianController menuHarianController = Get.put(
+      DapurMenuHarianController(),
+    );
 
     dapurCheckpointController.initializeWithMenuId(menuHarianId);
 

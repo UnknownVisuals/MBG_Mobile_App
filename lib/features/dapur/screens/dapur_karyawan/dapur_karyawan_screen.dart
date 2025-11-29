@@ -18,6 +18,28 @@ class DapurKaryawanScreen extends StatelessWidget {
 
     return Scaffold(
       body: Obx(() {
+        if (dapurKaryawanController.dapurId == null) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Iconsax.building_3,
+                  size: MBGSizes.iconLg * 2,
+                  color: MBGColors.textSecondary,
+                ),
+                const SizedBox(height: MBGSizes.spaceBtwItems),
+                Text(
+                  'Belum ada dapur yang ditugaskan',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: MBGColors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+
         if (dapurKaryawanController.isLoading.value &&
             dapurKaryawanController.karyawanList.isEmpty) {
           return const Center(
@@ -29,30 +51,35 @@ class DapurKaryawanScreen extends StatelessWidget {
           return RefreshIndicator(
             color: MBGColors.primary,
             onRefresh: dapurKaryawanController.refreshKaryawan,
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Iconsax.profile_2user,
-                    size: MBGSizes.iconLg * 2,
-                    color: MBGColors.textSecondary,
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height - 200,
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Iconsax.profile_2user,
+                        size: MBGSizes.iconLg * 2,
+                        color: MBGColors.textSecondary,
+                      ),
+                      const SizedBox(height: MBGSizes.spaceBtwItems),
+                      Text(
+                        'Tidak ada karyawan',
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(color: MBGColors.textSecondary),
+                      ),
+                      Text(
+                        'Tambahkan karyawan baru dengan menekan tombol di bawah',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: MBGColors.textSecondary,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: MBGSizes.spaceBtwItems),
-                  Text(
-                    'Tidak ada karyawan',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: MBGColors.textSecondary,
-                    ),
-                  ),
-                  Text(
-                    'Tambahkan karyawan baru dengan menekan tombol di bawah',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: MBGColors.textSecondary,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
+                ),
               ),
             ),
           );
