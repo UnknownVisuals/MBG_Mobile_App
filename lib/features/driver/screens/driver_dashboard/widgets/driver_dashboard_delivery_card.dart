@@ -7,6 +7,7 @@ import 'package:mbg_mobile_app/features/driver/models/driver_delivery_model.dart
 import 'package:mbg_mobile_app/features/driver/screens/driver_dashboard/widgets/driver_dashboard_delivery_tracking.dart';
 import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
+import 'package:mbg_mobile_app/utils/helpers/helper_functions.dart';
 import 'package:mbg_mobile_app/utils/popups/loaders.dart';
 
 class DriverDashboardDeliveryCard extends StatelessWidget {
@@ -23,11 +24,17 @@ class DriverDashboardDeliveryCard extends StatelessWidget {
     final sekolahSummary = delivery.sekolah;
     final alamat = sekolahSummary!.alamat ?? 'Alamat belum tersedia';
 
+    final bool isDarkMode = MBGHelperFunctions.isDarkMode(context);
+
     return Container(
       margin: const EdgeInsets.only(bottom: MBGSizes.spaceBtwItems),
       decoration: BoxDecoration(
-        color: MBGColors.light,
-        border: Border.all(color: MBGColors.borderPrimary),
+        color: isDarkMode ? MBGColors.dark : MBGColors.light,
+        border: Border.all(
+          color: isDarkMode
+              ? MBGColors.lightGrey.withValues(alpha: 0.4)
+              : MBGColors.borderPrimary,
+        ),
         borderRadius: BorderRadius.circular(MBGSizes.borderRadiusMd),
       ),
       child: Padding(
@@ -131,6 +138,7 @@ class DriverDashboardDeliveryCard extends StatelessWidget {
                     child: Text(
                       DateFormat(
                         'dd MMM yyyy, HH:mm',
+                        'id_ID',
                       ).format(delivery.createdAt!.toLocal()),
                       style: Theme.of(context).textTheme.bodySmall,
                     ),

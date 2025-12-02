@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
+import 'package:mbg_mobile_app/utils/helpers/helper_functions.dart';
 
 class SekolahInfoHorizontalCardList<T> extends StatelessWidget {
   const SekolahInfoHorizontalCardList({
@@ -19,11 +20,17 @@ class SekolahInfoHorizontalCardList<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isDarkMode = MBGHelperFunctions.isDarkMode(context);
+
     if (items.isEmpty) {
       return Container(
         decoration: BoxDecoration(
-          color: MBGColors.light,
-          border: Border.all(color: MBGColors.borderPrimary),
+          color: isDarkMode ? MBGColors.dark : MBGColors.light,
+          border: Border.all(
+            color: isDarkMode
+                ? MBGColors.lightGrey.withValues(alpha: 0.4)
+                : MBGColors.grey,
+          ),
           borderRadius: BorderRadius.circular(MBGSizes.borderRadiusMd),
         ),
         padding: const EdgeInsets.all(MBGSizes.defaultSpace),
@@ -52,19 +59,26 @@ class SekolahInfoHorizontalCardList<T> extends StatelessWidget {
 
     return SizedBox(
       height: listHeight,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: items.length,
-        itemBuilder: (context, index) {
-          final T item = items[index];
-          final Widget child = itemBuilder(context, item, index);
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemCount: items.length,
+            separatorBuilder: (_, _) =>
+                const SizedBox(width: MBGSizes.spaceBtwItems),
+            itemBuilder: (context, index) {
+              final T item = items[index];
+              final Widget child = itemBuilder(context, item, index);
 
-          return Padding(
-            padding: EdgeInsets.only(
-              right: MBGSizes.spaceBtwItems,
-              left: index == 0 ? 0 : 0,
-            ),
-            child: child,
+              return ConstrainedBox(
+                constraints: BoxConstraints(
+                  // ⛔ Mencegah card lebih tinggi dari listHeight
+                  maxHeight: constraints.maxHeight,
+                ),
+                child: child,
+              );
+            },
+            padding: const EdgeInsets.only(left: MBGSizes.defaultSpace),
           );
         },
       ),

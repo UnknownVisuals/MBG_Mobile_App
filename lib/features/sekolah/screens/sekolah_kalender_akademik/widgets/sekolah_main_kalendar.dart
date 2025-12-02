@@ -168,7 +168,7 @@ class SekolahMainKalendar extends StatelessWidget {
             const Icon(Iconsax.calendar_circle, size: MBGSizes.iconMd),
             const SizedBox(width: MBGSizes.xs),
             Text(
-              'Event pada ${DateFormat('dd MMMM yyyy').format(controller.selectedDate.value)}',
+              'Event pada ${DateFormat('dd MMMM yyyy', 'id_ID').format(controller.selectedDate.value)}',
               style: Theme.of(
                 context,
               ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),

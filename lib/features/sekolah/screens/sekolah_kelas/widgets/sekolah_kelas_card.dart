@@ -9,30 +9,59 @@ class SekolahKelasCard extends StatelessWidget {
   const SekolahKelasCard({
     super.key,
     required this.kelas,
+    required this.index,
     required this.onEdit,
     required this.onDelete,
   });
 
   final SekolahKelasModel kelas;
+  final int index;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
 
   String get _formattedDate {
     if (kelas.createdAt == null) return '-';
-    return DateFormat('dd MMM yyyy').format(kelas.createdAt!.toLocal());
+    return DateFormat(
+      'dd MMM yyyy',
+      'id_ID',
+    ).format(kelas.createdAt!.toLocal());
   }
 
   @override
   Widget build(BuildContext context) {
-    final gradient = const LinearGradient(
-      colors: [Color(0xFF2A7ABD), Color(0xFF00A8B3)],
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-    );
+    final gradients = [
+      const LinearGradient(
+        colors: [Color(0xFF2A7ABD), Color(0xFF00A8B3)],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      const LinearGradient(
+        colors: [Color(0xFF8E2DE2), Color(0xFF4A00E0)],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      const LinearGradient(
+        colors: [Color(0xFFFF512F), Color(0xFFDD2476)],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      const LinearGradient(
+        colors: [Color(0xFF11998e), Color(0xFF38ef7d)],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      const LinearGradient(
+        colors: [Color(0xFFC94D6E), Color(0xFFD4A92E)],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+    ];
+
+    final gradient = gradients[index % gradients.length];
     final studentCount = kelas.count?.siswa ?? kelas.jumlahSiswa ?? 0;
 
     return Container(
-      width: 260,
+      width: double.infinity,
       padding: const EdgeInsets.all(MBGSizes.defaultSpace),
       decoration: BoxDecoration(
         gradient: gradient,

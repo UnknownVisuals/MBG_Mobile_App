@@ -9,6 +9,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
+import 'package:mbg_mobile_app/common/widgets/appbar.dart';
 import 'package:mbg_mobile_app/features/driver/models/driver_delivery_model.dart';
 import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
@@ -424,7 +425,8 @@ class _DriverDashboardDeliveryTrackingState
 
     // Build widget tree without waiting for async operations
     return Scaffold(
-      appBar: AppBar(
+      appBar: MBGAppBar(
+        showBackArrow: true,
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

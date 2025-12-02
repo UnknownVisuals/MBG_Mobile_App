@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:mbg_mobile_app/features/authentication/controllers/user_controller.dart';
 import 'package:mbg_mobile_app/features/sekolah/models/sekolah_delivery_model.dart';
+import 'package:mbg_mobile_app/utils/helpers/loading_overlay.dart';
 import 'package:mbg_mobile_app/utils/popups/loaders.dart';
 import 'package:mbg_mobile_app/utils/services/sekolah_service.dart';
 
@@ -121,13 +122,16 @@ class SekolahDeliveryController extends GetxController {
 
     try {
       isSubmitting.value = true;
+      MBGLoadingOverlay.show();
       final updatedDelivery = await _sekolahService.scanSekolahQR(normalized);
       _updateOrInsertDelivery(updatedDelivery);
+      MBGLoadingOverlay.hide();
       MBGLoaders.successSnackBar(
         title: 'Pengiriman selesai',
         message: 'Status pengiriman ${updatedDelivery.qrCodeId} diperbarui.',
       );
     } catch (error) {
+      MBGLoadingOverlay.hide();
       MBGLoaders.errorSnackBar(title: 'Scan Gagal', message: error.toString());
       rethrow;
     } finally {

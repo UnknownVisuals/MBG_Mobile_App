@@ -14,6 +14,7 @@ import 'package:mbg_mobile_app/features/sekolah/screens/sekolah_info/widgets/sek
 import 'package:mbg_mobile_app/features/sekolah/screens/sekolah_info/widgets/sekolah_info_pic_card.dart';
 import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
+import 'package:mbg_mobile_app/utils/helpers/responsive.dart';
 
 class SekolahInfoScreen extends StatelessWidget {
   const SekolahInfoScreen({super.key});
@@ -28,9 +29,31 @@ class SekolahInfoScreen extends StatelessWidget {
       final kelasList = sekolah?.kelas ?? [];
       final dapurList = sekolah?.dapurPelayanan ?? [];
 
-      if (controller.isLoading.value && sekolah == null) {
+      if (controller.isLoading.value) {
         return const Center(
           child: CircularProgressIndicator(color: MBGColors.primary),
+        );
+      }
+
+      if (controller.sekolahId == null) {
+        return Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Iconsax.building,
+                size: MBGSizes.iconLg * 2,
+                color: MBGColors.textSecondary,
+              ),
+              const SizedBox(height: MBGSizes.spaceBtwItems),
+              Text(
+                'Belum ada sekolah yang ditugaskan',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: MBGColors.textSecondary,
+                ),
+              ),
+            ],
+          ),
         );
       }
 
@@ -77,6 +100,7 @@ class SekolahInfoScreen extends StatelessWidget {
                 value: sekolah?.createdAt != null
                     ? DateFormat(
                         'dd MMMM yyyy, HH:mm',
+                        'id_ID',
                       ).format(sekolah!.createdAt!.toLocal())
                     : '-',
               ),
@@ -85,6 +109,7 @@ class SekolahInfoScreen extends StatelessWidget {
                 value: sekolah?.updatedAt != null
                     ? DateFormat(
                         'dd MMMM yyyy, HH:mm',
+                        'id_ID',
                       ).format(sekolah!.updatedAt!.toLocal())
                     : '-',
               ),
@@ -106,7 +131,7 @@ class SekolahInfoScreen extends StatelessWidget {
               SekolahInfoHorizontalCardList<SekolahInfoPICSekolahSummary>(
                 items: picList,
                 emptyMessage: 'Tidak ada PIC sekolah',
-                listHeight: 190,
+                listHeight: MBGResponsive.autoScaleHeight(context, 190),
                 itemBuilder: (context, item, index) =>
                     SekolahInfoPicCard(pic: item),
               ),
@@ -120,7 +145,7 @@ class SekolahInfoScreen extends StatelessWidget {
               SekolahInfoHorizontalCardList<SekolahInfoKelasSummary>(
                 items: kelasList,
                 emptyMessage: 'Tidak ada kelas yang terdaftar',
-                listHeight: 210,
+                listHeight: MBGResponsive.autoScaleHeight(context, 220),
                 itemBuilder: (context, item, index) =>
                     SekolahInfoKelasCard(kelas: item),
               ),
@@ -134,7 +159,7 @@ class SekolahInfoScreen extends StatelessWidget {
               SekolahInfoHorizontalCardList<SekolahInfoDapurPelayananSummary>(
                 items: dapurList,
                 emptyMessage: 'Belum ada dapur yang melayani',
-                listHeight: 230,
+                listHeight: MBGResponsive.autoScaleHeight(context, 240),
                 itemBuilder: (context, item, index) =>
                     SekolahInfoDapurCard(pelayanan: item),
               ),

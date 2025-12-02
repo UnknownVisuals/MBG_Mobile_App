@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:mbg_mobile_app/features/sekolah/models/sekolah_info_model.dart';
 import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
+import 'package:mbg_mobile_app/utils/helpers/helper_functions.dart';
 
 class SekolahInfoKelasCard extends StatelessWidget {
   const SekolahInfoKelasCard({super.key, required this.kelas});
@@ -12,23 +13,26 @@ class SekolahInfoKelasCard extends StatelessWidget {
 
   String _formatDate(DateTime? date) {
     if (date == null) return '-';
-    return DateFormat('dd MMM yyyy').format(date.toLocal());
+    return DateFormat('dd MMM yyyy', 'id_ID').format(date.toLocal());
   }
 
   @override
   Widget build(BuildContext context) {
     final studentCount = kelas.count?.siswa;
+    final bool isDarkMode = MBGHelperFunctions.isDarkMode(context);
+    const accentColor = Color(0xFF2A7ABD);
 
     return Container(
       width: 260,
       padding: const EdgeInsets.all(MBGSizes.defaultSpace),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF2A7ABD), Color(0xFF00A8B3)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        color: isDarkMode ? MBGColors.dark : MBGColors.light,
         borderRadius: BorderRadius.circular(MBGSizes.cardRadiusLg),
+        border: Border.all(
+          color: isDarkMode
+              ? MBGColors.lightGrey.withValues(alpha: 0.4)
+              : MBGColors.grey,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -38,16 +42,12 @@ class SekolahInfoKelasCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(MBGSizes.sm + 2),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.25),
+                  color: accentColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(MBGSizes.borderRadiusMd),
-                  border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.3),
-                    width: 1.5,
-                  ),
                 ),
                 child: const Icon(
                   Iconsax.buildings,
-                  color: MBGColors.white,
+                  color: accentColor,
                   size: MBGSizes.iconMd,
                 ),
               ),
@@ -56,7 +56,9 @@ class SekolahInfoKelasCard extends StatelessWidget {
                 child: Text(
                   kelas.nama ?? 'Kelas',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: MBGColors.textWhite,
+                    color: isDarkMode
+                        ? MBGColors.textWhite
+                        : MBGColors.textPrimary,
                     fontWeight: FontWeight.bold,
                   ),
                   maxLines: 1,
@@ -66,22 +68,28 @@ class SekolahInfoKelasCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: MBGSizes.spaceBtwItems / 2),
-          const Divider(color: MBGColors.grey),
+          Divider(
+            color: isDarkMode
+                ? MBGColors.lightGrey.withValues(alpha: 0.2)
+                : MBGColors.grey.withValues(alpha: 0.5),
+          ),
           const SizedBox(height: MBGSizes.spaceBtwItems / 2),
           Row(
             children: [
-              const Icon(
+              Icon(
                 Iconsax.briefcase,
-                color: MBGColors.white,
+                color: isDarkMode ? MBGColors.textWhite : MBGColors.textPrimary,
                 size: MBGSizes.iconSm,
               ),
               const SizedBox(width: MBGSizes.spaceBtwItems / 2),
               Expanded(
                 child: Text(
                   'Tingkat ${kelas.tingkat?.toString() ?? '-'}',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyMedium?.copyWith(color: MBGColors.textWhite),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: isDarkMode
+                        ? MBGColors.textWhite
+                        : MBGColors.textPrimary,
+                  ),
                 ),
               ),
             ],
@@ -90,16 +98,18 @@ class SekolahInfoKelasCard extends StatelessWidget {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(
+              Icon(
                 Iconsax.user,
-                color: MBGColors.white,
+                color: isDarkMode ? MBGColors.textWhite : MBGColors.textPrimary,
                 size: MBGSizes.iconSm,
               ),
               const SizedBox(width: MBGSizes.spaceBtwItems / 2),
               Text(
                 '${studentCount ?? 0} siswa',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: MBGColors.textWhite,
+                  color: isDarkMode
+                      ? MBGColors.textWhite
+                      : MBGColors.textPrimary,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -112,13 +122,15 @@ class SekolahInfoKelasCard extends StatelessWidget {
               vertical: MBGSizes.xs,
             ),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.2),
+              color: isDarkMode
+                  ? MBGColors.darkerGrey
+                  : MBGColors.grey.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(MBGSizes.borderRadiusSm),
             ),
             child: Text(
               'Dibuat: ${_formatDate(kelas.createdAt)}',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: MBGColors.textWhite,
+                color: isDarkMode ? MBGColors.textWhite : MBGColors.textPrimary,
                 fontWeight: FontWeight.w500,
               ),
             ),

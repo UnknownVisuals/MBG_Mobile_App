@@ -15,7 +15,7 @@ class SekolahEventCard extends StatelessWidget {
     final start = event.tanggalMulai;
     final end = event.tanggalSelesai;
     if (start == null) return 'Tanggal tidak tersedia';
-    final formatter = DateFormat('dd MMM yyyy');
+    final formatter = DateFormat('dd MMM yyyy', 'id_ID');
     if (end != null && !_isSameDay(start, end)) {
       return '${formatter.format(start)} • ${formatter.format(end)}';
     }

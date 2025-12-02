@@ -30,21 +30,6 @@ class SekolahDeliveryScreen extends StatelessWidget {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: MBGSizes.spaceBtwSections),
-                Text(
-                  'Pengiriman Sekolah',
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: MBGSizes.xs),
-                Text(
-                  controller.sekolahName,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: MBGColors.textSecondary,
-                  ),
-                ),
-                const SizedBox(height: MBGSizes.spaceBtwSections),
                 SekolahDeliveryActionButton(
                   onTap: () {
                     Get.to(

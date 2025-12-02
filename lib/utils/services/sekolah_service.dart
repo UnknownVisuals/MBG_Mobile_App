@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:get/get.dart';
 import 'package:mbg_mobile_app/features/dapur/models/dapur_menu_planning_model.dart';
-import 'package:mbg_mobile_app/features/sekolah/models/sekolah_absensi_model.dart';
 import 'package:mbg_mobile_app/features/sekolah/models/sekolah_alergi_model.dart';
 import 'package:mbg_mobile_app/features/sekolah/models/sekolah_delivery_model.dart';
 import 'package:mbg_mobile_app/features/sekolah/models/sekolah_info_model.dart';
@@ -329,35 +328,35 @@ class SekolahService extends GetxService {
   //   return SekolahPengirimanModel.fromJson(data);
   // }
 
-  Future<List<SekolahAbsensiModel>> getAbsensiByKelas(String kelasId) async {
-    MBGHttpHelper.loadSessionToken();
-    final response = await _httpHelper.getRequest('kelas/$kelasId/absensi');
+  // Future<List<SekolahAbsensiModel>> getAbsensiByKelas(String kelasId) async {
+  //   MBGHttpHelper.loadSessionToken();
+  //   final response = await _httpHelper.getRequest('kelas/$kelasId/absensi');
 
-    if (!_isSuccess(response)) {
-      throw Exception(_responseMessage(response, 'Gagal memuat absensi kelas'));
-    }
+  //   if (!_isSuccess(response)) {
+  //     throw Exception(_responseMessage(response, 'Gagal memuat absensi kelas'));
+  //   }
 
-    final data = _extractDataList(response);
-    return data.map(SekolahAbsensiModel.fromJson).toList();
-  }
+  //   final data = _extractDataList(response);
+  //   return data.map(SekolahAbsensiModel.fromJson).toList();
+  // }
 
-  Future<SekolahAbsensiModel> createAbsensi(
-    String kelasId,
-    Map<String, dynamic> payload,
-  ) async {
-    MBGHttpHelper.loadSessionToken();
-    final response = await _httpHelper.postRequest(
-      'kelas/$kelasId/absensi',
-      payload,
-    );
+  // Future<SekolahAbsensiModel> createAbsensi(
+  //   String kelasId,
+  //   Map<String, dynamic> payload,
+  // ) async {
+  //   MBGHttpHelper.loadSessionToken();
+  //   final response = await _httpHelper.postRequest(
+  //     'kelas/$kelasId/absensi',
+  //     payload,
+  //   );
 
-    if (response.statusCode != 201 || !_isSuccess(response)) {
-      throw Exception(_responseMessage(response, 'Gagal membuat absensi'));
-    }
+  //   if (response.statusCode != 201 || !_isSuccess(response)) {
+  //     throw Exception(_responseMessage(response, 'Gagal membuat absensi'));
+  //   }
 
-    final data = _extractDataObject(response);
-    return SekolahAbsensiModel.fromJson(data);
-  }
+  //   final data = _extractDataObject(response);
+  //   return SekolahAbsensiModel.fromJson(data);
+  // }
 
   Future<SekolahInfoModel> getSekolahInfo(String sekolahId) async {
     MBGHttpHelper.loadSessionToken();

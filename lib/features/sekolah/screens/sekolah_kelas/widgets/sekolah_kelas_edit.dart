@@ -81,24 +81,24 @@ class SekolahKelasEdit extends StatelessWidget {
                   },
                 ),
                 const SizedBox(height: MBGSizes.spaceBtwSections),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      if (!formKey.currentState!.validate()) return;
-                      final tingkat = int.parse(tingkatController.text.trim());
-                      await controller.updateKelas(
-                        id: kelas.id,
-                        nama: namaController.text.trim(),
-                        tingkat: tingkat,
-                      );
-                    },
-                    child: const Text('Simpan Perubahan'),
-                  ),
-                ),
               ],
             ),
           ),
+        ),
+      ),
+      bottomNavigationBar: Container(
+        padding: const EdgeInsets.all(MBGSizes.defaultSpace),
+        child: ElevatedButton(
+          onPressed: () async {
+            if (!formKey.currentState!.validate()) return;
+            final tingkat = int.parse(tingkatController.text.trim());
+            await controller.updateKelas(
+              id: kelas.id,
+              nama: namaController.text.trim(),
+              tingkat: tingkat,
+            );
+          },
+          child: const Text('Simpan Perubahan'),
         ),
       ),
     );

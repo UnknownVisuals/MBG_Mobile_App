@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:mbg_mobile_app/common/widgets/image_preview_dialog.dart';
 import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
+import 'package:mbg_mobile_app/utils/helpers/helper_functions.dart';
 
 import 'package:mbg_mobile_app/features/sekolah/models/sekolah_delivery_model.dart';
 
@@ -15,14 +16,19 @@ class SekolahDeliveryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDarkMode = MBGHelperFunctions.isDarkMode(context);
     final createdAt = delivery.waktuBuatQR.toLocal();
     final selesaiAt = delivery.waktuSampai?.toLocal();
-    final formatter = DateFormat('dd MMM yyyy, HH:mm');
+    final formatter = DateFormat('dd MMM yyyy, HH:mm', 'id_ID');
 
     return Container(
       decoration: BoxDecoration(
-        color: theme.cardColor,
-        border: Border.all(color: theme.dividerColor),
+        color: isDarkMode ? MBGColors.dark : MBGColors.light,
+        border: Border.all(
+          color: isDarkMode
+              ? MBGColors.lightGrey.withValues(alpha: 0.4)
+              : MBGColors.borderPrimary,
+        ),
         borderRadius: BorderRadius.circular(MBGSizes.borderRadiusMd),
       ),
       child: Padding(

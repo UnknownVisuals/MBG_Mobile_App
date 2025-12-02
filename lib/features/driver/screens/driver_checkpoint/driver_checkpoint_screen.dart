@@ -6,7 +6,9 @@ import 'package:mbg_mobile_app/features/dapur/controllers/dapur_checkpoint_contr
 import 'package:mbg_mobile_app/features/driver/controllers/driver_checkpoint_controller.dart';
 import 'package:mbg_mobile_app/features/driver/screens/driver_checkpoint/widgets/driver_checkpoint_list.dart';
 import 'package:mbg_mobile_app/features/driver/screens/driver_checkpoint/widgets/driver_checkpoint_summary.dart';
+import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
+import 'package:mbg_mobile_app/utils/helpers/helper_functions.dart';
 
 class DriverCheckpointScreen extends StatelessWidget {
   const DriverCheckpointScreen({super.key, this.menuHarianId});
@@ -89,8 +91,8 @@ class DriverCheckpointScreen extends StatelessWidget {
                                       ),
                                 ),
                                 Text(
-                                  '${DateFormat('dd MMM yyyy').format(planning.tanggalMulai!)} - '
-                                  '${DateFormat('dd MMM yyyy').format(planning.tanggalSelesai!)}',
+                                  '${DateFormat('dd MMM yyyy', 'id_ID').format(planning.tanggalMulai!.toLocal())} - '
+                                  '${DateFormat('dd MMM yyyy', 'id_ID').format(planning.tanggalSelesai!.toLocal())}',
                                   style: Theme.of(context).textTheme.bodySmall
                                       ?.copyWith(
                                         color: Theme.of(
@@ -149,7 +151,8 @@ class DriverCheckpointScreen extends StatelessWidget {
                             Text(
                               DateFormat(
                                 'dd MMM yyyy',
-                              ).format(menuHarian.tanggal!),
+                                'id_ID',
+                              ).format(menuHarian.tanggal!.toLocal()),
                               style: Theme.of(context).textTheme.bodySmall
                                   ?.copyWith(
                                     color: Theme.of(
@@ -239,9 +242,15 @@ class DriverCheckpointScreen extends StatelessWidget {
             vertical: MBGSizes.sm,
           ),
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
+            color: MBGHelperFunctions.isDarkMode(context)
+                ? MBGColors.dark
+                : MBGColors.white,
             borderRadius: BorderRadius.circular(MBGSizes.cardRadiusMd),
-            border: Border.all(color: Theme.of(context).dividerColor),
+            border: Border.all(
+              color: MBGHelperFunctions.isDarkMode(context)
+                  ? MBGColors.lightGrey.withValues(alpha: 0.4)
+                  : MBGColors.borderPrimary,
+            ),
           ),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
@@ -277,10 +286,14 @@ class DriverCheckpointScreen extends StatelessWidget {
       margin: const EdgeInsets.only(top: MBGSizes.sm),
       padding: const EdgeInsets.all(MBGSizes.md),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        color: MBGHelperFunctions.isDarkMode(context)
+            ? MBGColors.dark
+            : MBGColors.lightContainer,
         borderRadius: BorderRadius.circular(MBGSizes.cardRadiusMd),
         border: Border.all(
-          color: Theme.of(context).dividerColor.withValues(alpha: 0.3),
+          color: MBGHelperFunctions.isDarkMode(context)
+              ? MBGColors.lightGrey.withValues(alpha: 0.4)
+              : MBGColors.borderPrimary,
         ),
       ),
       child: Text(

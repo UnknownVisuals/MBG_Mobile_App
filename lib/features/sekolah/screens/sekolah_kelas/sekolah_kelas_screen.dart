@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:mbg_mobile_app/features/sekolah/controllers/sekolah_kelas_controller.dart';
 import 'package:mbg_mobile_app/features/sekolah/screens/sekolah_kelas/widgets/sekolah_kelas_add.dart';
 import 'package:mbg_mobile_app/features/sekolah/screens/sekolah_kelas/widgets/sekolah_kelas_card.dart';
@@ -41,6 +40,7 @@ class SekolahKelasScreen extends StatelessWidget {
                 padding: const EdgeInsets.only(bottom: MBGSizes.spaceBtwItems),
                 child: SekolahKelasCard(
                   kelas: kelas,
+                  index: index,
                   onEdit: () => Get.to(() => SekolahKelasEdit(kelas: kelas)),
                   onDelete: () => showDialog(
                     context: context,
@@ -52,15 +52,11 @@ class SekolahKelasScreen extends StatelessWidget {
           ),
         );
       }),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => Get.to(() => const SekolahKelasAdd()),
-        backgroundColor: MBGColors.primary,
-        icon: const Icon(Iconsax.add, color: MBGColors.white),
-        label: Text(
-          'Tambah Kelas',
-          style: Theme.of(
-            context,
-          ).textTheme.bodyMedium?.copyWith(color: MBGColors.white),
+      bottomNavigationBar: Container(
+        padding: const EdgeInsets.all(MBGSizes.defaultSpace),
+        child: ElevatedButton(
+          onPressed: () => Get.to(() => const SekolahKelasAdd()),
+          child: const Text('Tambah Kelas'),
         ),
       ),
     );

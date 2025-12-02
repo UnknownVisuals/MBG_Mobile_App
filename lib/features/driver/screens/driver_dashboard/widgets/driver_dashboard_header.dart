@@ -17,7 +17,10 @@ class DriverDashboardHeader extends StatelessWidget {
           ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
         ),
         Text(
-          DateFormat('EEEE, dd MMMM yyyy').format(DateTime.now().toLocal()),
+          DateFormat(
+            'EEEE, dd MMMM yyyy',
+            'id_ID',
+          ).format(DateTime.now().toLocal()),
           style: Theme.of(
             context,
           ).textTheme.bodyMedium?.copyWith(color: MBGColors.textSecondary),

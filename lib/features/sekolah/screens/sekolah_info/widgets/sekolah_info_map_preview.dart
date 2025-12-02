@@ -5,6 +5,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:mbg_mobile_app/features/sekolah/controllers/sekolah_info_controller.dart';
 import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
+import 'package:mbg_mobile_app/utils/helpers/helper_functions.dart';
 
 class SekolahInfoMapPreview extends StatelessWidget {
   const SekolahInfoMapPreview({super.key});
@@ -16,11 +17,17 @@ class SekolahInfoMapPreview extends StatelessWidget {
 
     return Obx(() {
       final sekolah = sekolahInfoController.sekolahInfo.value;
+      final bool isDarkMode = MBGHelperFunctions.isDarkMode(context);
 
       return Container(
         height: 240,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(MBGSizes.borderRadiusLg),
+          border: Border.all(
+            color: isDarkMode
+                ? MBGColors.lightGrey.withValues(alpha: 0.4)
+                : MBGColors.grey,
+          ),
         ),
         clipBehavior: Clip.antiAlias,
         child: FlutterMap(
@@ -31,10 +38,28 @@ class SekolahInfoMapPreview extends StatelessWidget {
             ),
           ),
           children: [
-            TileLayer(
-              urlTemplate: 'https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
-              userAgentPackageName: 'com.mbg.tracker.app',
-            ),
+            if (isDarkMode)
+              ColorFiltered(
+                colorFilter: const ColorFilter.matrix([
+                  // Grayscale + Invert Matrix
+                  // R = 255 - (0.2126*R + 0.7152*G + 0.0722*B)
+                  -0.2126, -0.7152, -0.0722, 0, 255, // Red
+                  -0.2126, -0.7152, -0.0722, 0, 255, // Green
+                  -0.2126, -0.7152, -0.0722, 0, 255, // Blue
+                  0, 0, 0, 1, 0, // Alpha
+                ]),
+                child: TileLayer(
+                  urlTemplate:
+                      'https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
+                  userAgentPackageName: 'com.mbg.tracker.app',
+                ),
+              )
+            else
+              TileLayer(
+                urlTemplate:
+                    'https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
+                userAgentPackageName: 'com.mbg.tracker.app',
+              ),
             MarkerLayer(
               markers: [
                 Marker(

@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:mbg_mobile_app/features/sekolah/models/sekolah_info_model.dart';
 import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
+import 'package:mbg_mobile_app/utils/helpers/helper_functions.dart';
 
 class SekolahInfoDapurCard extends StatelessWidget {
   const SekolahInfoDapurCard({super.key, required this.pelayanan});
@@ -12,23 +13,26 @@ class SekolahInfoDapurCard extends StatelessWidget {
 
   String _formatDate(DateTime? date) {
     if (date == null) return '-';
-    return DateFormat('dd MMM yyyy').format(date.toLocal());
+    return DateFormat('dd MMM yyyy', 'id_ID').format(date.toLocal());
   }
 
   @override
   Widget build(BuildContext context) {
     final dapur = pelayanan.dapur;
+    final bool isDarkMode = MBGHelperFunctions.isDarkMode(context);
+    const accentColor = Color(0xFFC94D6E);
 
     return Container(
       width: 300,
       padding: const EdgeInsets.all(MBGSizes.defaultSpace),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFFC94D6E), Color(0xFFD4A92E)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        color: isDarkMode ? MBGColors.dark : MBGColors.light,
         borderRadius: BorderRadius.circular(MBGSizes.cardRadiusLg),
+        border: Border.all(
+          color: isDarkMode
+              ? MBGColors.lightGrey.withValues(alpha: 0.4)
+              : MBGColors.grey,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -38,16 +42,12 @@ class SekolahInfoDapurCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(MBGSizes.sm + 2),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.25),
+                  color: accentColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(MBGSizes.borderRadiusMd),
-                  border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.3),
-                    width: 1.5,
-                  ),
                 ),
                 child: const Icon(
                   Iconsax.clipboard_text,
-                  color: MBGColors.white,
+                  color: accentColor,
                   size: MBGSizes.iconMd,
                 ),
               ),
@@ -56,7 +56,9 @@ class SekolahInfoDapurCard extends StatelessWidget {
                 child: Text(
                   dapur?.nama ?? 'Dapur Pelayanan',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: MBGColors.textWhite,
+                    color: isDarkMode
+                        ? MBGColors.textWhite
+                        : MBGColors.textPrimary,
                     fontWeight: FontWeight.bold,
                   ),
                   maxLines: 2,
@@ -66,23 +68,29 @@ class SekolahInfoDapurCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: MBGSizes.spaceBtwItems / 2),
-          const Divider(color: MBGColors.grey),
+          Divider(
+            color: isDarkMode
+                ? MBGColors.lightGrey.withValues(alpha: 0.2)
+                : MBGColors.grey.withValues(alpha: 0.5),
+          ),
           const SizedBox(height: MBGSizes.spaceBtwItems / 2),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Icon(
+              Icon(
                 Iconsax.location,
-                color: MBGColors.white,
+                color: isDarkMode ? MBGColors.textWhite : MBGColors.textPrimary,
                 size: MBGSizes.iconSm,
               ),
               const SizedBox(width: MBGSizes.spaceBtwItems / 2),
               Expanded(
                 child: Text(
                   dapur?.alamat ?? '-',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodySmall?.copyWith(color: MBGColors.textWhite),
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: isDarkMode
+                        ? MBGColors.textWhite
+                        : MBGColors.textPrimary,
+                  ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -92,9 +100,9 @@ class SekolahInfoDapurCard extends StatelessWidget {
           const SizedBox(height: MBGSizes.spaceBtwItems / 2),
           Row(
             children: [
-              const Icon(
+              Icon(
                 Iconsax.location_tick,
-                color: MBGColors.white,
+                color: isDarkMode ? MBGColors.textWhite : MBGColors.textPrimary,
                 size: MBGSizes.iconSm,
               ),
               const SizedBox(width: MBGSizes.spaceBtwItems / 2),
@@ -105,9 +113,11 @@ class SekolahInfoDapurCard extends StatelessWidget {
                           dapur.longitude != null
                       ? '${dapur.latitude!.toStringAsFixed(4)}, ${dapur.longitude!.toStringAsFixed(4)}'
                       : '-',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodySmall?.copyWith(color: MBGColors.textWhite),
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: isDarkMode
+                        ? MBGColors.textWhite
+                        : MBGColors.textPrimary,
+                  ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -121,18 +131,28 @@ class SekolahInfoDapurCard extends StatelessWidget {
               vertical: MBGSizes.xs,
             ),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.2),
+              color: isDarkMode
+                  ? MBGColors.darkerGrey
+                  : MBGColors.grey.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(MBGSizes.borderRadiusSm),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Iconsax.calendar, color: MBGColors.white, size: 12),
+                Icon(
+                  Iconsax.calendar,
+                  color: isDarkMode
+                      ? MBGColors.textWhite
+                      : MBGColors.textPrimary,
+                  size: 12,
+                ),
                 const SizedBox(width: MBGSizes.xs),
                 Text(
                   'Bergabung: ${_formatDate(pelayanan.createdAt)}',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: MBGColors.textWhite,
+                    color: isDarkMode
+                        ? MBGColors.textWhite
+                        : MBGColors.textPrimary,
                     fontWeight: FontWeight.w500,
                   ),
                 ),

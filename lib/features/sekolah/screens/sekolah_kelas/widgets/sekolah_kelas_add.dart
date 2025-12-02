@@ -73,23 +73,23 @@ class SekolahKelasAdd extends StatelessWidget {
                   },
                 ),
                 const SizedBox(height: MBGSizes.spaceBtwSections),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      if (!formKey.currentState!.validate()) return;
-                      final tingkat = int.parse(tingkatController.text.trim());
-                      await controller.addKelas(
-                        nama: namaController.text.trim(),
-                        tingkat: tingkat,
-                      );
-                    },
-                    child: const Text('Simpan Kelas'),
-                  ),
-                ),
               ],
             ),
           ),
+        ),
+      ),
+      bottomNavigationBar: Container(
+        padding: const EdgeInsets.all(MBGSizes.defaultSpace),
+        child: ElevatedButton(
+          onPressed: () async {
+            if (!formKey.currentState!.validate()) return;
+            final tingkat = int.parse(tingkatController.text.trim());
+            await controller.addKelas(
+              nama: namaController.text.trim(),
+              tingkat: tingkat,
+            );
+          },
+          child: const Text('Simpan Kelas'),
         ),
       ),
     );

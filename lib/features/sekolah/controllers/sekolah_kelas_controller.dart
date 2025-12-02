@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:mbg_mobile_app/features/authentication/controllers/user_controller.dart';
 import 'package:mbg_mobile_app/features/sekolah/models/sekolah_kelas_model.dart';
+import 'package:mbg_mobile_app/utils/helpers/loading_overlay.dart';
 import 'package:mbg_mobile_app/utils/popups/loaders.dart';
 import 'package:mbg_mobile_app/utils/services/sekolah_service.dart';
 
@@ -69,7 +70,7 @@ class SekolahKelasController extends GetxController {
     }
 
     try {
-      isLoading.value = true;
+      MBGLoadingOverlay.show();
 
       final newKelas = await _sekolahService.createKelas(id, {
         'nama': nama,
@@ -78,19 +79,19 @@ class SekolahKelasController extends GetxController {
 
       kelasList.insert(0, newKelas);
 
+      MBGLoadingOverlay.hide();
+      Get.back();
+
       MBGLoaders.successSnackBar(
         title: 'Kelas Ditambahkan',
         message: 'Kelas $nama berhasil dibuat',
       );
-
-      Get.back();
     } catch (e) {
+      MBGLoadingOverlay.hide();
       MBGLoaders.errorSnackBar(
         title: 'Gagal menambahkan kelas',
         message: e.toString(),
       );
-    } finally {
-      isLoading.value = false;
     }
   }
 
@@ -100,7 +101,7 @@ class SekolahKelasController extends GetxController {
     required int tingkat,
   }) async {
     try {
-      isLoading.value = true;
+      MBGLoadingOverlay.show();
 
       final updated = await _sekolahService.updateKelas(id, {
         'nama': nama,
@@ -114,44 +115,43 @@ class SekolahKelasController extends GetxController {
         kelasList.refresh();
       }
 
+      MBGLoadingOverlay.hide();
+      Get.back();
+
       MBGLoaders.successSnackBar(
         title: 'Kelas Diperbarui',
         message: 'Perubahan berhasil disimpan',
       );
-
-      Get.back();
     } catch (e) {
+      MBGLoadingOverlay.hide();
       MBGLoaders.errorSnackBar(
         title: 'Gagal memperbarui kelas',
         message: e.toString(),
       );
-    } finally {
-      isLoading.value = false;
     }
   }
 
   Future<void> deleteKelas(String id) async {
     try {
-      deletingKelasId.value = id;
+      MBGLoadingOverlay.show();
 
       await _sekolahService.deleteKelas(id);
 
       kelasList.removeWhere((item) => item.id == id);
 
+      MBGLoadingOverlay.hide();
+      Get.back(); // Close dialog
+
       MBGLoaders.successSnackBar(
         title: 'Kelas Dihapus',
         message: 'Kelas berhasil dihapus',
       );
-
-      Get.back();
     } catch (e) {
+      MBGLoadingOverlay.hide();
       MBGLoaders.errorSnackBar(
         title: 'Gagal menghapus kelas',
         message: e.toString(),
       );
-    } finally {
-      deletingKelasId.value = null;
-      isLoading.value = false;
     }
   }
 }

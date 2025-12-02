@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:mbg_mobile_app/features/sekolah/controllers/sekolah_dashboard_controller.dart';
-import '../../../../../utils/constants/colors.dart';
-import '../../../../../utils/constants/sizes.dart';
+import 'package:mbg_mobile_app/utils/constants/colors.dart';
+import 'package:mbg_mobile_app/utils/constants/sizes.dart';
 
 /// Attendance summary card widget (UI-only, tanpa controller)
 class AttendanceSummaryWidget extends StatelessWidget {
@@ -16,14 +16,6 @@ class AttendanceSummaryWidget extends StatelessWidget {
     return Obx(() {
       final totalSiswa = controller.totalSiswa;
       final totalKelas = controller.totalKelas;
-
-      // Placeholder for attendance rate as we don't have real attendance data yet
-      final double attendanceRate = totalSiswa > 0 ? 100.0 : 0.0;
-
-      // 🔹 Warna status berdasarkan rate
-      final Color statusColor = attendanceRate >= 90
-          ? Colors.greenAccent
-          : (attendanceRate >= 75 ? Colors.orangeAccent : Colors.redAccent);
 
       return Container(
         padding: const EdgeInsets.all(MBGSizes.md),
@@ -72,24 +64,6 @@ class AttendanceSummaryWidget extends StatelessWidget {
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
-                    ),
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    '${attendanceRate.toStringAsFixed(1)}%',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: statusColor,
                     ),
                   ),
                 ),

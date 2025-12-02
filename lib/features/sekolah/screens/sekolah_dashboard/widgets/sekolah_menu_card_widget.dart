@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
-import '../../../../../utils/constants/colors.dart';
-import '../../../../../utils/constants/sizes.dart';
+import 'package:mbg_mobile_app/utils/constants/colors.dart';
+import 'package:mbg_mobile_app/utils/constants/sizes.dart';
+import 'package:mbg_mobile_app/utils/helpers/helper_functions.dart';
 
 /// Widget untuk menampilkan daftar menu hari ini di dashboard sekolah (UI-only)
 class SekolahMenuCardWidget extends StatelessWidget {
@@ -9,10 +10,12 @@ class SekolahMenuCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = MBGHelperFunctions.isDarkMode(context);
+
     return Container(
       padding: const EdgeInsets.all(MBGSizes.md),
       decoration: BoxDecoration(
-        color: MBGColors.white,
+        color: isDarkMode ? MBGColors.dark : MBGColors.white,
         borderRadius: BorderRadius.circular(MBGSizes.cardRadiusLg),
         boxShadow: [
           BoxShadow(
@@ -22,7 +25,11 @@ class SekolahMenuCardWidget extends StatelessWidget {
             offset: const Offset(0, 4),
           ),
         ],
-        border: Border.all(color: MBGColors.grey.withValues(alpha: 0.3)),
+        border: Border.all(
+          color: isDarkMode
+              ? MBGColors.lightGrey.withValues(alpha: 0.1)
+              : MBGColors.grey.withValues(alpha: 0.3),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -39,12 +46,12 @@ class SekolahMenuCardWidget extends StatelessWidget {
                 child: Icon(Iconsax.note, color: MBGColors.primary, size: 22),
               ),
               const SizedBox(width: MBGSizes.spaceBtwItems),
-              const Text(
+              Text(
                 'Today\'s Menu',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
-                  color: MBGColors.dark,
+                  color: isDarkMode ? MBGColors.white : MBGColors.dark,
                 ),
               ),
             ],
@@ -101,10 +108,12 @@ class _MenuItem extends StatelessWidget {
       leading: Icon(icon, color: MBGColors.primary, size: 22),
       title: Text(
         name,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 14,
           fontWeight: FontWeight.w600,
-          color: MBGColors.dark,
+          color: MBGHelperFunctions.isDarkMode(context)
+              ? MBGColors.white
+              : MBGColors.dark,
         ),
       ),
       subtitle: Text(

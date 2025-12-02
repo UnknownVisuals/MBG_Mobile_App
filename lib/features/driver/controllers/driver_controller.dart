@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:mbg_mobile_app/features/driver/models/driver_delivery_model.dart';
+import 'package:mbg_mobile_app/utils/helpers/loading_overlay.dart';
 import 'package:mbg_mobile_app/utils/popups/loaders.dart';
 import 'package:mbg_mobile_app/utils/services/driver_service.dart';
 
@@ -87,14 +88,17 @@ class DriverController extends GetxController {
     }
 
     try {
+      MBGLoadingOverlay.show();
       await scanDriverQrCode(normalizedCode);
       await fetchDeliveries();
+      MBGLoadingOverlay.hide();
       Get.back();
       MBGLoaders.successSnackBar(
         title: 'Berhasil',
         message: 'Status pengiriman diperbarui.',
       );
     } catch (error) {
+      MBGLoadingOverlay.hide();
       MBGLoaders.errorSnackBar(
         title: 'Gagal memindai',
         message: error.toString(),

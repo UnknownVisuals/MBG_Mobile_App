@@ -116,7 +116,7 @@ class MBGHttpHelper extends GetConnect {
       final response = await get(
         '$_baseUrl/$endpoint',
         headers: _getHeaders(),
-      ).timeout(const Duration(seconds: 15));
+      ).timeout(const Duration(seconds: 60));
 
       return _handleResponse(response);
     } on TimeoutException {
@@ -133,7 +133,7 @@ class MBGHttpHelper extends GetConnect {
         '$_baseUrl/$endpoint',
         data,
         headers: _getHeaders(),
-      ).timeout(const Duration(seconds: 15));
+      ).timeout(const Duration(seconds: 60));
 
       return _handleResponse(response);
     } on TimeoutException {
@@ -183,7 +183,7 @@ class MBGHttpHelper extends GetConnect {
           await (isPutMethod
                   ? put(url, formData, headers: headers)
                   : post(url, formData, headers: headers))
-              .timeout(const Duration(seconds: 15));
+              .timeout(const Duration(seconds: 60));
 
       return _handleResponse(response);
     } on TimeoutException {
@@ -200,7 +200,7 @@ class MBGHttpHelper extends GetConnect {
         '$_baseUrl/$endpoint',
         data,
         headers: _getHeaders(),
-      ).timeout(const Duration(seconds: 15));
+      ).timeout(const Duration(seconds: 60));
 
       return _handleResponse(response);
     } on TimeoutException {
@@ -217,7 +217,7 @@ class MBGHttpHelper extends GetConnect {
         '$_baseUrl/$endpoint',
         data,
         headers: _getHeaders(),
-      ).timeout(const Duration(seconds: 15));
+      ).timeout(const Duration(seconds: 60));
 
       return _handleResponse(response);
     } on TimeoutException {
@@ -233,7 +233,7 @@ class MBGHttpHelper extends GetConnect {
       final response = await delete(
         '$_baseUrl/$endpoint',
         headers: _getHeaders(),
-      ).timeout(const Duration(seconds: 15));
+      ).timeout(const Duration(seconds: 60));
 
       return _handleResponse(response);
     } on TimeoutException {
