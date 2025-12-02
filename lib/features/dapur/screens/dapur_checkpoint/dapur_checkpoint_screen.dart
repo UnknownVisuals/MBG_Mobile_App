@@ -6,7 +6,9 @@ import 'package:mbg_mobile_app/features/dapur/controllers/dapur_checkpoint_contr
 import 'package:mbg_mobile_app/features/dapur/controllers/dapur_menu_harian_controller.dart';
 import 'package:mbg_mobile_app/features/dapur/screens/dapur_checkpoint/widgets/dapur_checkpoint_list.dart';
 import 'package:mbg_mobile_app/features/dapur/screens/dapur_checkpoint/widgets/dapur_checkpoint_summary.dart';
+import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
+import 'package:mbg_mobile_app/utils/helpers/helper_functions.dart';
 
 class DapurCheckpointScreen extends StatelessWidget {
   const DapurCheckpointScreen({super.key, this.menuHarianId});
@@ -22,18 +24,15 @@ class DapurCheckpointScreen extends StatelessWidget {
       DapurMenuHarianController(),
     );
 
-    dapurCheckpointController.initializeWithMenuId(menuHarianId);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (menuHarianId != null &&
+          dapurCheckpointController.currentMenuHarianId.value != menuHarianId) {
+        dapurCheckpointController.initializeWithMenuId(menuHarianId);
+      }
+    });
 
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-
-    // Theme-aware colors
-    final dropdownBgColor = isDark ? Colors.grey[850] : Colors.white;
-    final dropdownBorderColor = isDark
-        ? Colors.grey[700]!
-        : Colors.grey[300]!; // border
-    final dropdownHintColor = isDark ? Colors.grey[400] : Colors.grey[700];
-    final dateTextColor = isDark ? Colors.grey[400] : Colors.grey[700];
+    final isDark = MBGHelperFunctions.isDarkMode(context);
 
     return Scaffold(
       body: Obx(() {
@@ -45,12 +44,16 @@ class DapurCheckpointScreen extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.info_outline, size: 64, color: Colors.grey[400]),
+                  const Icon(
+                    Icons.info_outline,
+                    size: 64,
+                    color: MBGColors.darkGrey,
+                  ),
                   const SizedBox(height: MBGSizes.spaceBtwItems),
                   Text(
                     'Tidak ada menu harian tersedia',
                     style: theme.textTheme.titleMedium?.copyWith(
-                      color: dropdownHintColor,
+                      color: MBGColors.textSecondary,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -62,11 +65,14 @@ class DapurCheckpointScreen extends StatelessWidget {
 
         // Show loading
         if (dapurCheckpointController.isLoading.value) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(
+            child: CircularProgressIndicator(color: MBGColors.primary),
+          );
         }
 
         // Show checkpoint list
         return RefreshIndicator(
+          color: MBGColors.primary,
           onRefresh: () =>
               dapurCheckpointController.fetchCheckpointsByMenuHarian(
                 dapurCheckpointController.currentMenuHarianId.value!,
@@ -83,9 +89,9 @@ class DapurCheckpointScreen extends StatelessWidget {
                     vertical: MBGSizes.sm,
                   ),
                   decoration: BoxDecoration(
-                    color: dropdownBgColor,
+                    color: isDark ? MBGColors.dark : MBGColors.white,
                     borderRadius: BorderRadius.circular(MBGSizes.cardRadiusMd),
-                    border: Border.all(color: dropdownBorderColor),
+                    border: Border.all(color: MBGColors.borderPrimary),
                   ),
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<String>(
@@ -95,12 +101,12 @@ class DapurCheckpointScreen extends StatelessWidget {
                       hint: Text(
                         'Pilih Menu Harian',
                         style: theme.textTheme.bodyMedium?.copyWith(
-                          color: dropdownHintColor,
+                          color: MBGColors.textSecondary,
                         ),
                       ),
-                      icon: Icon(
+                      icon: const Icon(
                         Icons.keyboard_arrow_down,
-                        color: theme.colorScheme.primary,
+                        color: MBGColors.primary,
                       ),
                       items: menuHarianController.menuHarianList.map((
                         menuHarian,
@@ -122,9 +128,10 @@ class DapurCheckpointScreen extends StatelessWidget {
                               Text(
                                 DateFormat(
                                   'dd MMM yyyy',
-                                ).format(menuHarian.tanggal!),
+                                  'id_ID',
+                                ).format(menuHarian.tanggal!.toLocal()),
                                 style: theme.textTheme.bodySmall?.copyWith(
-                                  color: dateTextColor,
+                                  color: MBGColors.textSecondary,
                                 ),
                               ),
                             ],

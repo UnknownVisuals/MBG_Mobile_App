@@ -6,7 +6,9 @@ import 'package:mbg_mobile_app/features/dapur/models/dapur_menu_harian_model.dar
 import 'package:mbg_mobile_app/features/dapur/screens/dapur_menu_planning/widgets/dapur_menu_harian_checkpoint_status.dart';
 import 'package:mbg_mobile_app/features/dapur/screens/dapur_menu_planning/widgets/dapur_menu_harian_time_range.dart';
 import 'package:mbg_mobile_app/features/dapur/screens/dapur_menu_planning/widgets/dapur_menu_harian_nutricion_info.dart';
+import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
+import 'package:mbg_mobile_app/utils/helpers/helper_functions.dart';
 
 class DapurMenuHarianCard extends StatelessWidget {
   const DapurMenuHarianCard({super.key, required this.menuHarian});
@@ -15,8 +17,7 @@ class DapurMenuHarianCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colors = theme.colorScheme;
+    final bool isDarkMode = MBGHelperFunctions.isDarkMode(context);
 
     final currencyFormatter = NumberFormat.currency(
       locale: 'id_ID',
@@ -28,13 +29,18 @@ class DapurMenuHarianCard extends StatelessWidget {
         '${currencyFormatter.format(menuHarian.biayaPerTray)}/tray';
     final formattedDate = DateFormat(
       'EEEE, dd MMM yyyy',
-    ).format(menuHarian.tanggal!);
+      'id_ID',
+    ).format(menuHarian.tanggal!.toLocal());
 
     return Container(
       padding: const EdgeInsets.all(MBGSizes.defaultSpace),
       decoration: BoxDecoration(
-        color: colors.surface,
-        border: Border.all(color: colors.outline),
+        color: isDarkMode ? MBGColors.dark : MBGColors.light,
+        border: Border.all(
+          color: isDarkMode
+              ? MBGColors.lightGrey.withValues(alpha: 0.4)
+              : MBGColors.grey,
+        ),
         borderRadius: BorderRadius.circular(MBGSizes.borderRadiusLg),
       ),
       child: Column(
@@ -43,10 +49,9 @@ class DapurMenuHarianCard extends StatelessWidget {
           // Title
           Text(
             menuHarian.namaMenu!,
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: colors.onSurface,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 6),
@@ -57,14 +62,14 @@ class DapurMenuHarianCard extends StatelessWidget {
               Icon(
                 Iconsax.calendar,
                 size: MBGSizes.iconSm,
-                color: colors.onSurface.withValues(alpha: 0.6),
+                color: isDarkMode ? MBGColors.lightGrey : MBGColors.darkGrey,
               ),
               const SizedBox(width: MBGSizes.xs),
               Text(
                 formattedDate,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: colors.onSurface.withValues(alpha: 0.7),
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodySmall?.copyWith(color: MBGColors.textSecondary),
               ),
             ],
           ),
@@ -80,16 +85,16 @@ class DapurMenuHarianCard extends StatelessWidget {
                   vertical: MBGSizes.sm,
                 ),
                 decoration: BoxDecoration(
-                  color: colors.secondaryContainer.withValues(alpha: 0.2),
+                  color: MBGColors.success.withValues(alpha: 0.2),
                   border: Border.all(
-                    color: colors.secondary.withValues(alpha: 0.4),
+                    color: MBGColors.success.withValues(alpha: 0.4),
                   ),
                   borderRadius: BorderRadius.circular(MBGSizes.borderRadiusMd),
                 ),
                 child: Text(
                   costLabel,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: colors.secondary,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: MBGColors.success,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -103,9 +108,9 @@ class DapurMenuHarianCard extends StatelessWidget {
                   vertical: MBGSizes.sm,
                 ),
                 decoration: BoxDecoration(
-                  color: colors.primaryContainer.withValues(alpha: 0.2),
+                  color: MBGColors.primary.withValues(alpha: 0.2),
                   border: Border.all(
-                    color: colors.primary.withValues(alpha: 0.4),
+                    color: MBGColors.primary.withValues(alpha: 0.4),
                   ),
                   borderRadius: BorderRadius.circular(MBGSizes.borderRadiusMd),
                 ),
@@ -115,13 +120,13 @@ class DapurMenuHarianCard extends StatelessWidget {
                     Icon(
                       Iconsax.box,
                       size: MBGSizes.iconSm,
-                      color: colors.primary,
+                      color: MBGColors.primary,
                     ),
                     const SizedBox(width: MBGSizes.xs),
                     Text(
                       '${menuHarian.targetTray} Tray',
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: colors.primary,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: MBGColors.primary,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -133,7 +138,11 @@ class DapurMenuHarianCard extends StatelessWidget {
           ),
 
           const SizedBox(height: MBGSizes.spaceBtwItems / 2),
-          Divider(color: colors.outline),
+          Divider(
+            color: isDarkMode
+                ? MBGColors.lightGrey.withValues(alpha: 0.3)
+                : MBGColors.grey,
+          ),
           const SizedBox(height: MBGSizes.spaceBtwItems / 2),
 
           // Time ranges
@@ -144,7 +153,7 @@ class DapurMenuHarianCard extends StatelessWidget {
                   icon: Iconsax.timer_start,
                   label: 'Start',
                   value: menuHarian.jamMulaiMasak!,
-                  color: colors.primary,
+                  color: MBGColors.primary,
                 ),
               ),
               const SizedBox(width: MBGSizes.sm),
@@ -153,7 +162,7 @@ class DapurMenuHarianCard extends StatelessWidget {
                   icon: Iconsax.timer_pause,
                   label: 'End',
                   value: menuHarian.jamSelesaiMasak!,
-                  color: colors.secondary,
+                  color: MBGColors.success,
                 ),
               ),
             ],

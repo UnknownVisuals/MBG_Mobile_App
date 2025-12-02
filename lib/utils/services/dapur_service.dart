@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:mbg_mobile_app/features/dapur/models/dapur_checkpoint_model.dart';
 import 'package:mbg_mobile_app/features/dapur/models/dapur_info_model.dart';
 import 'package:mbg_mobile_app/features/dapur/models/dapur_karyawan_model.dart';
-import 'package:mbg_mobile_app/features/dapur/models/dapur_kalender_akademik_model.dart';
 import 'package:mbg_mobile_app/features/dapur/models/dapur_menu_harian_model.dart';
 import 'package:mbg_mobile_app/features/dapur/models/dapur_menu_planning_model.dart';
 import 'package:mbg_mobile_app/features/dapur/models/dapur_pengiriman_model.dart';
@@ -617,102 +616,5 @@ class DapurService extends GetxService {
     if (!_isSuccess(response)) {
       throw Exception(_responseMessage(response, 'Gagal menghapus pengiriman'));
     }
-  }
-
-  // =======================
-  // DAPUR KALENDER AKADEMIK
-  // =======================
-
-  // Get All Kalender Akademik
-  Future<List<KalenderAkademikModel>> getAllKalenderAkademik() async {
-    MBGHttpHelper.loadSessionToken();
-    final response = await _httpHelper.getRequest('kalender-akademik');
-
-    if (!_isSuccess(response)) {
-      throw Exception(
-        _responseMessage(response, 'Gagal memuat kalender akademik'),
-      );
-    }
-
-    final data = _extractDataList(response);
-    return data.map(KalenderAkademikModel.fromJson).toList();
-  }
-
-  // Create Kalender Akademik
-  Future<KalenderAkademikModel> createKalenderAkademik(
-    Map<String, dynamic> payload,
-  ) async {
-    MBGHttpHelper.loadSessionToken();
-    final response = await _httpHelper.postRequest(
-      'kalender-akademik',
-      payload,
-    );
-
-    if (response.statusCode != 201 || !_isSuccess(response)) {
-      throw Exception(
-        _responseMessage(response, 'Gagal membuat kalender akademik'),
-      );
-    }
-
-    final data = _extractDataObject(response);
-    return KalenderAkademikModel.fromJson(data);
-  }
-
-  // Update Kalender Akademik
-  Future<KalenderAkademikModel> updateKalenderAkademik(
-    String id,
-    Map<String, dynamic> payload,
-  ) async {
-    MBGHttpHelper.loadSessionToken();
-    final response = await _httpHelper.putRequest(
-      'kalender-akademik/$id',
-      payload,
-    );
-
-    if (!_isSuccess(response)) {
-      throw Exception(
-        _responseMessage(response, 'Gagal memperbarui kalender akademik'),
-      );
-    }
-
-    final data = _extractDataObject(response);
-    return KalenderAkademikModel.fromJson(data);
-  }
-
-  // Delete Kalender Akademik
-  Future<void> deleteKalenderAkademik(String id) async {
-    MBGHttpHelper.loadSessionToken();
-    final response = await _httpHelper.deleteRequest('kalender-akademik/$id');
-
-    if (!_isSuccess(response)) {
-      throw Exception(
-        _responseMessage(response, 'Gagal menghapus kalender akademik'),
-      );
-    }
-  }
-
-  // Check if Date is Holiday
-  Future<bool> checkHoliday(String date) async {
-    MBGHttpHelper.loadSessionToken();
-    final response = await _httpHelper.getRequest(
-      'kalender-akademik/check-holiday?date=$date',
-    );
-
-    if (!_isSuccess(response)) {
-      throw Exception(_responseMessage(response, 'Gagal memeriksa hari libur'));
-    }
-
-    final body = response.body;
-    if (body is Map<String, dynamic>) {
-      final data = body['data'];
-      if (data is Map<String, dynamic>) {
-        final result = data['isHoliday'];
-        if (result is bool) return result;
-      } else if (data is bool) {
-        return data;
-      }
-    }
-
-    throw Exception('Format respons tidak valid');
   }
 }

@@ -151,7 +151,7 @@ class DapurPengirimanAdd extends StatelessWidget {
                     child: ElevatedButton(
                       onPressed: controller.isSubmitting.value
                           ? null
-                          : () async {
+                          : () {
                               if (controller.formKey.currentState!.validate()) {
                                 final payload = {
                                   'sekolahId': selectedSekolahId.value,
@@ -163,32 +163,18 @@ class DapurPengirimanAdd extends StatelessWidget {
                                   ),
                                 };
 
-                                final result = await controller
-                                    .createPengiriman(payload);
-                                if (result != null) {
-                                  Get.back();
-                                }
+                                controller.createPengiriman(payload);
                               }
                             },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: MBGColors.primary,
                       ),
-                      child: controller.isSubmitting.value
-                          ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  Colors.white,
-                                ),
-                              ),
-                            )
-                          : Text(
-                              'Simpan Pengiriman',
-                              style: Theme.of(context).textTheme.bodyMedium
-                                  ?.copyWith(color: MBGColors.white),
-                            ),
+                      child: Text(
+                        'Simpan Pengiriman',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: MBGColors.white,
+                        ),
+                      ),
                     ),
                   ),
                 ),

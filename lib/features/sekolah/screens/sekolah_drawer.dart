@@ -37,7 +37,7 @@ class SekolahDrawer extends StatelessWidget {
               border: Border(
                 right: BorderSide(
                   width: 1,
-                  color: colorScheme.outline.withOpacity(0.3),
+                  color: colorScheme.outline.withValues(alpha: 0.3),
                 ),
               ),
             ),

@@ -3,6 +3,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:mbg_mobile_app/features/dapur/models/dapur_info_model.dart';
 import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
+import 'package:mbg_mobile_app/utils/helpers/helper_functions.dart';
 
 class DapurInfoKaryawanCard extends StatelessWidget {
   const DapurInfoKaryawanCard({super.key, required this.karyawan});
@@ -17,16 +18,20 @@ class DapurInfoKaryawanCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isDarkMode = MBGHelperFunctions.isDarkMode(context);
+    const accentColor = Color(0xFF00A8B3);
+
     return Container(
       width: 280,
       padding: const EdgeInsets.all(MBGSizes.defaultSpace),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF2A7ABD), Color(0xFF00A8B3)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        color: isDarkMode ? MBGColors.dark : MBGColors.light,
         borderRadius: BorderRadius.circular(MBGSizes.cardRadiusLg),
+        border: Border.all(
+          color: isDarkMode
+              ? MBGColors.lightGrey.withValues(alpha: 0.4)
+              : MBGColors.grey,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -36,16 +41,12 @@ class DapurInfoKaryawanCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(MBGSizes.sm + 2),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.25),
+                  color: accentColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(MBGSizes.borderRadiusMd),
-                  border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.3),
-                    width: 1.5,
-                  ),
                 ),
                 child: const Icon(
                   Iconsax.user,
-                  color: MBGColors.white,
+                  color: accentColor,
                   size: MBGSizes.iconMd,
                 ),
               ),
@@ -54,7 +55,9 @@ class DapurInfoKaryawanCard extends StatelessWidget {
                 child: Text(
                   karyawan.nama!,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: MBGColors.textWhite,
+                    color: isDarkMode
+                        ? MBGColors.textWhite
+                        : MBGColors.textPrimary,
                     fontWeight: FontWeight.bold,
                   ),
                   maxLines: 1,
@@ -64,22 +67,28 @@ class DapurInfoKaryawanCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: MBGSizes.spaceBtwItems / 2),
-          const Divider(color: MBGColors.grey),
+          Divider(
+            color: isDarkMode
+                ? MBGColors.lightGrey.withValues(alpha: 0.2)
+                : MBGColors.grey.withValues(alpha: 0.5),
+          ),
           const SizedBox(height: MBGSizes.spaceBtwItems / 2),
           Row(
             children: [
-              const Icon(
+              Icon(
                 Iconsax.briefcase,
-                color: MBGColors.white,
+                color: isDarkMode ? MBGColors.textWhite : MBGColors.textPrimary,
                 size: MBGSizes.iconSm,
               ),
               const SizedBox(width: MBGSizes.spaceBtwItems / 2),
               Expanded(
                 child: Text(
                   karyawan.posisi!,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyMedium?.copyWith(color: MBGColors.textWhite),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: isDarkMode
+                        ? MBGColors.textWhite
+                        : MBGColors.textPrimary,
+                  ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -93,12 +102,9 @@ class DapurInfoKaryawanCard extends StatelessWidget {
               vertical: MBGSizes.xs,
             ),
             decoration: BoxDecoration(
-              color: _getStatusColor(),
+              color: _getStatusColor().withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(MBGSizes.borderRadiusSm),
-              border: Border.all(
-                color: Colors.white.withValues(alpha: 0.4),
-                width: 1,
-              ),
+              border: Border.all(color: _getStatusColor(), width: 1),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -108,13 +114,13 @@ class DapurInfoKaryawanCard extends StatelessWidget {
                       ? Iconsax.tick_circle
                       : Iconsax.close_circle,
                   size: 14,
-                  color: MBGColors.white,
+                  color: _getStatusColor(),
                 ),
                 const SizedBox(width: MBGSizes.xs),
                 Text(
                   karyawan.status == 'AKTIF' ? 'Aktif' : 'Tidak Aktif',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: MBGColors.textWhite,
+                    color: _getStatusColor(),
                     fontWeight: FontWeight.bold,
                   ),
                 ),

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:mbg_mobile_app/features/dapur/screens/dapur_checkpoint/widgets/dapur_checkpoint_add.dart';
-import 'package:mbg_mobile_app/utils/constants/sizes.dart';
 import 'package:mbg_mobile_app/features/authentication/controllers/user_controller.dart';
 import 'package:mbg_mobile_app/features/dapur/controllers/dapur_checkpoint_controller.dart';
+import 'package:mbg_mobile_app/features/dapur/screens/dapur_checkpoint/widgets/dapur_checkpoint_add.dart';
+import 'package:mbg_mobile_app/utils/constants/colors.dart';
+import 'package:mbg_mobile_app/utils/constants/sizes.dart';
 
 class DapurCheckpointEventCardActionButton extends StatelessWidget {
   const DapurCheckpointEventCardActionButton({super.key, required this.tipe});
@@ -20,9 +21,9 @@ class DapurCheckpointEventCardActionButton extends StatelessWidget {
     final theme = Theme.of(context);
 
     // Define colors based on theme
-    final errorColor = theme.colorScheme.error;
-    final buttonColor = theme.colorScheme.primary;
-    final buttonTextColor = theme.colorScheme.onPrimary;
+    const errorColor = MBGColors.error;
+    const buttonColor = MBGColors.primary;
+    const buttonTextColor = MBGColors.white;
 
     return Obx(() {
       final userRole = userController.userModel.value?.role;

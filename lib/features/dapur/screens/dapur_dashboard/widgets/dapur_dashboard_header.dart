@@ -29,7 +29,10 @@ class DapurDashboardHeader extends StatelessWidget {
             const SizedBox(width: MBGSizes.spaceBtwItems / 2),
             Obx(
               () => Text(
-                DateFormat('EEEE, dd MMMM yyyy').format(controller.currentTime),
+                DateFormat(
+                  'EEEE, dd MMMM yyyy',
+                  'id_ID',
+                ).format(controller.currentTime.toLocal()),
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
             ),
@@ -51,7 +54,10 @@ class DapurDashboardHeader extends StatelessWidget {
               ),
               child: Obx(
                 () => Text(
-                  DateFormat('HH:mm:ss').format(controller.currentTime),
+                  DateFormat(
+                    'HH:mm:ss',
+                    'id_ID',
+                  ).format(controller.currentTime.toLocal()),
                   style: Theme.of(context).textTheme.labelMedium?.copyWith(
                     color: MBGColors.primary,
                     fontWeight: FontWeight.bold,

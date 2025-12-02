@@ -3,8 +3,10 @@ import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:mbg_mobile_app/features/dapur/controllers/dapur_menu_planning_controller.dart';
 import 'package:mbg_mobile_app/features/dapur/screens/dapur_menu_planning/widgets/dapur_menu_planning_delete.dart';
+import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
 import 'package:mbg_mobile_app/utils/formatters/formatter.dart';
+import 'package:mbg_mobile_app/utils/helpers/helper_functions.dart';
 
 class DapurMenuPlanningList extends StatelessWidget {
   const DapurMenuPlanningList({super.key});
@@ -14,15 +16,14 @@ class DapurMenuPlanningList extends StatelessWidget {
     final DapurMenuPlanningController dapurMenuPlanningController =
         Get.find<DapurMenuPlanningController>();
 
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
+    final bool isDarkMode = MBGHelperFunctions.isDarkMode(context);
 
     return Obx(() {
       if (dapurMenuPlanningController.isLoading.value) {
-        return SizedBox(
+        return const SizedBox(
           height: 110,
           child: Center(
-            child: CircularProgressIndicator(color: colorScheme.primary),
+            child: CircularProgressIndicator(color: MBGColors.primary),
           ),
         );
       }
@@ -33,15 +34,19 @@ class DapurMenuPlanningList extends StatelessWidget {
           alignment: Alignment.center,
           padding: const EdgeInsets.all(MBGSizes.defaultSpace),
           decoration: BoxDecoration(
-            color: colorScheme.surface, // adaptive
+            color: isDarkMode ? MBGColors.dark : MBGColors.light,
             borderRadius: BorderRadius.circular(MBGSizes.borderRadiusMd),
-            border: Border.all(color: colorScheme.outline), // adaptive
+            border: Border.all(
+              color: isDarkMode
+                  ? MBGColors.lightGrey.withValues(alpha: 0.4)
+                  : MBGColors.grey,
+            ),
           ),
           child: Text(
             'Belum ada menu planning',
-            style: textTheme.bodyMedium?.copyWith(
-              color: colorScheme.onSurfaceVariant,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(color: MBGColors.textSecondary),
           ),
         );
       }
@@ -51,7 +56,7 @@ class DapurMenuPlanningList extends StatelessWidget {
         child: ListView.separated(
           scrollDirection: Axis.horizontal,
           itemCount: dapurMenuPlanningController.menuPlanningList.length,
-          separatorBuilder: (_, _) =>
+          separatorBuilder: (context, index) =>
               const SizedBox(width: MBGSizes.spaceBtwItems),
           itemBuilder: (context, index) {
             final menuPlan =
@@ -63,8 +68,14 @@ class DapurMenuPlanningList extends StatelessWidget {
                   menuPlan.id;
 
               final cardColor = isSelected
-                  ? colorScheme.primary.withValues(alpha: 0.1)
-                  : colorScheme.surface;
+                  ? MBGColors.primary.withValues(alpha: 0.1)
+                  : (isDarkMode ? MBGColors.dark : MBGColors.light);
+
+              final borderColor = isSelected
+                  ? MBGColors.primary
+                  : (isDarkMode
+                        ? MBGColors.lightGrey.withValues(alpha: 0.4)
+                        : MBGColors.grey);
 
               return GestureDetector(
                 onTap: () =>
@@ -77,22 +88,16 @@ class DapurMenuPlanningList extends StatelessWidget {
                     borderRadius: BorderRadius.circular(
                       MBGSizes.borderRadiusMd,
                     ),
-                    border: Border.all(
-                      color: isSelected
-                          ? colorScheme.primary
-                          : colorScheme.outline,
-                    ),
+                    border: Border.all(color: borderColor),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         'Week ${menuPlan.mingguanKe}',
-                        style: textTheme.bodyLarge?.copyWith(
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: isSelected
-                              ? colorScheme.primary
-                              : colorScheme.onSurface, // adaptive
+                          color: isSelected ? MBGColors.primary : null,
                         ),
                       ),
                       Text(
@@ -100,10 +105,10 @@ class DapurMenuPlanningList extends StatelessWidget {
                           menuPlan.tanggalMulai!,
                           menuPlan.tanggalSelesai!,
                         ),
-                        style: textTheme.bodyMedium?.copyWith(
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: isSelected
-                              ? colorScheme.primary
-                              : colorScheme.onSurfaceVariant, // adaptive
+                              ? MBGColors.primary
+                              : MBGColors.textSecondary,
                         ),
                       ),
                       const Spacer(),
@@ -111,10 +116,9 @@ class DapurMenuPlanningList extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            '${menuPlan.count!.menuHarian} Menu',
-                            style: textTheme.bodySmall?.copyWith(
-                              color: colorScheme.onSurfaceVariant,
-                            ),
+                            '${menuPlan.count?.menuHarian ?? 0} Menu',
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(color: MBGColors.textSecondary),
                           ),
                           // Delete button
                           SizedBox(
@@ -130,10 +134,10 @@ class DapurMenuPlanningList extends StatelessWidget {
                                   ),
                                 );
                               },
-                              icon: Icon(
+                              icon: const Icon(
                                 Iconsax.trash,
                                 size: MBGSizes.iconSm,
-                                color: colorScheme.error, // adaptive
+                                color: MBGColors.error,
                               ),
                             ),
                           ),

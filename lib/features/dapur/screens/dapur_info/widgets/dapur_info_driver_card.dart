@@ -3,6 +3,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:mbg_mobile_app/features/dapur/models/dapur_info_model.dart';
 import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
+import 'package:mbg_mobile_app/utils/helpers/helper_functions.dart';
 
 class DapurInfoDriverCard extends StatelessWidget {
   const DapurInfoDriverCard({super.key, required this.driver});
@@ -11,16 +12,20 @@ class DapurInfoDriverCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isDarkMode = MBGHelperFunctions.isDarkMode(context);
+    const accentColor = Color(0xFFC73D51); // Keeping the red/pink accent
+
     return Container(
       width: 260, // dikurangi agar tidak overflow di list
       padding: const EdgeInsets.all(MBGSizes.md),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFFB86DB8), Color(0xFFC73D51)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        color: isDarkMode ? MBGColors.dark : MBGColors.light,
         borderRadius: BorderRadius.circular(MBGSizes.cardRadiusLg),
+        border: Border.all(
+          color: isDarkMode
+              ? MBGColors.lightGrey.withValues(alpha: 0.4)
+              : MBGColors.grey,
+        ),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min, // ⛔ mencegah tinggi membengkak
@@ -33,16 +38,12 @@ class DapurInfoDriverCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(MBGSizes.sm),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.25),
+                  color: accentColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(MBGSizes.borderRadiusMd),
-                  border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.3),
-                    width: 1.2,
-                  ),
                 ),
                 child: const Icon(
                   Iconsax.truck_fast,
-                  color: MBGColors.white,
+                  color: accentColor,
                   size: MBGSizes.iconMd,
                 ),
               ),
@@ -52,7 +53,9 @@ class DapurInfoDriverCard extends StatelessWidget {
                 child: Text(
                   driver.name!,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: MBGColors.textWhite,
+                    color: isDarkMode
+                        ? MBGColors.textWhite
+                        : MBGColors.textPrimary,
                     fontWeight: FontWeight.bold,
                   ),
                   maxLines: 1,
@@ -63,15 +66,20 @@ class DapurInfoDriverCard extends StatelessWidget {
           ),
 
           const SizedBox(height: MBGSizes.xs),
-          Divider(color: MBGColors.white.withValues(alpha: 0.3), height: 1),
+          Divider(
+            color: isDarkMode
+                ? MBGColors.lightGrey.withValues(alpha: 0.2)
+                : MBGColors.grey.withValues(alpha: 0.5),
+            height: 1,
+          ),
           const SizedBox(height: MBGSizes.xs),
 
           /// ==== EMAIL ====
           Row(
             children: [
-              const Icon(
+              Icon(
                 Iconsax.direct_right,
-                color: MBGColors.white,
+                color: isDarkMode ? MBGColors.textWhite : MBGColors.textPrimary,
                 size: MBGSizes.iconSm,
               ),
               const SizedBox(width: MBGSizes.xs),
@@ -79,9 +87,11 @@ class DapurInfoDriverCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   driver.email!,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyMedium?.copyWith(color: MBGColors.textWhite),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: isDarkMode
+                        ? MBGColors.textWhite
+                        : MBGColors.textPrimary,
+                  ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -94,9 +104,9 @@ class DapurInfoDriverCard extends StatelessWidget {
           /// ==== PHONE ====
           Row(
             children: [
-              const Icon(
+              Icon(
                 Iconsax.call,
-                color: MBGColors.white,
+                color: isDarkMode ? MBGColors.textWhite : MBGColors.textPrimary,
                 size: MBGSizes.iconSm,
               ),
               const SizedBox(width: MBGSizes.xs),
@@ -104,9 +114,11 @@ class DapurInfoDriverCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   driver.phone!,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyMedium?.copyWith(color: MBGColors.textWhite),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: isDarkMode
+                        ? MBGColors.textWhite
+                        : MBGColors.textPrimary,
+                  ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -123,28 +135,22 @@ class DapurInfoDriverCard extends StatelessWidget {
               vertical: MBGSizes.xs,
             ),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.2),
+              color: accentColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(MBGSizes.borderRadiusSm),
-              border: Border.all(
-                color: Colors.white.withValues(alpha: 0.25),
-                width: 1,
-              ),
+              border: Border.all(color: accentColor, width: 1),
             ),
             child: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Iconsax.car, color: MBGColors.white, size: 16),
+                Icon(Iconsax.car, color: accentColor, size: 16),
                 const SizedBox(width: MBGSizes.xs),
 
-                Expanded(
-                  child: Text(
-                    driver.nomorKendaraan!,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: MBGColors.textWhite,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.1,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                Text(
+                  driver.nomorKendaraan!,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: accentColor,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.1,
                   ),
                 ),
               ],

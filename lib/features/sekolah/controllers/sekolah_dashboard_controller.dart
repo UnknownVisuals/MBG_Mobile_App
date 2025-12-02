@@ -1,7 +1,7 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:mbg_mobile_app/features/authentication/controllers/user_controller.dart';
-import 'package:mbg_mobile_app/features/authentication/models/user_model.dart';
 import 'package:mbg_mobile_app/features/sekolah/controllers/sekolah_delivery_controller.dart';
 import 'package:mbg_mobile_app/features/sekolah/controllers/sekolah_kelas_controller.dart';
 import 'package:mbg_mobile_app/features/sekolah/controllers/sekolah_siswa_controller.dart';
@@ -60,8 +60,9 @@ class SekolahDashboardController extends GetxController {
     try {
       return menuList.firstWhere((menu) {
         // Check if today is within the menu planning range
-        if (menu.tanggalMulai == null || menu.tanggalSelesai == null)
+        if (menu.tanggalMulai == null || menu.tanggalSelesai == null) {
           return false;
+        }
 
         final start = menu.tanggalMulai!;
         final end = menu.tanggalSelesai!;
@@ -109,7 +110,7 @@ class SekolahDashboardController extends GetxController {
       final menus = await _sekolahService.getMenuBySekolah(id);
       menuList.assignAll(menus);
     } catch (e) {
-      print('Error fetching menu: $e');
+      debugPrint('Error fetching menu: $e');
     }
   }
 

@@ -104,7 +104,9 @@ class _DriverDashboardDeliveryTrackingState
       }
 
       final initialPosition = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.best,
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.best,
+        ),
       );
 
       if (!mounted) return;
@@ -162,7 +164,9 @@ class _DriverDashboardDeliveryTrackingState
     _isUpdatingLocation = true;
     try {
       final position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.bestForNavigation,
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.bestForNavigation,
+        ),
       );
 
       if (!mounted) return;

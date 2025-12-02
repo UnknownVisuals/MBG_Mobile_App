@@ -17,7 +17,10 @@ class DapurDashboardTodayMenuCard extends StatelessWidget {
 
     // Format time range if available, otherwise just show date
     final timeString = menu.tanggal != null
-        ? DateFormat('EEEE, dd MMM yyyy').format(menu.tanggal!)
+        ? DateFormat(
+            'EEEE, dd MMM yyyy',
+            'id_ID',
+          ).format(menu.tanggal!.toLocal())
         : 'Unknown Date';
 
     return Container(

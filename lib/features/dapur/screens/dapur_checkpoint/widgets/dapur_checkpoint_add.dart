@@ -13,6 +13,7 @@ import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
 import 'package:mbg_mobile_app/utils/validators/validation.dart';
 import 'package:mbg_mobile_app/features/dapur/controllers/dapur_checkpoint_controller.dart';
+import 'package:mbg_mobile_app/utils/helpers/helper_functions.dart';
 
 class DapurCheckpointAdd extends StatelessWidget {
   const DapurCheckpointAdd({super.key, required this.checkpointType});
@@ -28,6 +29,8 @@ class DapurCheckpointAdd extends StatelessWidget {
         : Get.put(CameraController());
     final DapurCheckpointController checkpointController =
         Get.find<DapurCheckpointController>();
+
+    final isDark = MBGHelperFunctions.isDarkMode(context);
 
     // Form Controllers
     final GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -115,7 +118,9 @@ class DapurCheckpointAdd extends StatelessWidget {
                             MBGSizes.borderRadiusMd,
                           ),
                           border: Border.all(color: MBGColors.borderPrimary),
-                          color: MBGColors.lightContainer,
+                          color: isDark
+                              ? MBGColors.darkContainer
+                              : MBGColors.lightContainer,
                         ),
                         child: selectedImage.value != null
                             ? ClipRRect(
@@ -133,13 +138,19 @@ class DapurCheckpointAdd extends StatelessWidget {
                                   Icon(
                                     Iconsax.image,
                                     size: MBGSizes.iconLg * 1.5,
-                                    color: MBGColors.darkGrey,
+                                    color: isDark
+                                        ? MBGColors.darkGrey
+                                        : MBGColors.darkGrey,
                                   ),
                                   const SizedBox(height: MBGSizes.sm),
                                   Text(
                                     'Ketuk untuk mengunggah foto',
                                     style: Theme.of(context).textTheme.bodySmall
-                                        ?.copyWith(color: MBGColors.darkGrey),
+                                        ?.copyWith(
+                                          color: isDark
+                                              ? MBGColors.textSecondary
+                                              : MBGColors.darkGrey,
+                                        ),
                                   ),
                                 ],
                               ),
@@ -147,95 +158,83 @@ class DapurCheckpointAdd extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(height: MBGSizes.spaceBtwSections),
-
-                // Action Buttons
-                Obx(
-                  () => Row(
-                    children: [
-                      // Ubah Foto Button
-                      Expanded(
-                        child: OutlinedButton(
-                          onPressed: selectedImage.value != null
-                              ? () => MBGImagePickerBottomSheet.show(
-                                  context: context,
-                                )
-                              : null,
-                          child: const Text('Ubah Foto'),
-                        ),
-                      ),
-                      const SizedBox(width: MBGSizes.spaceBtwItems),
-
-                      // Submit Button
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: checkpointController.isLoading.value
-                              ? null
-                              : () async {
-                                  // Validate form
-                                  if (!formKey.currentState!.validate()) {
-                                    return;
-                                  }
-
-                                  // Check if image is selected
-                                  if (selectedImage.value == null) {
-                                    Get.snackbar(
-                                      'Error',
-                                      'Silakan pilih foto terlebih dahulu',
-                                      snackPosition: SnackPosition.BOTTOM,
-                                      backgroundColor: MBGColors.error,
-                                      colorText: Colors.white,
-                                    );
-                                    return;
-                                  }
-
-                                  // Get menuHarianId from controller
-                                  final menuHarianId = checkpointController
-                                      .currentMenuHarianId
-                                      .value;
-
-                                  if (menuHarianId == null) {
-                                    Get.snackbar(
-                                      'Error',
-                                      'Menu Harian tidak ditemukan',
-                                      snackPosition: SnackPosition.BOTTOM,
-                                      backgroundColor: MBGColors.error,
-                                      colorText: Colors.white,
-                                    );
-                                    return;
-                                  }
-
-                                  // Create checkpoint
-                                  await checkpointController.createCheckpoint(
-                                    menuHarianId: menuHarianId,
-                                    tipe: checkpointType,
-                                    foto: selectedImage.value!,
-                                    deskripsi: descriptionController.text
-                                        .trim(),
-                                  );
-
-                                  // Clear image and form only on success
-                                  cameraController.clearImage();
-                                  descriptionController.clear();
-                                },
-                          child: checkpointController.isLoading.value
-                              ? const SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                      Colors.white,
-                                    ),
-                                  ),
-                                )
-                              : const Text('Kirim'),
-                        ),
-                      ),
-                    ],
+              ],
+            ),
+          ),
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(MBGSizes.md),
+          child: Obx(
+            () => Row(
+              children: [
+                // Ubah Foto Button
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: selectedImage.value != null
+                        ? () => MBGImagePickerBottomSheet.show(context: context)
+                        : null,
+                    child: const Text('Ubah Foto'),
                   ),
                 ),
-                const SizedBox(height: MBGSizes.spaceBtwSections * 2),
+                const SizedBox(width: MBGSizes.spaceBtwItems),
+
+                // Submit Button
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: checkpointController.isLoading.value
+                        ? null
+                        : () async {
+                            // Validate form
+                            if (!formKey.currentState!.validate()) {
+                              return;
+                            }
+
+                            // Check if image is selected
+                            if (selectedImage.value == null) {
+                              Get.snackbar(
+                                'Error',
+                                'Silakan pilih foto terlebih dahulu',
+                                snackPosition: SnackPosition.BOTTOM,
+                                backgroundColor: MBGColors.error,
+                                colorText: Colors.white,
+                              );
+                              return;
+                            }
+
+                            // Get menuHarianId from controller
+                            final menuHarianId =
+                                checkpointController.currentMenuHarianId.value;
+
+                            if (menuHarianId == null) {
+                              Get.snackbar(
+                                'Error',
+                                'Menu Harian tidak ditemukan',
+                                snackPosition: SnackPosition.BOTTOM,
+                                backgroundColor: MBGColors.error,
+                                colorText: Colors.white,
+                              );
+                              return;
+                            }
+
+                            // Create checkpoint
+                            await checkpointController.createCheckpoint(
+                              menuHarianId: menuHarianId,
+                              tipe: checkpointType,
+                              foto: selectedImage.value!,
+                              deskripsi: descriptionController.text.trim(),
+                            );
+
+                            // Clear image and form only on success
+                            // Note: Controller navigates back on success, so this might not be needed
+                            // but good for safety if we stay on page (which we don't)
+                            cameraController.clearImage();
+                            descriptionController.clear();
+                          },
+                    child: const Text('Kirim'),
+                  ),
+                ),
               ],
             ),
           ),

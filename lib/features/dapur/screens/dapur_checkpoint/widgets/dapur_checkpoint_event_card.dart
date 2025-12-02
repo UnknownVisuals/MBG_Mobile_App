@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mbg_mobile_app/features/dapur/models/dapur_checkpoint_model.dart';
+import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
+import 'package:mbg_mobile_app/utils/helpers/helper_functions.dart';
 import 'package:mbg_mobile_app/features/dapur/screens/dapur_checkpoint/widgets/dapur_checkpoint_event_card_header.dart';
 import 'package:mbg_mobile_app/features/dapur/screens/dapur_checkpoint/widgets/dapur_checkpoint_event_card_image.dart';
 import 'package:mbg_mobile_app/features/dapur/screens/dapur_checkpoint/widgets/dapur_checkpoint_event_card_description.dart';
@@ -21,9 +23,7 @@ class DapurCheckpointEventCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
-    final isDark = theme.brightness == Brightness.dark;
+    final bool isDarkMode = MBGHelperFunctions.isDarkMode(context);
 
     // Adaptive Colors
     late Color backgroundColor;
@@ -34,16 +34,18 @@ class DapurCheckpointEventCard extends StatelessWidget {
 
     switch (status) {
       case 'completed':
-        backgroundColor = scheme.surface;
-        borderColor = scheme.outline;
+        backgroundColor = isDarkMode ? MBGColors.dark : MBGColors.light;
+        borderColor = isDarkMode
+            ? MBGColors.lightGrey.withValues(alpha: 0.4)
+            : MBGColors.grey;
         borderWidth = 1;
         showButton = false;
         showShadow = false;
         break;
 
       case 'active':
-        backgroundColor = scheme.primary.withValues(alpha: 0.08);
-        borderColor = scheme.primary;
+        backgroundColor = MBGColors.primary.withValues(alpha: 0.08);
+        borderColor = MBGColors.primary;
         borderWidth = 2;
         showButton = true;
         showShadow = true;
@@ -51,10 +53,12 @@ class DapurCheckpointEventCard extends StatelessWidget {
 
       case 'future':
       default:
-        backgroundColor = isDark
-            ? scheme.surfaceContainerHighest.withValues(alpha: 0.3)
-            : scheme.surfaceContainerHighest;
-        borderColor = scheme.outlineVariant;
+        backgroundColor = isDarkMode
+            ? MBGColors.darkContainer
+            : MBGColors.lightContainer;
+        borderColor = isDarkMode
+            ? MBGColors.lightGrey.withValues(alpha: 0.2)
+            : MBGColors.softGrey;
         borderWidth = 1;
         showButton = false;
         showShadow = false;
@@ -68,7 +72,7 @@ class DapurCheckpointEventCard extends StatelessWidget {
         boxShadow: showShadow
             ? [
                 BoxShadow(
-                  color: scheme.primary.withValues(alpha: 0.12),
+                  color: MBGColors.primary.withValues(alpha: 0.12),
                   blurRadius: MBGSizes.sm,
                   offset: const Offset(0, 2),
                 ),

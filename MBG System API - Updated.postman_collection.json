@@ -1,0 +1,3057 @@
+{
+	"info": {
+		"_postman_id": "80adcfc0-a133-46a0-bd47-6670011f7665",
+		"name": "MBG System API - Updated",
+		"description": "Complete API documentation for MBG Food Distribution Management System.\n\n## Features\n- Authentication with JWT\n- Role-based access control (SUPERADMIN, PIC_DAPUR, PIC_SEKOLAH, DRIVER)\n- Auto-calculate IMT & Status Gizi for students\n- QR Code system for delivery tracking\n- Photo upload for checkpoints\n\n## Roles\n- **SUPERADMIN**: Full access to all resources\n- **PIC_DAPUR**: Manage kitchen, menu, checkpoints, delivery\n- **PIC_SEKOLAH**: Manage school, students, classes, attendance\n- **DRIVER**: Scan QR codes for delivery\n\n## Base URL\nLocal: http://localhost:3000\n\n## Authentication\nAll endpoints except login require Bearer token in Authorization header.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "49387163",
+		"_collection_link": "https://mbgindonesia958-3466053.postman.co/workspace/MBG-GACOR~371104c6-5f73-4cb9-b03f-2e9401575e8a/collection/49387123-80adcfc0-a133-46a0-bd47-6670011f7665?action=share&source=collection_link&creator=49387163"
+	},
+	"item": [
+		{
+			"name": "Auth & Upload",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Parse response body\r",
+									"let res = pm.response.json();\r",
+									"\r",
+									"// Cek apakah login berhasil dan token tersedia\r",
+									"if (res.success && res.data && res.data.token) {\r",
+									"    let token = res.data.token;\r",
+									"\r",
+									"    // Simpan token ke environment variable\r",
+									"    pm.environment.set(\"authToken\", token);\r",
+									"\r",
+									"    console.log(\"✅ Token berhasil disimpan ke environment:\", token);\r",
+									"} else {\r",
+									"    console.log(\"❌ Login gagal atau token tidak ditemukan dalam response.\");\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"picdapur1@mbg.com\",\n    \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						},
+						"description": "Login with email and password. Returns user data and JWT token."
+					},
+					"response": []
+				},
+				{
+					"name": "Register User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"pic.dapur@mbg.com\",\n    \"name\": \"PIC Dapur 1\",\n    \"phone\": \"081234567890\",\n    \"password\": \"password123\",\n    \"role\": \"PIC_DAPUR\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						},
+						"description": "Register new user. Only accessible by SUPERADMIN."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Profile",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/me",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"me"
+							]
+						},
+						"description": "Get current user profile."
+					},
+					"response": []
+				},
+				{
+					"name": "Upload Image",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "image",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/upload/image",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"upload",
+								"image"
+							]
+						},
+						"description": "Upload image to S3. Returns image URL."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Ticketing System",
+			"item": [
+				{
+					"name": "Create Ticket",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"judul\": \"Issue with login\",\n    \"deskripsi\": \"I cannot login to my account.\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/tickets",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"tickets"
+							]
+						},
+						"description": "Create a new ticket."
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Tickets",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/tickets",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"tickets"
+							]
+						},
+						"description": "Get all tickets. Only for SUPERADMIN and ADMIN."
+					},
+					"response": []
+				},
+				{
+					"name": "Get My Tickets",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/tickets/my-tickets",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"tickets",
+								"my-tickets"
+							]
+						},
+						"description": "Get tickets created by the current user."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Ticket by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/tickets/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"tickets",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						},
+						"description": "Get a ticket by its ID."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Dapur Management",
+			"item": [
+				{
+					"name": "Dapur",
+					"item": [
+						{
+							"name": "Create Dapur",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "\n    {\n    \"nama\": \"DAPUR Baru\",\n    \"alamat\": \"Alamat DAPUR Baru\",\n    \"latitude\": \"\",\n    \"longitude\": \"\",\n    \"provinceId\": \"\",\n    \"regencyId\": \"\"\n\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/dapur",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"dapur"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get All Dapur",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/dapur",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"dapur"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Dapur by ID",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/dapur/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"dapur",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Dapur",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n      \"nama\": \"Dapur Updated\",\n      \"alamat\": \"Alamat Dapur Updated\",\n      \"latitude\": -6.1753924,\n      \"longitude\": 106.8271528,\n         \"provinceId\": \"\",\n    \"regencyId\": \"\",\n      \"status\": \"AKTIF\"\n    }"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/dapur/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"dapur",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Dapur",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/dapur/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"dapur",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Dapur Status",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"status\": \"AKTIF\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/dapur/:id/status",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"dapur",
+										":id",
+										"status"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Driver",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{                                                                                                                                                    \n \"email\":\"driver@examplecom\",                                                                                                               \n \"name\": \"Nama Driver\",                    \n \"phone\": \"08123456789\",                                                                         \n \"password\": \"minimal6\",                                      \n \"nomorKendaraan\": \"B 1234 CD\"                              \n} "
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/dapur/drivers",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"dapur",
+										"drivers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get All Drivers",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{                                                                                                                                                       \n \"email\":\"driver@examplecom\",                                                                                                               \n \"name\": \"Nama Driver\",                    \n \"phone\": \"08123456789\",                                                                         \n \"password\": \"minimal6\",                                      \n \"nomorKendaraan\": \"B 1234 CD\"                              \n} "
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/dapur/drivers",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"dapur",
+										"drivers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Link Sekolah to Dapur",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"sekolahId\": \"sekolah-id\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/dapur/:dapurId/link-sekolah",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"dapur",
+										":dapurId",
+										"link-sekolah"
+									],
+									"variable": [
+										{
+											"key": "dapurId",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Karyawan",
+					"item": [
+						{
+							"name": "Create Karyawan",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "nama",
+											"value": "Adrian ",
+											"type": "text"
+										},
+										{
+											"key": "posisi",
+											"value": "Front End",
+											"type": "text"
+										},
+										{
+											"key": "foto",
+											"type": "file",
+											"src": []
+										},
+										{
+											"key": "jenisKelamin",
+											"value": "LAKI_LAKI",
+											"type": "text"
+										},
+										{
+											"key": "umur",
+											"value": "90",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/karyawan",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"karyawan"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get All Karyawan",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/karyawan",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"karyawan"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get All Karyawan by Dapur",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/dapur/:dapurId/karyawan",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"dapur",
+										":dapurId",
+										"karyawan"
+									],
+									"variable": [
+										{
+											"key": "dapurId"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Karyawan by ID",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/karyawan/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"karyawan",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Karyawan",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "nama",
+											"value": "Nama Karyawan Updated",
+											"type": "text"
+										},
+										{
+											"key": "posisi",
+											"value": "Posisi Karyawan Updated",
+											"type": "text"
+										},
+										{
+											"key": "foto",
+											"type": "file",
+											"src": []
+										},
+										{
+											"key": "jenisKelamin",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "umur",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/karyawan/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"karyawan",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Karyawan",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/karyawan/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"karyawan",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Stok",
+					"item": [
+						{
+							"name": "Create Stok",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"nama\": \"Bahan Makanan\",\n    \"kategori\": \"LAINNYA\",\n    \"stokKg\": 10.5\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/stok",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"stok"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get All Stok",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/stok",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"stok"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get All Stok by Dapur",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/dapur/:dapurId/stok",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"dapur",
+										":dapurId",
+										"stok"
+									],
+									"variable": [
+										{
+											"key": "dapurId"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Stok by ID",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/stok/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"stok",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Stok",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"nama\": \"Bahan Makanan Updated\",\n    \"kategori\": \"LAINNYA\",\n    \"stokKg\": 15.0\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/stok/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"stok",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Stok",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/stok/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"stok",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Adjust Stok",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"adjustment\": 5.5\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/stok/:id/adjust",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"stok",
+										":id",
+										"adjust"
+									],
+									"variable": [
+										{
+											"key": "id"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Sekolah Management",
+			"item": [
+				{
+					"name": "Sekolah",
+					"item": [
+						{
+							"name": "Create Sekolah",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"nama\": \"Sekolah Baru\",\n    \"alamat\": \"Alamat Sekolah Baru\",\n    \"latitude\": \"\",\n    \"longitude\": \"\",\n    \"regencyId\": \"\",\n    \"provinceId\": \"\"\n\n\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/sekolah",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"sekolah"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get All Sekolah",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/sekolah",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"sekolah"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Sekolah by ID",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/sekolah/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"sekolah",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Sekolah",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"nama\": \"Sekolah Baru\",\n    \"alamat\": \"Alamat Sekolah Baru\",\n    \"latitude\": \"\",\n    \"longitude\": \"\",\n    \"regencyId\": \"\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/sekolah/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"sekolah",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Sekolah",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/sekolah/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"sekolah",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Kelas",
+					"item": [
+						{
+							"name": "Create Kelas",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"nama\": \"Kelas 1A\",\n    \"tingkat\": 1\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/sekolah/:sekolahId/kelas",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"sekolah",
+										":sekolahId",
+										"kelas"
+									],
+									"variable": [
+										{
+											"key": "sekolahId"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get All Kelas by Sekolah",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/sekolah/:sekolahId/kelas",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"sekolah",
+										":sekolahId",
+										"kelas"
+									],
+									"variable": [
+										{
+											"key": "sekolahId"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Kelas by ID",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/kelas/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"kelas",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Kelas",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"nama\": \"Kelas 1B\",\n    \"tingkat\": 1\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/kelas/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"kelas",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Kelas",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/kelas/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"kelas",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "CEK KELAS SENDIRI",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/sekolah/kelas",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"sekolah",
+										"kelas"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Siswa",
+					"item": [
+						{
+							"name": "Create Siswa",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "nama",
+											"value": "Kayla",
+											"type": "text"
+										},
+										{
+											"key": "nis",
+											"value": "12345",
+											"type": "text"
+										},
+										{
+											"key": "kelasId",
+											"value": "3ea857f1-ab7e-4ee9-9782-1e9b6387cbfa",
+											"type": "text"
+										},
+										{
+											"key": "jenisKelamin",
+											"value": "LAKI_LAKI",
+											"type": "text"
+										},
+										{
+											"key": "umur",
+											"value": "22",
+											"type": "text"
+										},
+										{
+											"key": "tinggiBadan",
+											"value": "148",
+											"type": "text"
+										},
+										{
+											"key": "beratBadan",
+											"value": "44",
+											"type": "text"
+										},
+										{
+											"key": "foto",
+											"type": "file",
+											"src": []
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/sekolah/2b6639ca-e3ce-40b3-a745-717e2afcf6b4/siswa",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"sekolah",
+										"2b6639ca-e3ce-40b3-a745-717e2afcf6b4",
+										"siswa"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get All Siswa by Sekolah",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/sekolah/:sekolahId/siswa",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"sekolah",
+										":sekolahId",
+										"siswa"
+									],
+									"variable": [
+										{
+											"key": "sekolahId"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get All Siswa by Kelas",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/kelas/:kelasId/siswa",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"kelas",
+										":kelasId",
+										"siswa"
+									],
+									"variable": [
+										{
+											"key": "kelasId"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Siswa by ID",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/siswa/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"siswa",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Siswa",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "nama",
+											"value": "Nama Siswa Updated",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/siswa/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"siswa",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Siswa",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/siswa/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"siswa",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Alergi to Siswa",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"namaAlergi\": \"Kacang\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/siswa/:siswaId/alergi",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"siswa",
+										":siswaId",
+										"alergi"
+									],
+									"variable": [
+										{
+											"key": "siswaId"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Alergi by Siswa",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/siswa/:siswaId/alergi",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"siswa",
+										":siswaId",
+										"alergi"
+									],
+									"variable": [
+										{
+											"key": "siswaId"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Alergi",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/alergi/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"alergi",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Kalender Akademik",
+					"item": [
+						{
+							"name": "Create Kalender Akademik",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"tanggalMulai\": \"2025-10-28\",\n    \"tanggalSelesai\": \"2025-10-28\",\n    \"deskripsi\": \"Hari Raya Natal\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/kalender-akademik",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"kalender-akademik"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get All Kalender Akademik",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/kalender-akademik",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"kalender-akademik"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Check Holiday",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/kalender-akademik/check-holiday?date=2025-12-25",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"kalender-akademik",
+										"check-holiday"
+									],
+									"query": [
+										{
+											"key": "date",
+											"value": "2025-12-25"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Kalender Akademik by ID",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/kalender-akademik/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"kalender-akademik",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Kalender Akademik",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"keterangan\": \"Cuti Bersama Natal\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/kalender-akademik/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"kalender-akademik",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Kalender Akademik",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/kalender-akademik/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"kalender-akademik",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Absensi",
+			"item": [
+				{
+					"name": "Create Absensi",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"tanggal\": \"2025-10-20\",\n    \"jumlahHadir\": 25\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/kelas/:kelasId/absensi",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"kelas",
+								":kelasId",
+								"absensi"
+							],
+							"variable": [
+								{
+									"key": "kelasId"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ABSENSI V2",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"siswaId\": \"31e2a0f2-4b6a-44d8-b129-f5d200e64ed3\",  \n    \"tanggal\": \"2025-11-03\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/kelas/:kelasId/absensi/face-recognition",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"kelas",
+								":kelasId",
+								"absensi",
+								"face-recognition"
+							],
+							"variable": [
+								{
+									"key": "kelasId",
+									"value": "e709d8d3-433b-439f-b276-1aa17e8b1ce7"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Absensi by Kelas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/kelas/:kelasId/absensi",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"kelas",
+								":kelasId",
+								"absensi"
+							],
+							"variable": [
+								{
+									"key": "kelasId"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Total Absensi by Sekolah and Date",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/sekolah/:sekolahId/absensi/total/:tanggal",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"sekolah",
+								":sekolahId",
+								"absensi",
+								"total",
+								":tanggal"
+							],
+							"variable": [
+								{
+									"key": "sekolahId",
+									"value": ""
+								},
+								{
+									"key": "tanggal",
+									"value": "2025-10-20"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Absensi History by Sekolah",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/sekolah/:sekolahId/absensi",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"sekolah",
+								":sekolahId",
+								"absensi"
+							],
+							"variable": [
+								{
+									"key": "sekolahId"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Absensi",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"jumlahHadir\": 26\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/absensi/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"absensi",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Absensi",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/absensi/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"absensi",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Menu Planning & Checkpoint",
+			"item": [
+				{
+					"name": "Menu",
+					"item": [
+						{
+							"name": "Create Menu Planning",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"mingguanKe\": 1,\n    \"tanggalMulai\": \"2025-10-20\",\n    \"tanggalSelesai\": \"2025-10-25\",\n    \"sekolahId\": \"sekolah-id\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/menu-planning",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"menu-planning"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get All Menu Planning",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/menu-planning",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"menu-planning"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Menu Planning by Sekolah",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/sekolah/:sekolahId/menu-planning",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"sekolah",
+										":sekolahId",
+										"menu-planning"
+									],
+									"variable": [
+										{
+											"key": "sekolahId"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Menu Planning by ID",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/menu-planning/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"menu-planning",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Menu Planning",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"mingguanKe\": 2\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/menu-planning/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"menu-planning",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Menu Planning",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/menu-planning/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"menu-planning",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Menu Harian",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": " {\n       \"tanggal\": \"2025-11-03\",\n       \"namaMenu\": \"Nasi Goreng Spesial\",\n       \"biayaPerTray\": 15000.0,\n       \"jamMulaiMasak\": \"06:00\",\n       \"jamSelesaiMasak\": \"08:00\",\n       \"kalori\": 550.5,\n       \"protein\": 25.5,\n       \"karbohidrat\": 75.0,\n       \"lemak\": 15.0,\n       \"targetTray\": 100\n\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/menu-planning/c00a3b75-dd80-448b-9849-3a768e644d23/menu-harian",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"menu-planning",
+										"c00a3b75-dd80-448b-9849-3a768e644d23",
+										"menu-harian"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Menu Harian by Planning",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/menu-planning/:planningId/menu-harian",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"menu-planning",
+										":planningId",
+										"menu-harian"
+									],
+									"variable": [
+										{
+											"key": "planningId"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Menu Harian by ID",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/menu-harian/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"menu-harian",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Menu Harian",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"namaMenu\": \"Nasi Ayam Bakar\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/menu-harian/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"menu-harian",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Menu Harian",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/menu-harian/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"menu-harian",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GET DATA KEHADIRAN SEKOLAH",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/dapur/kehadiran-sekolah",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"dapur",
+										"kehadiran-sekolah"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "CEK MENU HARI INI  (SEKOLAH)",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/menu-harian/today",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"menu-harian",
+										"today"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "SELFIE DULU BOSS",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "foto",
+											"type": "file",
+											"src": "/C:/Users/hokac/Pictures/Screenshots/Screenshot 2025-11-08 194833.png"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/face-recognition/detect",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"face-recognition",
+										"detect"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "NGAMBIL MAKANAN",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "siswaId",
+											"value": "9333d2b1-027a-494c-aec8-55a5ebc7d436",
+											"type": "text"
+										},
+										{
+											"key": "idTray",
+											"value": "HJKDSAJK9822",
+											"type": "text"
+										},
+										{
+											"key": "fotoMuka",
+											"type": "file",
+											"src": "/C:/Users/hokac/Pictures/Screenshots/pemula.png"
+										},
+										{
+											"key": "fotoMakanan",
+											"type": "file",
+											"src": "/C:/Users/hokac/Pictures/Screenshots/Screenshot 2025-11-04 234247.png"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/pengambilan-makanan",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"pengambilan-makanan"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GET NGAMBIL MAKANAN",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/pengambilan-makanan",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"pengambilan-makanan"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "BALIKIN MAKANAN",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "siswaId",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "idTray",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "fotoSisaMakanan",
+											"type": "file",
+											"src": []
+										},
+										{
+											"key": "keterangan",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/pengembalian-makanan",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"pengembalian-makanan"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GET BALIKIN MAKANAN",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"picdapur1@mbg.com\",\n    \"password\": \"password123\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/pengembalian-makanan/statistics/today",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"pengembalian-makanan",
+										"statistics",
+										"today"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Checkpoint",
+					"item": [
+						{
+							"name": "Create Checkpoint",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "tipe",
+											"value": "MULAI_MEMASAK",
+											"type": "text"
+										},
+										{
+											"key": "foto",
+											"type": "file",
+											"src": []
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/menu-harian/:menuHarianId/checkpoint",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"menu-harian",
+										":menuHarianId",
+										"checkpoint"
+									],
+									"variable": [
+										{
+											"key": "menuHarianId"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Checkpoints by Menu Harian",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": []
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/menu-harian/:menuHarianId/checkpoint",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"menu-harian",
+										":menuHarianId",
+										"checkpoint"
+									],
+									"variable": [
+										{
+											"key": "menuHarianId",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Checkpoint by ID",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/checkpoint/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"checkpoint",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Checkpoint",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/checkpoint/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"checkpoint",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Pengiriman & QR Code",
+			"item": [
+				{
+					"name": "Create Pengiriman",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"sekolahId\": \"sekolah-id\",\n    \"jumlahTray\": 10,\n    \"jumlahKeranjang\": 2\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/pengiriman",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"pengiriman"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Scan Driver",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/pengiriman/:qrCodeId/scan-driver",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"pengiriman",
+								":qrCodeId",
+								"scan-driver"
+							],
+							"variable": [
+								{
+									"key": "qrCodeId"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Scan Sekolah",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/pengiriman/:qrCodeId/scan-sekolah",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"pengiriman",
+								":qrCodeId",
+								"scan-sekolah"
+							],
+							"variable": [
+								{
+									"key": "qrCodeId"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Pengiriman by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/pengiriman/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"pengiriman",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Pengiriman by QR Code",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/pengiriman/qr/:qrCodeId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"pengiriman",
+								"qr",
+								":qrCodeId"
+							],
+							"variable": [
+								{
+									"key": "qrCodeId"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Pengiriman by Sekolah",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/sekolah/:sekolahId/pengiriman",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"sekolah",
+								":sekolahId",
+								"pengiriman"
+							],
+							"variable": [
+								{
+									"key": "sekolahId"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Pengiriman by Driver",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/driver/pengiriman",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"driver",
+								"pengiriman"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Pengiriman",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/pengiriman/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"pengiriman",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						},
+						"description": "**Access:** SUPERADMIN, PIC_DAPUR"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "SUMMERY",
+			"item": [
+				{
+					"name": "DATA DASHBOARD PENTING",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nama\": \"Dapur Baru\",\n    \"alamat\": \"Alamat Dapur Baru\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/summary",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"summary"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "WILAYAH",
+			"item": [
+				{
+					"name": "GET PROVINSI",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nama\": \"Dapur Baru\",\n    \"alamat\": \"Alamat Dapur Baru\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/wilayah/provinsi",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"wilayah",
+								"provinsi"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET KOTA",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/wilayah/provinsi/36/regencies",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"wilayah",
+								"provinsi",
+								"36",
+								"regencies"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "IOT",
+			"item": [
+				{
+					"name": "PENGAMBILAN MAKAN",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"sekolahId\": \"b506bbb5-735f-4833-bc64-397bb651f61b\",\r\n    \"uid\": \"MMQ\"\r\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/rfid/scan",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"rfid",
+								"scan"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PENGAMBILAN MAKAN",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/rfid/latest",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"rfid",
+								"latest"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CEK MAKANAN BASI",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"deviceId\": \"SEKOLAH_001\",\n    \"sekolahId\": \"b506bbb5-735f-4833-bc64-397bb651f61b\",\n    \"statusKualitas\": \"PERINGATAN\"\n  }"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/iot/cek-kualitas-makanan",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"iot",
+								"cek-kualitas-makanan"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CEK BASI MENU HARIAN",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"siswaId\": \"31e2a0f2-4b6a-44d8-b129-f5d200e64ed3\",  \n    \"tanggal\": \"2025-11-03\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/iot/riwayat-pengecekan/:menuHarianId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"iot",
+								"riwayat-pengecekan",
+								":menuHarianId"
+							],
+							"variable": [
+								{
+									"key": "menuHarianId",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CEK MENU BASI HARIAN REAL TIME",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"siswaId\": \"31e2a0f2-4b6a-44d8-b129-f5d200e64ed3\",  \n    \"tanggal\": \"2025-11-03\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/iot/status-realtime/:sekolahId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"iot",
+								"status-realtime",
+								":sekolahId"
+							],
+							"variable": [
+								{
+									"key": "sekolahId",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "LOKASI",
+			"item": [
+				{
+					"name": "LOKASI DRIVER",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": " {\r\n    \"latitude\": -6.200000,\r\n    \"longitude\": 106.816666\r\n  }"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/drivers/location",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"drivers",
+								"location"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET LOKASI",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"sekolahId\": \"7da283ab-8272-47aa-abc9-7aa37c635db4\",\r\n    \"uid\": \"TEST123ABC\"\r\n  }"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/drivers/active",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"drivers",
+								"active"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{authToken}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

@@ -3,6 +3,7 @@ import 'package:mbg_mobile_app/features/dapur/models/dapur_menu_planning_model.d
 import 'package:mbg_mobile_app/features/dapur/models/dapur_sekolah_model.dart';
 import 'package:mbg_mobile_app/utils/popups/loaders.dart';
 import 'package:mbg_mobile_app/utils/services/dapur_service.dart';
+import 'package:mbg_mobile_app/utils/helpers/loading_overlay.dart';
 
 class DapurMenuPlanningController extends GetxController {
   // Dependencies
@@ -68,6 +69,7 @@ class DapurMenuPlanningController extends GetxController {
   }) async {
     try {
       isLoading.value = true;
+      MBGLoadingOverlay.show();
 
       await _dapurService.createMenuPlanning({
         'mingguanKe': mingguanKe,
@@ -76,6 +78,7 @@ class DapurMenuPlanningController extends GetxController {
         'sekolahId': sekolahId,
       });
 
+      MBGLoadingOverlay.hide();
       Get.back();
 
       MBGLoaders.successSnackBar(
@@ -85,6 +88,7 @@ class DapurMenuPlanningController extends GetxController {
 
       await fetchAllMenuPlanning();
     } catch (e) {
+      MBGLoadingOverlay.hide();
       MBGLoaders.errorSnackBar(
         title: 'Gagal membuat menu planning',
         message: e.toString(),
@@ -144,9 +148,11 @@ class DapurMenuPlanningController extends GetxController {
   Future<void> deleteMenuPlanning({required String planningId}) async {
     try {
       isLoading.value = true;
+      MBGLoadingOverlay.show();
 
       await _dapurService.deleteMenuPlanning(planningId);
 
+      MBGLoadingOverlay.hide();
       Get.back();
 
       MBGLoaders.successSnackBar(
@@ -156,6 +162,7 @@ class DapurMenuPlanningController extends GetxController {
 
       await fetchAllMenuPlanning();
     } catch (e) {
+      MBGLoadingOverlay.hide();
       MBGLoaders.errorSnackBar(
         title: 'Gagal menghapus menu planning',
         message: e.toString(),

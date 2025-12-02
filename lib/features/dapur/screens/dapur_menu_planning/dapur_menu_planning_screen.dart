@@ -11,6 +11,8 @@ import 'package:mbg_mobile_app/features/dapur/screens/dapur_menu_planning/widget
 import 'package:mbg_mobile_app/features/dapur/screens/dapur_menu_planning/widgets/dapur_menu_planning_header.dart';
 import 'package:mbg_mobile_app/features/dapur/screens/dapur_menu_planning/widgets/dapur_menu_planning_list.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
+import 'package:mbg_mobile_app/utils/constants/colors.dart';
+import 'package:mbg_mobile_app/utils/popups/loaders.dart';
 
 class DapurMenuPlanningScreen extends StatelessWidget {
   const DapurMenuPlanningScreen({super.key});
@@ -19,24 +21,60 @@ class DapurMenuPlanningScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // Ensure controller initialization
     Get.put(DapurInfoController());
-    final DapurMenuPlanningController dapurMenuPlanningController =
-        Get.put(DapurMenuPlanningController());
+    final DapurMenuPlanningController dapurMenuPlanningController = Get.put(
+      DapurMenuPlanningController(),
+    );
     Get.put(DapurMenuHarianController());
 
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
 
     return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
-
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => Get.to(const DapurMenuHarianAdd()),
-        backgroundColor: colorScheme.primary,
-        icon: Icon(Iconsax.add, color: colorScheme.onPrimary),
+        onPressed: () {
+          final selectedId =
+              dapurMenuPlanningController.selectedMenuPlanningId.value;
+          if (selectedId == null) {
+            MBGLoaders.warningSnackBar(
+              title: 'Pilih Menu Planning',
+              message: 'Silakan pilih menu planning terlebih dahulu.',
+            );
+            return;
+          }
+
+          final menuPlanning = dapurMenuPlanningController.menuPlanningList
+              .firstWhereOrNull((element) => element.id == selectedId);
+
+          if (menuPlanning == null) {
+            MBGLoaders.warningSnackBar(
+              title: 'Error',
+              message: 'Data menu planning tidak ditemukan.',
+            );
+            return;
+          }
+
+          if (menuPlanning.tanggalMulai == null ||
+              menuPlanning.tanggalSelesai == null) {
+            MBGLoaders.warningSnackBar(
+              title: 'Error',
+              message: 'Tanggal menu planning tidak valid.',
+            );
+            return;
+          }
+
+          Get.to(
+            () => DapurMenuHarianAdd(
+              menuPlanningId: selectedId,
+              startDate: menuPlanning.tanggalMulai!,
+              endDate: menuPlanning.tanggalSelesai!,
+            ),
+          );
+        },
+        backgroundColor: MBGColors.primary,
+        icon: const Icon(Iconsax.add, color: MBGColors.white),
         label: Text(
           'Menu Harian',
           style: theme.textTheme.bodyMedium?.copyWith(
-            color: colorScheme.onPrimary,
+            color: MBGColors.white,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -46,29 +84,26 @@ class DapurMenuPlanningScreen extends StatelessWidget {
         onRefresh: () async {
           await dapurMenuPlanningController.refreshMenuPlanning();
         },
-        color: colorScheme.primary,
+        color: MBGColors.primary,
 
-        child: Container(
-          color: theme.scaffoldBackgroundColor,
-          child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            child: Padding(
-              padding: MBGSpacingStyles.homeScreenPadding,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const DapurMenuPlanningHeader(),
-                  const SizedBox(height: MBGSizes.spaceBtwItems),
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Padding(
+            padding: MBGSpacingStyles.homeScreenPadding,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const DapurMenuPlanningHeader(),
+                const SizedBox(height: MBGSizes.spaceBtwItems),
 
-                  const DapurMenuPlanningList(),
-                  const SizedBox(height: MBGSizes.spaceBtwItems),
+                const DapurMenuPlanningList(),
+                const SizedBox(height: MBGSizes.spaceBtwItems),
 
-                  const DapurMenuHarianHeader(),
-                  const SizedBox(height: MBGSizes.spaceBtwItems),
+                const DapurMenuHarianHeader(),
+                const SizedBox(height: MBGSizes.spaceBtwItems),
 
-                  const DapurMenuHarianList(),
-                ],
-              ),
+                const DapurMenuHarianList(),
+              ],
             ),
           ),
         ),

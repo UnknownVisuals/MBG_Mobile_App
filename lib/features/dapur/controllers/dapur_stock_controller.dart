@@ -7,6 +7,7 @@ import 'package:mbg_mobile_app/features/dapur/models/dapur_stock_model.dart';
 import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/popups/loaders.dart';
 import 'package:mbg_mobile_app/utils/services/dapur_service.dart';
+import 'package:mbg_mobile_app/utils/helpers/loading_overlay.dart';
 
 class DapurStokController extends GetxController {
   // Dependencies
@@ -140,6 +141,7 @@ class DapurStokController extends GetxController {
   }) async {
     try {
       isLoading.value = true;
+      MBGLoadingOverlay.show();
 
       await _dapurService.createStok({
         'nama': nama,
@@ -148,6 +150,7 @@ class DapurStokController extends GetxController {
         'dapurId': dapurId,
       });
 
+      MBGLoadingOverlay.hide();
       Get.back();
 
       MBGLoaders.successSnackBar(
@@ -159,6 +162,7 @@ class DapurStokController extends GetxController {
         await fetchStok(dapurId: dapurId!);
       }
     } catch (e) {
+      MBGLoadingOverlay.hide();
       MBGLoaders.errorSnackBar(
         title: 'Gagal Menambahkan Stok',
         message: e.toString(),
@@ -179,6 +183,7 @@ class DapurStokController extends GetxController {
   }) async {
     try {
       isLoading.value = true;
+      MBGLoadingOverlay.show();
 
       final updatedStok = await _dapurService.updateStok(stokId, {
         'nama': nama,
@@ -188,6 +193,7 @@ class DapurStokController extends GetxController {
 
       _replaceStok(updatedStok);
 
+      MBGLoadingOverlay.hide();
       Get.back();
 
       MBGLoaders.successSnackBar(
@@ -195,6 +201,7 @@ class DapurStokController extends GetxController {
         message: 'Data stok berhasil diperbarui.',
       );
     } catch (e) {
+      MBGLoadingOverlay.hide();
       MBGLoaders.errorSnackBar(
         title: 'Gagal Memperbarui Stok',
         message: e.toString(),
@@ -221,8 +228,11 @@ class DapurStokController extends GetxController {
 
     try {
       adjustingStokId.value = stokId;
+      MBGLoadingOverlay.show();
       final adjustedStok = await _dapurService.adjustStok(stokId, adjustment);
       _replaceStok(adjustedStok);
+
+      MBGLoadingOverlay.hide();
 
       // Close dialog
       Get.back();
@@ -237,6 +247,7 @@ class DapurStokController extends GetxController {
         message: 'Penyesuaian stok berhasil disimpan.',
       );
     } catch (e) {
+      MBGLoadingOverlay.hide();
       MBGLoaders.errorSnackBar(
         title: 'Gagal Menyesuaikan Stok',
         message: e.toString(),
@@ -261,19 +272,22 @@ class DapurStokController extends GetxController {
   Future<void> deleteStok(String stokId) async {
     try {
       deletingStokId.value = stokId;
+      MBGLoadingOverlay.show();
       await _dapurService.deleteStok(stokId);
 
+      if (dapurId != null) {
+        await fetchStok(dapurId: dapurId!);
+      }
+
+      MBGLoadingOverlay.hide();
       Get.back(); // Close dialog
 
       MBGLoaders.successSnackBar(
         title: 'Stok Dihapus',
         message: 'Data stok berhasil dihapus.',
       );
-
-      if (dapurId != null) {
-        await fetchStok(dapurId: dapurId!);
-      }
     } catch (e) {
+      MBGLoadingOverlay.hide();
       MBGLoaders.errorSnackBar(
         title: 'Gagal Menghapus Stok',
         message: e.toString(),

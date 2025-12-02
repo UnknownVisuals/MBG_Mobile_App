@@ -19,7 +19,7 @@ class DapurPengirimanScreen extends StatelessWidget {
     final controller = Get.put(DapurPengirimanController());
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor = isDark ? Colors.black : Colors.white;
+    final bgColor = isDark ? MBGColors.black : MBGColors.white;
 
     return Scaffold(
       backgroundColor: bgColor,
@@ -57,8 +57,9 @@ class DapurPengirimanScreen extends StatelessWidget {
                         prefixIcon: const Icon(Iconsax.building_3),
                         border: OutlineInputBorder(
                           borderSide: BorderSide(
-                            color:
-                                isDark ? Colors.white24 : Colors.grey.shade400,
+                            color: isDark
+                                ? Colors.white24
+                                : Colors.grey.shade400,
                           ),
                         ),
                       ),
@@ -129,30 +130,57 @@ class DapurPengirimanScreen extends StatelessWidget {
                   ///        LIST PENGIRIMAN
                   /// ===============================
                   Expanded(
-                    child: Obx(() {
-                      if (controller.isLoading.value) {
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      }
+                    child: RefreshIndicator(
+                      color: MBGColors.primary,
+                      onRefresh: controller.refreshPengiriman,
+                      child: Obx(() {
+                        if (controller.isLoading.value) {
+                          return LayoutBuilder(
+                            builder: (context, constraints) {
+                              return SingleChildScrollView(
+                                physics: const AlwaysScrollableScrollPhysics(),
+                                child: ConstrainedBox(
+                                  constraints: BoxConstraints(
+                                    minHeight: constraints.maxHeight,
+                                  ),
+                                  child: const Center(
+                                    child: CircularProgressIndicator(
+                                      color: MBGColors.primary,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        }
 
-                      final list = controller.filteredPengiriman;
+                        final list = controller.filteredPengiriman;
 
-                      if (list.isEmpty) {
-                        return const DapurPengirimanEmpty();
-                      }
+                        if (list.isEmpty) {
+                          return LayoutBuilder(
+                            builder: (context, constraints) {
+                              return SingleChildScrollView(
+                                physics: const AlwaysScrollableScrollPhysics(),
+                                child: ConstrainedBox(
+                                  constraints: BoxConstraints(
+                                    minHeight: constraints.maxHeight,
+                                  ),
+                                  child: const DapurPengirimanEmpty(),
+                                ),
+                              );
+                            },
+                          );
+                        }
 
-                      return RefreshIndicator(
-                        color: MBGColors.primary,
-                        onRefresh: controller.refreshPengiriman,
-                        child: ListView.builder(
+                        return ListView.builder(
+                          physics: const AlwaysScrollableScrollPhysics(),
                           padding: const EdgeInsets.only(bottom: 80),
                           itemCount: list.length,
                           itemBuilder: (context, i) =>
                               DapurPengirimanCard(pengiriman: list[i]),
-                        ),
-                      );
-                    }),
+                        );
+                      }),
+                    ),
                   ),
                 ],
               ),
@@ -180,10 +208,9 @@ class DapurPengirimanScreen extends StatelessWidget {
         icon: Icon(Iconsax.profile_add, color: MBGColors.white),
         label: Text(
           'Buat Pengiriman',
-          style: Theme.of(context)
-              .textTheme
-              .bodyMedium
-              ?.copyWith(color: MBGColors.white),
+          style: Theme.of(
+            context,
+          ).textTheme.bodyMedium?.copyWith(color: MBGColors.white),
         ),
       ),
     );

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
+import 'package:mbg_mobile_app/utils/helpers/helper_functions.dart';
 
 class DapurInfoHorizontalCardList<T> extends StatelessWidget {
   const DapurInfoHorizontalCardList({
@@ -19,11 +20,17 @@ class DapurInfoHorizontalCardList<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isDarkMode = MBGHelperFunctions.isDarkMode(context);
+
     if (items.isEmpty) {
       return Container(
         decoration: BoxDecoration(
-          color: MBGColors.light,
-          border: Border.all(color: MBGColors.borderPrimary),
+          color: isDarkMode ? MBGColors.dark : MBGColors.light,
+          border: Border.all(
+            color: isDarkMode
+                ? MBGColors.lightGrey.withValues(alpha: 0.4)
+                : MBGColors.grey,
+          ),
           borderRadius: BorderRadius.circular(MBGSizes.borderRadiusMd),
         ),
         padding: const EdgeInsets.all(MBGSizes.defaultSpace),

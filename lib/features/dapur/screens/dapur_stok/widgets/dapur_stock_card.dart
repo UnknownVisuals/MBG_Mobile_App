@@ -6,6 +6,7 @@ import 'package:mbg_mobile_app/features/dapur/controllers/dapur_stock_controller
 import 'package:mbg_mobile_app/features/dapur/models/dapur_stock_model.dart';
 import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
+import 'package:mbg_mobile_app/utils/helpers/helper_functions.dart';
 import 'dapur_stock_delete.dart';
 import 'dapur_stock_edit.dart';
 
@@ -17,8 +18,7 @@ class DapurStokCard extends StatelessWidget {
     final DapurStokController dapurStokController =
         Get.find<DapurStokController>();
 
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    final bool isDarkMode = MBGHelperFunctions.isDarkMode(context);
 
     final filters = [
       {
@@ -140,14 +140,13 @@ class DapurStokCard extends StatelessWidget {
                           Icon(
                             Iconsax.box_remove,
                             size: MBGSizes.iconLg * 2,
-                            color: colorScheme.onSurfaceVariant,
+                            color: MBGColors.textSecondary,
                           ),
                           const SizedBox(height: MBGSizes.md),
                           Text(
                             'Belum ada data stok',
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              color: colorScheme.onSurfaceVariant,
-                            ),
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(color: MBGColors.textSecondary),
                           ),
                         ],
                       ),
@@ -175,12 +174,16 @@ class DapurStokCard extends StatelessWidget {
                   margin: const EdgeInsets.only(bottom: MBGSizes.spaceBtwItems),
                   padding: const EdgeInsets.all(MBGSizes.md),
                   decoration: BoxDecoration(
-                    color: colorScheme.surface,
+                    color: isDarkMode ? MBGColors.dark : MBGColors.light,
                     borderRadius: BorderRadius.circular(
                       MBGSizes.borderRadiusLg,
                     ),
                     border: Border.all(
-                      color: isLowStock ? MBGColors.error : colorScheme.outline,
+                      color: isLowStock
+                          ? MBGColors.error
+                          : (isDarkMode
+                                ? MBGColors.lightGrey.withValues(alpha: 0.4)
+                                : MBGColors.grey),
                     ),
                   ),
                   child: Row(
@@ -202,10 +205,13 @@ class DapurStokCard extends StatelessWidget {
                           children: [
                             Text(
                               stok.nama!,
-                              style: theme.textTheme.titleSmall?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: colorScheme.onSurface,
-                              ),
+                              style: Theme.of(context).textTheme.titleSmall
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: isDarkMode
+                                        ? MBGColors.textWhite
+                                        : MBGColors.textPrimary,
+                                  ),
                             ),
 
                             if (isLowStock) ...[
@@ -223,10 +229,11 @@ class DapurStokCard extends StatelessWidget {
                                 ),
                                 child: Text(
                                   'Stok Menipis',
-                                  style: theme.textTheme.labelSmall?.copyWith(
-                                    color: MBGColors.error,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                  style: Theme.of(context).textTheme.labelSmall
+                                      ?.copyWith(
+                                        color: MBGColors.error,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                 ),
                               ),
                             ],
@@ -235,21 +242,23 @@ class DapurStokCard extends StatelessWidget {
 
                             Text(
                               stok.kategoriLabel!,
-                              style: theme.textTheme.labelLarge?.copyWith(
-                                color: categoryColor,
-                              ),
+                              style: Theme.of(context).textTheme.labelLarge
+                                  ?.copyWith(color: categoryColor),
                             ),
 
                             const SizedBox(height: MBGSizes.xs),
 
                             Text(
                               'Stok: ${stok.stokKg!.toStringAsFixed(2)} kg',
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: isLowStock
-                                    ? MBGColors.error
-                                    : colorScheme.onSurface,
-                              ),
+                              style: Theme.of(context).textTheme.bodyMedium
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: isLowStock
+                                        ? MBGColors.error
+                                        : (isDarkMode
+                                              ? MBGColors.textWhite
+                                              : MBGColors.textPrimary),
+                                  ),
                             ),
                           ],
                         ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
+import 'package:mbg_mobile_app/utils/helpers/helper_functions.dart';
 
 class DapurDashboardCard extends StatelessWidget {
   const DapurDashboardCard({
@@ -17,12 +18,20 @@ class DapurDashboardCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isDarkMode = MBGHelperFunctions.isDarkMode(context);
+
     return Container(
       padding: const EdgeInsets.all(MBGSizes.defaultSpace),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.2),
+        color: isDarkMode
+            ? color.withValues(alpha: 0.15)
+            : color.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(MBGSizes.cardRadiusMd),
-        border: Border.all(color: color.withValues(alpha: 0.4)),
+        border: Border.all(
+          color: isDarkMode
+              ? color.withValues(alpha: 0.6)
+              : color.withValues(alpha: 0.4),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

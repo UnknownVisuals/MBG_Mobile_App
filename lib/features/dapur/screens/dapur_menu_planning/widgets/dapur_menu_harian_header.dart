@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mbg_mobile_app/features/dapur/controllers/dapur_menu_harian_controller.dart';
 import 'package:mbg_mobile_app/features/dapur/controllers/dapur_menu_planning_controller.dart';
+import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
 import 'package:mbg_mobile_app/utils/formatters/formatter.dart';
 
@@ -50,16 +51,14 @@ class DapurMenuHarianHeader extends StatelessWidget {
                   vertical: MBGSizes.xs,
                 ),
                 decoration: BoxDecoration(
-                  color: colorScheme.primaryContainer,
-                  border: Border.all(
-                    color: colorScheme.primary.withValues(alpha: 0.5),
-                  ),
+                  color: MBGColors.primary.withValues(alpha: 0.2),
+                  border: Border.all(color: MBGColors.primary),
                   borderRadius: BorderRadius.circular(MBGSizes.borderRadiusSm),
                 ),
                 child: Text(
                   '$menuCount menu${menuCount != 1 ? 's' : ''}',
                   style: textTheme.labelSmall?.copyWith(
-                    color: colorScheme.onPrimaryContainer,
+                    color: MBGColors.primary,
                     fontWeight: FontWeight.bold,
                   ),
                 ),

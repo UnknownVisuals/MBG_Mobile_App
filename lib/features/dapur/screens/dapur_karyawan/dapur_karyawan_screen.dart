@@ -88,38 +88,19 @@ class DapurKaryawanScreen extends StatelessWidget {
         return RefreshIndicator(
           color: MBGColors.primary,
           onRefresh: dapurKaryawanController.refreshKaryawan,
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              const crossAxisCount = 2;
-              final horizontalPadding = MBGSizes.defaultSpace * 2;
-              final totalSpacing =
-                  (crossAxisCount - 1) * MBGSizes.gridViewSpacing;
-              final itemWidth =
-                  (constraints.maxWidth - horizontalPadding - totalSpacing) /
-                  crossAxisCount;
-
-              final imageHeight = itemWidth * 5 / 4;
-              const detailsHeight = 180.0; // Estimated text + action height
-              final itemHeight = imageHeight + detailsHeight;
-              final childAspectRatio = itemWidth / itemHeight;
-
-              return GridView.builder(
-                padding: const EdgeInsets.all(MBGSizes.defaultSpace),
-                physics: const AlwaysScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: MBGSizes.gridViewSpacing,
-                  mainAxisSpacing: MBGSizes.gridViewSpacing,
-
-                  /// Tinggi card FIX → 100% bebas overflow
-                  mainAxisExtent: 380,
-                ),
-                itemCount: dapurKaryawanController.karyawanList.length,
-                itemBuilder: (context, index) {
-                  final karyawan = dapurKaryawanController.karyawanList[index];
-                  return DapurKaryawanCard(karyawan: karyawan);
-                },
-              );
+          child: GridView.builder(
+            padding: const EdgeInsets.all(MBGSizes.defaultSpace),
+            physics: const AlwaysScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: MBGSizes.gridViewSpacing,
+              mainAxisSpacing: MBGSizes.gridViewSpacing,
+              mainAxisExtent: 380,
+            ),
+            itemCount: dapurKaryawanController.karyawanList.length,
+            itemBuilder: (context, index) {
+              final karyawan = dapurKaryawanController.karyawanList[index];
+              return DapurKaryawanCard(karyawan: karyawan);
             },
           ),
         );

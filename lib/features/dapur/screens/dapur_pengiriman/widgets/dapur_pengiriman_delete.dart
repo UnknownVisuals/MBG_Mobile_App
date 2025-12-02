@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mbg_mobile_app/features/dapur/controllers/dapur_pengiriman_controller.dart';
-import 'package:mbg_mobile_app/utils/constants/colors.dart';
 
 class DapurPengirimanDelete extends StatelessWidget {
   const DapurPengirimanDelete({
@@ -38,29 +37,10 @@ class DapurPengirimanDelete extends StatelessWidget {
                 () => ElevatedButton(
                   onPressed: controller.isSubmitting.value
                       ? null
-                      : () async {
-                          final success = await controller.deletePengiriman(
-                            pengirimanId,
-                          );
-                          if (success) {
-                            Get.back(); // Close dialog
-                          }
+                      : () {
+                          controller.deletePengiriman(pengirimanId);
                         },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: MBGColors.error,
-                  ),
-                  child: controller.isSubmitting.value
-                      ? const SizedBox(
-                          height: 16,
-                          width: 16,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              Colors.white,
-                            ),
-                          ),
-                        )
-                      : const Text('Hapus'),
+                  child: const Text('Hapus'),
                 ),
               ),
             ),

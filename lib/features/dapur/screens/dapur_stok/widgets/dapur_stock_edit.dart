@@ -147,36 +147,45 @@ class DapurStokEdit extends StatelessWidget {
                 ),
                 const SizedBox(height: MBGSizes.spaceBtwSections),
 
-                // Submit Button
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      if (formKey.currentState!.validate()) {
-                        await dapurStokController.updateStok(
-                          stokId: stok.id,
-                          nama: namaController.text,
-                          kategori: selectedCategory.value,
-                          stokKg: double.parse(stokController.text),
-                        );
-                      }
-                    },
-                    child: const Text('Simpan Perubahan'),
-                  ),
-                ),
-                const SizedBox(height: MBGSizes.spaceBtwItems),
-                SizedBox(
-                  width: double.infinity,
-                  child: OutlinedButton(
-                    onPressed: () {
-                      Get.dialog(DapurStockAdjust(stok: stok));
-                    },
-                    child: const Text('Sesuaikan Stok'),
-                  ),
-                ),
                 const SizedBox(height: MBGSizes.spaceBtwSections * 2),
               ],
             ),
+          ),
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(MBGSizes.spaceBtwItems),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton(
+                  onPressed: () {
+                    Get.dialog(DapurStockAdjust(stok: stok));
+                  },
+                  child: const Text('Sesuaikan Stok'),
+                ),
+              ),
+              const SizedBox(height: MBGSizes.spaceBtwItems),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () async {
+                    if (formKey.currentState!.validate()) {
+                      await dapurStokController.updateStok(
+                        stokId: stok.id,
+                        nama: namaController.text,
+                        kategori: selectedCategory.value,
+                        stokKg: double.parse(stokController.text),
+                      );
+                    }
+                  },
+                  child: const Text('Simpan Perubahan'),
+                ),
+              ),
+            ],
           ),
         ),
       ),

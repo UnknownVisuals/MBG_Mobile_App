@@ -4,6 +4,7 @@ import 'package:mbg_mobile_app/features/dapur/models/dapur_pengiriman_model.dart
 import 'package:mbg_mobile_app/features/dapur/models/dapur_sekolah_model.dart';
 import 'package:mbg_mobile_app/utils/popups/loaders.dart';
 import 'package:mbg_mobile_app/utils/services/dapur_service.dart';
+import 'package:mbg_mobile_app/utils/helpers/loading_overlay.dart';
 
 class DapurPengirimanController extends GetxController {
   // Dependencies
@@ -173,8 +174,15 @@ class DapurPengirimanController extends GetxController {
   ) async {
     try {
       isSubmitting.value = true;
+      MBGLoadingOverlay.show();
+
       final DapurPengirimanModel newPengiriman = await _dapurService
           .createPengiriman(payload);
+
+      MBGLoadingOverlay.hide();
+
+      // Navigate back first
+      Get.back();
 
       MBGLoaders.successSnackBar(
         title: 'Pengiriman Berhasil Dibuat',
@@ -185,6 +193,7 @@ class DapurPengirimanController extends GetxController {
 
       return newPengiriman;
     } catch (e) {
+      MBGLoadingOverlay.hide();
       MBGLoaders.errorSnackBar(
         title: 'Gagal Membuat Pengiriman',
         message: e.toString(),
@@ -201,7 +210,14 @@ class DapurPengirimanController extends GetxController {
   Future<bool> deletePengiriman(String pengirimanId) async {
     try {
       isSubmitting.value = true;
+      MBGLoadingOverlay.show();
+
       await _dapurService.deletePengiriman(pengirimanId);
+
+      MBGLoadingOverlay.hide();
+
+      // Close dialog
+      Get.back();
 
       MBGLoaders.successSnackBar(
         title: 'Pengiriman Berhasil Dihapus',
@@ -209,10 +225,11 @@ class DapurPengirimanController extends GetxController {
       );
 
       // Remove from list
-      pengirimanList.removeWhere((item) => item == pengirimanId);
+      pengirimanList.removeWhere((item) => item.id == pengirimanId);
 
       return true;
     } catch (e) {
+      MBGLoadingOverlay.hide();
       MBGLoaders.errorSnackBar(
         title: 'Gagal Menghapus Pengiriman',
         message: e.toString(),

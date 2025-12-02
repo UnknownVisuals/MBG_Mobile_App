@@ -8,6 +8,7 @@ import 'package:mbg_mobile_app/features/dapur/models/dapur_pengiriman_model.dart
 import 'package:mbg_mobile_app/features/dapur/screens/dapur_pengiriman/widgets/dapur_pengiriman_delete.dart';
 import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
+import 'package:mbg_mobile_app/utils/helpers/helper_functions.dart';
 
 class DapurPengirimanCard extends StatelessWidget {
   const DapurPengirimanCard({super.key, required this.pengiriman});
@@ -16,6 +17,7 @@ class DapurPengirimanCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isDarkMode = MBGHelperFunctions.isDarkMode(context);
     final theme = Theme.of(context);
     final statusColor = _getStatusColor(pengiriman.status!);
     final statusText = _getStatusText(pengiriman.status!);
@@ -24,8 +26,12 @@ class DapurPengirimanCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: MBGSizes.spaceBtwItems),
       decoration: BoxDecoration(
-        color: theme.cardColor, // 🟢 Adaptif Light/Dark
-        border: Border.all(color: theme.dividerColor), // 🟢 Adaptif
+        color: isDarkMode ? MBGColors.dark : MBGColors.light,
+        border: Border.all(
+          color: isDarkMode
+              ? MBGColors.lightGrey.withValues(alpha: 0.4)
+              : MBGColors.grey,
+        ),
         borderRadius: BorderRadius.circular(MBGSizes.borderRadiusMd),
       ),
       child: Padding(
@@ -48,7 +54,9 @@ class DapurPengirimanCard extends StatelessWidget {
                 Icon(
                   Iconsax.location,
                   size: MBGSizes.iconSm,
-                  color: theme.iconTheme.color?.withValues(alpha: 0.7),
+                  color: isDarkMode
+                      ? MBGColors.textWhite.withValues(alpha: 0.7)
+                      : MBGColors.textPrimary.withValues(alpha: 0.7),
                 ),
                 const SizedBox(width: 6),
                 Expanded(
@@ -124,7 +132,7 @@ class DapurPengirimanCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(MBGSizes.defaultSpace / 2),
               decoration: BoxDecoration(
-                color: theme.colorScheme.primary.withValues(alpha: 0.06),
+                color: MBGColors.primary.withValues(alpha: 0.06),
                 borderRadius: BorderRadius.circular(MBGSizes.borderRadiusMd),
               ),
               child: Row(
@@ -132,13 +140,16 @@ class DapurPengirimanCard extends StatelessWidget {
                   Icon(
                     Iconsax.calendar_1,
                     size: MBGSizes.iconSm,
-                    color: theme.iconTheme.color,
+                    color: isDarkMode
+                        ? MBGColors.textWhite
+                        : MBGColors.textPrimary,
                   ),
                   const SizedBox(width: 6),
                   Expanded(
                     child: Text(
                       DateFormat(
                         'dd MMM yyyy, HH:mm',
+                        'id_ID',
                       ).format(pengiriman.createdAt!.toLocal()),
                       style: theme.textTheme.bodySmall,
                     ),
@@ -147,29 +158,31 @@ class DapurPengirimanCard extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: MBGSizes.spaceBtwItems),
+            if (_isPendingStatus(pengiriman.status!)) ...[
+              const SizedBox(height: MBGSizes.spaceBtwItems),
 
-            // --- BUTTON BAR ---
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () {
-                      if (pengiriman.qrCodeUrl!.isNotEmpty) {
-                        MBGImagePreviewDialog.showData(
-                          context: context,
-                          imageData: pengiriman.qrCodeUrl!,
-                        );
-                      }
-                    },
-                    icon: Icon(
-                      Iconsax.scan_barcode,
-                      color: theme.iconTheme.color,
+              // --- BUTTON BAR ---
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: pengiriman.qrCodeUrl!.isNotEmpty
+                          ? () {
+                              MBGImagePreviewDialog.showData(
+                                context: context,
+                                imageData: pengiriman.qrCodeUrl!,
+                              );
+                            }
+                          : null,
+                      icon: Icon(
+                        Iconsax.scan_barcode,
+                        color: isDarkMode
+                            ? MBGColors.textWhite
+                            : MBGColors.textPrimary,
+                      ),
+                      label: Text('QR Code'),
                     ),
-                    label: Text('QR Code'),
                   ),
-                ),
-                if (_isPendingStatus(pengiriman.status!)) ...[
                   const SizedBox(width: MBGSizes.spaceBtwItems),
                   IconButton(
                     onPressed: () {
@@ -185,8 +198,8 @@ class DapurPengirimanCard extends StatelessWidget {
                     icon: const Icon(Iconsax.trash, color: MBGColors.error),
                   ),
                 ],
-              ],
-            ),
+              ),
+            ],
           ],
         ),
       ),

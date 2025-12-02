@@ -7,6 +7,7 @@ import 'package:mbg_mobile_app/features/dapur/models/dapur_checkpoint_model.dart
 import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/popups/loaders.dart';
 import 'package:mbg_mobile_app/utils/services/dapur_service.dart';
+import 'package:mbg_mobile_app/utils/helpers/loading_overlay.dart';
 
 class DapurCheckpointController extends GetxController {
   // Dependencies
@@ -144,7 +145,7 @@ class DapurCheckpointController extends GetxController {
   Color getRoleColor(String role) {
     switch (role) {
       case 'PIC_DAPUR':
-        return MBGColors.primary;
+        return MBGColors.success;
       case 'DRIVER':
         return MBGColors.warning;
       default:
@@ -188,6 +189,7 @@ class DapurCheckpointController extends GetxController {
   }) async {
     try {
       isLoading.value = true;
+      MBGLoadingOverlay.show();
 
       await _dapurService.createCheckpoint(
         menuHarianId: menuHarianId,
@@ -199,16 +201,17 @@ class DapurCheckpointController extends GetxController {
       // Fetch updated checkpoint list
       await fetchCheckpointsByMenuHarian(menuHarianId);
 
+      MBGLoadingOverlay.hide();
+
+      // Navigate back first to avoid Get.back() closing the snackbar
+      Get.back();
+
       MBGLoaders.successSnackBar(
         title: 'Berhasil',
         message: 'Checkpoint berhasil ditambahkan',
       );
-
-      // Wait briefly for success message to show, then navigate back
-      await Future.delayed(const Duration(milliseconds: 500));
-
-      Get.back();
     } catch (e) {
+      MBGLoadingOverlay.hide();
       MBGLoaders.errorSnackBar(
         title: 'Gagal menambahkan checkpoint',
         message: e.toString(),

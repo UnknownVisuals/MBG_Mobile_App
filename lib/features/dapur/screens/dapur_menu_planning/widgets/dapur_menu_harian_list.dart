@@ -4,6 +4,7 @@ import 'package:mbg_mobile_app/features/dapur/controllers/dapur_menu_harian_cont
 import 'package:mbg_mobile_app/features/dapur/screens/dapur_menu_planning/widgets/dapur_menu_harian_card.dart';
 import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
+import 'package:mbg_mobile_app/utils/helpers/helper_functions.dart';
 
 /// Dynamic list of daily menus fetched from API based on selected menu planning
 class DapurMenuHarianList extends StatelessWidget {
@@ -12,6 +13,7 @@ class DapurMenuHarianList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<DapurMenuHarianController>();
+    final bool isDarkMode = MBGHelperFunctions.isDarkMode(context);
 
     return Obx(() {
       if (controller.isLoading.value) {
@@ -24,9 +26,13 @@ class DapurMenuHarianList extends StatelessWidget {
         return Container(
           padding: const EdgeInsets.all(MBGSizes.defaultSpace),
           decoration: BoxDecoration(
-            color: MBGColors.light,
+            color: isDarkMode ? MBGColors.dark : MBGColors.light,
             borderRadius: BorderRadius.circular(MBGSizes.borderRadiusMd),
-            border: Border.all(color: MBGColors.borderPrimary),
+            border: Border.all(
+              color: isDarkMode
+                  ? MBGColors.lightGrey.withValues(alpha: 0.4)
+                  : MBGColors.grey,
+            ),
           ),
           child: Center(
             child: Text(

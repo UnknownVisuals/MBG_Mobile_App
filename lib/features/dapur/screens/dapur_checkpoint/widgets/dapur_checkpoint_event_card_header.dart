@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
+import 'package:mbg_mobile_app/utils/helpers/helper_functions.dart';
 import 'package:mbg_mobile_app/features/dapur/controllers/dapur_checkpoint_controller.dart';
 import 'package:mbg_mobile_app/features/dapur/screens/dapur_checkpoint/widgets/dapur_checkpoint_event_card_role_badge.dart';
 import 'package:mbg_mobile_app/features/dapur/screens/dapur_checkpoint/widgets/dapur_checkpoint_event_card_status_badge.dart';
@@ -21,14 +23,13 @@ class DapurCheckpointEventCardHeader extends StatelessWidget {
         Get.find<DapurCheckpointController>();
 
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final isDark = MBGHelperFunctions.isDarkMode(context);
 
-    // ---- WARNA ADAPTIF DARI THEME ----
-    final Color textColor = theme.colorScheme.onSurface;
-    final Color iconColor = theme.colorScheme.primary;
+    final Color textColor = isDark ? MBGColors.white : MBGColors.textPrimary;
+    final Color iconColor = MBGColors.primary;
     final Color iconBackgroundColor = isDark
-        ? theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3)
-        : theme.colorScheme.primary.withValues(alpha: 0.1);
+        ? MBGColors.white.withValues(alpha: 0.1)
+        : MBGColors.primary.withValues(alpha: 0.1);
 
     return Row(
       children: [

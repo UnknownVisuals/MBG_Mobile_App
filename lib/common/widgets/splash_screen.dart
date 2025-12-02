@@ -26,11 +26,12 @@ class MBGSplashScreen extends StatelessWidget {
             ),
             const SizedBox(height: MBGSizes.spaceBtwItems),
 
-            // Loading text
-            Text(
+            // Loading text - uses white color to maintain visibility on gradient
+            const Text(
               'Loading...',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              style: TextStyle(
                 color: MBGColors.white,
+                fontSize: 16,
                 fontWeight: FontWeight.w500,
               ),
             ),

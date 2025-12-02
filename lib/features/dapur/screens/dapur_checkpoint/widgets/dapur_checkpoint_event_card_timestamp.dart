@@ -39,7 +39,10 @@ class DapurCheckpointEventCardTimestamp extends StatelessWidget {
                 const SizedBox(width: MBGSizes.spaceBtwItems / 2),
                 Expanded(
                   child: Text(
-                    DateFormat('dd MMM yyyy\nHH:mm').format(timestamp),
+                    DateFormat(
+                      'dd MMM yyyy\nHH:mm',
+                      'id_ID',
+                    ).format(timestamp.toLocal()),
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: MBGColors.info,
                       fontWeight: FontWeight.w500,

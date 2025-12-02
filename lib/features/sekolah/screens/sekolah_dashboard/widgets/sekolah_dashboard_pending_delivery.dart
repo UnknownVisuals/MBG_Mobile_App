@@ -77,7 +77,7 @@ class SekolahDashboardPendingDelivery extends StatelessWidget {
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: deliveries.length,
-              separatorBuilder: (_, __) =>
+              separatorBuilder: (context, index) =>
                   Divider(color: color.outlineVariant.withValues(alpha: 0.4)),
               itemBuilder: (context, index) {
                 final delivery = deliveries[index];

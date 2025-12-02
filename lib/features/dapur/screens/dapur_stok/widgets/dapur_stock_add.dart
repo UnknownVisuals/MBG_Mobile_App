@@ -140,24 +140,28 @@ class DapurStokAdd extends StatelessWidget {
                 ),
                 const SizedBox(height: MBGSizes.spaceBtwSections),
 
-                // Submit Button
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      if (formKey.currentState!.validate()) {
-                        await dapurStokController.addStok(
-                          nama: namaController.text,
-                          kategori: selectedCategory.value,
-                          stokKg: double.parse(stokController.text),
-                        );
-                      }
-                    },
-                    child: const Text('Tambah Stok'),
-                  ),
-                ),
                 const SizedBox(height: MBGSizes.spaceBtwSections * 2),
               ],
+            ),
+          ),
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(MBGSizes.spaceBtwItems),
+          child: SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () async {
+                if (formKey.currentState!.validate()) {
+                  await dapurStokController.addStok(
+                    nama: namaController.text,
+                    kategori: selectedCategory.value,
+                    stokKg: double.parse(stokController.text),
+                  );
+                }
+              },
+              child: const Text('Tambah Stok'),
             ),
           ),
         ),

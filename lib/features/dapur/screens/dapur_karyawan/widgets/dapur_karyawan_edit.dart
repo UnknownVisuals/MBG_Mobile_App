@@ -241,52 +241,54 @@ class DapurKaryawanEdit extends StatelessWidget {
                 }),
                 const SizedBox(height: MBGSizes.spaceBtwSections),
 
-                // Action Buttons
-                Obx(
-                  () => Row(
-                    children: [
-                      // Ubah Gambar Button
-                      Expanded(
-                        child: OutlinedButton(
-                          onPressed:
-                              (selectedImage.value != null ||
-                                  (karyawan.fotoUrl != null &&
-                                      karyawan.fotoUrl!.isNotEmpty))
-                              ? () => MBGImagePickerBottomSheet.show(
-                                  context: context,
-                                )
-                              : null,
-                          child: const Text('Ubah Fotor'),
-                        ),
-                      ),
-                      const SizedBox(width: MBGSizes.spaceBtwItems),
-
-                      // Simpan Perubahan Button
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            // Validate Form
-                            if (!formKey.currentState!.validate()) {
-                              return;
-                            }
-
-                            // Process the form data
-                            await dapurKaryawanController.updateKaryawan(
-                              karyawanId: karyawan.id,
-                              nama: karyawan.nama,
-                              posisi: karyawan.posisi,
-                              status: selectedStatus.value,
-                              jenisKelamin: selectedGender.value,
-                              foto: selectedImage.value,
-                            );
-                          },
-                          child: const Text('Simpan'),
-                        ),
-                      ),
-                    ],
+                const SizedBox(height: MBGSizes.spaceBtwSections * 2),
+              ],
+            ),
+          ),
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(MBGSizes.spaceBtwItems),
+          child: Obx(
+            () => Row(
+              children: [
+                // Ubah Gambar Button
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed:
+                        (selectedImage.value != null ||
+                            (karyawan.fotoUrl != null &&
+                                karyawan.fotoUrl!.isNotEmpty))
+                        ? () => MBGImagePickerBottomSheet.show(context: context)
+                        : null,
+                    child: const Text('Ubah Foto'),
                   ),
                 ),
-                const SizedBox(height: MBGSizes.spaceBtwSections * 2),
+                const SizedBox(width: MBGSizes.spaceBtwItems),
+
+                // Simpan Perubahan Button
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      // Validate Form
+                      if (!formKey.currentState!.validate()) {
+                        return;
+                      }
+
+                      // Process the form data
+                      await dapurKaryawanController.updateKaryawan(
+                        karyawanId: karyawan.id,
+                        nama: karyawan.nama,
+                        posisi: karyawan.posisi,
+                        status: selectedStatus.value,
+                        jenisKelamin: selectedGender.value,
+                        foto: selectedImage.value,
+                      );
+                    },
+                    child: const Text('Simpan'),
+                  ),
+                ),
               ],
             ),
           ),

@@ -18,7 +18,7 @@ class DapurKaryawanDelete extends StatelessWidget {
     return AlertDialog(
       title: const Text('Hapus Karyawan'),
       content: Text(
-        'Apakah Anda yakin ingin menghapus ${karyawan.nama}? Tindakan ini tidak dapat dibatalkan.',
+        'Apakah Anda yakin ingin menghapus "${karyawan.nama}"? Tindakan ini tidak dapat dibatalkan.',
       ),
       actions: [
         Row(

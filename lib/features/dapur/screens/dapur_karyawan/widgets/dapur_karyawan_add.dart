@@ -13,6 +13,7 @@ import 'package:mbg_mobile_app/features/dapur/controllers/dapur_karyawan_control
 import 'package:mbg_mobile_app/features/dapur/models/dapur_karyawan_model.dart';
 import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
+import 'package:mbg_mobile_app/utils/helpers/helper_functions.dart';
 import 'package:mbg_mobile_app/utils/popups/loaders.dart';
 import 'package:mbg_mobile_app/utils/validators/validation.dart';
 
@@ -38,6 +39,8 @@ class DapurKaryawanAdd extends StatelessWidget {
 
     // Form Key
     final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+    final bool isDarkMode = MBGHelperFunctions.isDarkMode(context);
 
     return Scaffold(
       appBar: MBGAppBar(showBackArrow: true),
@@ -168,8 +171,14 @@ class DapurKaryawanAdd extends StatelessWidget {
                           borderRadius: BorderRadius.circular(
                             MBGSizes.borderRadiusMd,
                           ),
-                          border: Border.all(color: MBGColors.borderPrimary),
-                          color: MBGColors.lightContainer,
+                          border: Border.all(
+                            color: isDarkMode
+                                ? MBGColors.borderSecondary
+                                : MBGColors.borderPrimary,
+                          ),
+                          color: isDarkMode
+                              ? MBGColors.darkContainer
+                              : MBGColors.lightContainer,
                         ),
                         child: selectedImage.value != null
                             ? ClipRRect(
@@ -203,58 +212,60 @@ class DapurKaryawanAdd extends StatelessWidget {
                 ),
                 const SizedBox(height: MBGSizes.spaceBtwSections),
 
-                // Action Buttons
-                Obx(
-                  () => Row(
-                    children: [
-                      // Ubah Foto Button
-                      Expanded(
-                        child: OutlinedButton(
-                          onPressed: selectedImage.value != null
-                              ? () => MBGImagePickerBottomSheet.show(
-                                  context: context,
-                                )
-                              : null,
-                          child: const Text('Ubah Foto'),
-                        ),
-                      ),
-                      const SizedBox(width: MBGSizes.spaceBtwItems),
-
-                      // Submit Button
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            // Validate Form
-                            if (!formKey.currentState!.validate()) {
-                              return;
-                            }
-
-                            // Validate Image
-                            if (selectedImage.value == null) {
-                              MBGLoaders.errorSnackBar(
-                                title: 'Foto Karyawan Kosong',
-                                message:
-                                    'Silakan unggah foto karyawan terlebih dahulu',
-                              );
-                              return;
-                            }
-
-                            // Process the form data
-                            await dapurKaryawanController.addKaryawan(
-                              nama: nameController.text.trim(),
-                              posisi: positionController.text.trim(),
-                              jenisKelamin: selectedJenisKelamin.value!,
-                              umur: int.tryParse(ageController.text.trim())!,
-                              foto: selectedImage.value!,
-                            );
-                          },
-                          child: const Text('Kirim'),
-                        ),
-                      ),
-                    ],
+                const SizedBox(height: MBGSizes.spaceBtwSections * 2),
+              ],
+            ),
+          ),
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(MBGSizes.spaceBtwItems),
+          child: Obx(
+            () => Row(
+              children: [
+                // Ubah Foto Button
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: selectedImage.value != null
+                        ? () => MBGImagePickerBottomSheet.show(context: context)
+                        : null,
+                    child: const Text('Ubah Foto'),
                   ),
                 ),
-                const SizedBox(height: MBGSizes.spaceBtwSections * 2),
+                const SizedBox(width: MBGSizes.spaceBtwItems),
+
+                // Submit Button
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      // Validate Form
+                      if (!formKey.currentState!.validate()) {
+                        return;
+                      }
+
+                      // Validate Image
+                      if (selectedImage.value == null) {
+                        MBGLoaders.errorSnackBar(
+                          title: 'Foto Karyawan Kosong',
+                          message:
+                              'Silakan unggah foto karyawan terlebih dahulu',
+                        );
+                        return;
+                      }
+
+                      // Process the form data
+                      await dapurKaryawanController.addKaryawan(
+                        nama: nameController.text.trim(),
+                        posisi: positionController.text.trim(),
+                        jenisKelamin: selectedJenisKelamin.value!,
+                        umur: int.tryParse(ageController.text.trim())!,
+                        foto: selectedImage.value!,
+                      );
+                    },
+                    child: const Text('Kirim'),
+                  ),
+                ),
               ],
             ),
           ),

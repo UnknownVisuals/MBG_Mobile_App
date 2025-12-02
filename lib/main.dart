@@ -20,7 +20,7 @@ import 'package:mbg_mobile_app/utils/theme/theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   await initializeDateFormatting('id_ID', null);
   await dotenv.load(fileName: ".env");
   await GetStorage.init();

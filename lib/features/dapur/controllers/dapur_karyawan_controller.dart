@@ -7,6 +7,7 @@ import 'package:mbg_mobile_app/features/authentication/controllers/user_controll
 import 'package:mbg_mobile_app/features/dapur/models/dapur_karyawan_model.dart';
 import 'package:mbg_mobile_app/utils/services/dapur_service.dart';
 import 'package:mbg_mobile_app/utils/popups/loaders.dart';
+import 'package:mbg_mobile_app/utils/helpers/loading_overlay.dart';
 
 class DapurKaryawanController extends GetxController {
   // Dependencies
@@ -84,6 +85,7 @@ class DapurKaryawanController extends GetxController {
   }) async {
     try {
       isLoading.value = true;
+      MBGLoadingOverlay.show();
 
       await _dapurService.createKaryawan(
         nama: nama,
@@ -94,6 +96,7 @@ class DapurKaryawanController extends GetxController {
         dapurId: dapurId,
       );
 
+      MBGLoadingOverlay.hide();
       Get.back();
 
       MBGLoaders.successSnackBar(
@@ -109,6 +112,7 @@ class DapurKaryawanController extends GetxController {
         await fetchKaryawan(dapurId: dapurId!);
       }
     } catch (e) {
+      MBGLoadingOverlay.hide();
       MBGLoaders.errorSnackBar(
         title: 'Gagal menambahkan karyawan',
         message: e.toString(),
@@ -132,6 +136,7 @@ class DapurKaryawanController extends GetxController {
   }) async {
     try {
       isLoading.value = true;
+      MBGLoadingOverlay.show();
 
       await _dapurService.updateKaryawan(
         karyawanId: karyawanId,
@@ -143,6 +148,7 @@ class DapurKaryawanController extends GetxController {
         foto: foto,
       );
 
+      MBGLoadingOverlay.hide();
       Get.back();
 
       MBGLoaders.successSnackBar(
@@ -158,6 +164,7 @@ class DapurKaryawanController extends GetxController {
         await fetchKaryawan(dapurId: dapurId!);
       }
     } catch (e) {
+      MBGLoadingOverlay.hide();
       MBGLoaders.errorSnackBar(
         title: 'Gagal memperbarui karyawan',
         message: e.toString(),
@@ -173,12 +180,15 @@ class DapurKaryawanController extends GetxController {
   Future<void> deleteKaryawan({required String karyawanId}) async {
     try {
       isLoading.value = true;
+      MBGLoadingOverlay.show();
 
       await _dapurService.deleteKaryawan(karyawanId);
 
       if (dapurId != null) {
         await fetchKaryawan(dapurId: dapurId!);
       }
+
+      MBGLoadingOverlay.hide();
 
       if (Get.isDialogOpen ?? false) {
         Get.back();
@@ -189,6 +199,7 @@ class DapurKaryawanController extends GetxController {
         message: 'Karyawan berhasil dihapus dari dapur.',
       );
     } catch (e) {
+      MBGLoadingOverlay.hide();
       MBGLoaders.errorSnackBar(
         title: 'Gagal menghapus karyawan',
         message: e.toString(),

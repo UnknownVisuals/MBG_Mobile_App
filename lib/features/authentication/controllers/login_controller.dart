@@ -6,6 +6,7 @@ import 'package:mbg_mobile_app/features/driver/screens/driver.dart';
 import 'package:mbg_mobile_app/features/sekolah/screens/sekolah.dart';
 import 'package:mbg_mobile_app/utils/http/http_client.dart';
 import 'package:mbg_mobile_app/utils/popups/loaders.dart';
+import 'package:mbg_mobile_app/utils/helpers/loading_overlay.dart';
 
 class LoginController extends GetxController {
   // Dependencies
@@ -29,9 +30,11 @@ class LoginController extends GetxController {
 
   /// Perform login action
   Future<void> login({required String email, required String password}) async {
-    isLoading.value = true;
-
     try {
+      // Show loading overlay
+      isLoading.value = true;
+      MBGLoadingOverlay.show();
+
       // Create login model
       final LoginModel loginModel = LoginModel(
         email: email,
@@ -64,6 +67,9 @@ class LoginController extends GetxController {
           // Navigate based on user role
           final userRole = userController.userModel.value?.role;
 
+          // Hide loading overlay before navigation
+          MBGLoadingOverlay.hide();
+
           if (userRole == 'PIC_DAPUR') {
             Get.offAll(() => const DapurScreen());
           } else if (userRole == 'DRIVER') {
@@ -79,18 +85,21 @@ class LoginController extends GetxController {
                 'Selamat datang, ${userController.userModel.value?.name ?? 'Pengguna'}!',
           );
         } else {
+          MBGLoadingOverlay.hide();
           MBGLoaders.errorSnackBar(
             title: 'Login Gagal',
             message: responseData['message'],
           );
         }
       } else {
+        MBGLoadingOverlay.hide();
         MBGLoaders.errorSnackBar(
           title: 'Login Gagal',
           message: loginResponse.body['message'],
         );
       }
     } catch (e) {
+      MBGLoadingOverlay.hide();
       MBGLoaders.errorSnackBar(title: 'Login Gagal', message: e.toString());
     } finally {
       isLoading.value = false;

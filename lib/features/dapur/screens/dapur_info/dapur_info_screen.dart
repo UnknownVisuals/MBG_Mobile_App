@@ -94,6 +94,7 @@ class DapurInfoScreen extends StatelessWidget {
                 value: dapur?.createdAt != null
                     ? DateFormat(
                         'dd MMMM yyyy, HH:mm',
+                        'id_ID',
                       ).format(dapur!.createdAt!.toLocal())
                     : '-',
               ),
@@ -102,6 +103,7 @@ class DapurInfoScreen extends StatelessWidget {
                 value: dapur?.updatedAt != null
                     ? DateFormat(
                         'dd MMMM yyyy, HH:mm',
+                        'id_ID',
                       ).format(dapur!.updatedAt!.toLocal())
                     : '-',
               ),
@@ -133,7 +135,7 @@ class DapurInfoScreen extends StatelessWidget {
               DapurInfoHorizontalCardList<PICDapurSummary>(
                 items: picDapur,
                 emptyMessage: 'Tidak ada PIC yang ditugaskan',
-                listHeight: MBGResponsive.autoScaleHeight(context, 215),
+                listHeight: MBGResponsive.autoScaleHeight(context, 180),
                 itemBuilder: (context, item, index) =>
                     DapurInfoPicCard(pic: item),
               ),
@@ -151,7 +153,7 @@ class DapurInfoScreen extends StatelessWidget {
               DapurInfoHorizontalCardList<DriversSummary>(
                 items: drivers,
                 emptyMessage: 'Tidak ada driver yang ditugaskan',
-                listHeight: MBGResponsive.autoScaleHeight(context, 215),
+                listHeight: MBGResponsive.autoScaleHeight(context, 170),
                 itemBuilder: (context, item, index) =>
                     DapurInfoDriverCard(driver: item),
               ),
@@ -169,7 +171,7 @@ class DapurInfoScreen extends StatelessWidget {
               DapurInfoHorizontalCardList<KaryawanSummary>(
                 items: karyawan,
                 emptyMessage: 'Tidak ada karyawan terdaftar',
-                listHeight: MBGResponsive.autoScaleHeight(context, 215),
+                listHeight: MBGResponsive.autoScaleHeight(context, 190),
                 itemBuilder: (context, item, index) =>
                     DapurInfoKaryawanCard(karyawan: item),
               ),
@@ -187,7 +189,7 @@ class DapurInfoScreen extends StatelessWidget {
               DapurInfoHorizontalCardList<StockSummary>(
                 items: stokBahanBaku,
                 emptyMessage: 'Tidak ada stok bahan baku',
-                listHeight: MBGResponsive.autoScaleHeight(context, 215),
+                listHeight: MBGResponsive.autoScaleHeight(context, 190),
                 itemBuilder: (context, item, index) =>
                     DapurInfoStokCard(stok: item),
               ),
@@ -205,7 +207,7 @@ class DapurInfoScreen extends StatelessWidget {
               DapurInfoHorizontalCardList<SekolahDilayaniSummary>(
                 items: sekolahDilayani,
                 emptyMessage: 'Tidak ada sekolah yang dilayani',
-                listHeight: MBGResponsive.autoScaleHeight(context, 215),
+                listHeight: MBGResponsive.autoScaleHeight(context, 190),
                 itemBuilder: (context, item, index) =>
                     DapurInfoSekolahCard(sekolahDilayani: item),
               ),
