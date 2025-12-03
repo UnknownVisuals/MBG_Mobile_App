@@ -5,7 +5,6 @@ import 'package:mbg_mobile_app/utils/constants/sizes.dart';
 
 import '../../../models/sekolah_siswa_model.dart';
 
-/// Card widget displaying student information
 class SekolahSiswaCardWidget extends StatelessWidget {
   final SekolahSiswaModel siswa;
   final VoidCallback onTap;
@@ -51,25 +50,30 @@ class SekolahSiswaCardWidget extends StatelessWidget {
   }
 
   Widget _buildInfoPill(IconData icon, String label, BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: MBGSizes.sm,
         vertical: MBGSizes.xs,
       ),
       decoration: BoxDecoration(
-        color: MBGColors.light.withValues(alpha: 0.4),
+        color: isDark
+            ? MBGColors.darkGrey.withValues(alpha: 0.4)
+            : MBGColors.lightGrey.withValues(alpha: 0.4),
         borderRadius: BorderRadius.circular(MBGSizes.cardRadiusSm),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: MBGSizes.iconSm, color: MBGColors.textSecondary),
+          Icon(icon, size: MBGSizes.iconSm, color: theme.colorScheme.onSurface),
           const SizedBox(width: MBGSizes.xs),
           Text(
             label,
-            style: Theme.of(
-              context,
-            ).textTheme.bodySmall?.copyWith(color: MBGColors.textSecondary),
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.onSurface,
+            ),
           ),
         ],
       ),
@@ -78,6 +82,9 @@ class SekolahSiswaCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     final displayName = _safeText(siswa.nama, fallback: 'Nama tidak tersedia');
     final nisValue = _safeText(siswa.nis, fallback: 'N/A');
     final imtValue = siswa.imt != null ? siswa.imt!.toStringAsFixed(1) : 'N/A';
@@ -91,17 +98,15 @@ class SekolahSiswaCardWidget extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 6),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [MBGColors.white, MBGColors.primaryBackground],
-        ),
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(MBGSizes.cardRadiusLg),
         boxShadow: [
           BoxShadow(
-            color: MBGColors.primary.withValues(alpha: 0.15),
-            blurRadius: 18,
-            offset: const Offset(0, 8),
+            color: isDark
+                ? Colors.black.withOpacity(0.4)
+                : MBGColors.primary.withValues(alpha: 0.1),
+            blurRadius: isDark ? 10 : 18,
+            offset: const Offset(0, 6),
           ),
         ],
       ),
@@ -113,77 +118,75 @@ class SekolahSiswaCardWidget extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              /// === HEADER ===
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  /// Avatar
                   Container(
                     padding: const EdgeInsets.all(4),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          MBGColors.primary.withValues(alpha: 0.35),
-                          MBGColors.primary.withValues(alpha: 0.05),
-                        ],
-                      ),
+                      color: isDark
+                          ? MBGColors.darkGrey.withOpacity(0.4)
+                          : MBGColors.lightGrey.withOpacity(0.3),
                     ),
                     child: CircleAvatar(
                       radius: 28,
-                      backgroundColor: MBGColors.lightContainer,
+                      backgroundColor: isDark
+                          ? MBGColors.darkGrey
+                          : MBGColors.lightContainer,
                       backgroundImage: siswa.fotoUrl != null
                           ? NetworkImage(siswa.fotoUrl!)
                           : null,
                       child: siswa.fotoUrl == null
                           ? Text(
                               displayName.characters.first,
-                              style: const TextStyle(fontSize: 24),
+                              style: TextStyle(
+                                fontSize: 24,
+                                color: theme.colorScheme.onSurface,
+                              ),
                             )
                           : null,
                     ),
                   ),
+
                   const SizedBox(width: MBGSizes.md),
+
+                  /// Nama + Edit/Delete
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        /// Nama + Icons
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Expanded(
                               child: Text(
                                 displayName,
-                                style: Theme.of(context).textTheme.titleMedium
-                                    ?.copyWith(fontWeight: FontWeight.bold),
+                                style: theme.textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: theme.colorScheme.onSurface,
+                                ),
                               ),
                             ),
+
                             Row(
-                              mainAxisSize: MainAxisSize.min,
                               children: [
                                 IconButton(
                                   onPressed: onTap,
-                                  padding: const EdgeInsets.all(4),
-                                  constraints: const BoxConstraints(
-                                    minHeight: 32,
-                                    minWidth: 32,
-                                  ),
-                                  icon: const Icon(
+                                  icon: Icon(
                                     Iconsax.edit,
-                                    color: MBGColors.primary,
+                                    color: theme.colorScheme.primary,
                                   ),
                                   tooltip: 'Edit siswa',
                                 ),
                                 IconButton(
                                   onPressed: onDelete,
-                                  padding: const EdgeInsets.all(4),
-                                  constraints: const BoxConstraints(
-                                    minHeight: 32,
-                                    minWidth: 32,
-                                  ),
-                                  icon: const Icon(
+                                  icon: Icon(
                                     Iconsax.trash,
-                                    color: MBGColors.error,
+                                    color: theme.colorScheme.error,
                                   ),
                                   tooltip: 'Hapus siswa',
                                 ),
@@ -191,38 +194,46 @@ class SekolahSiswaCardWidget extends StatelessWidget {
                             ),
                           ],
                         ),
+
                         const SizedBox(height: MBGSizes.xs),
+
+                        /// NIS
                         Row(
                           children: [
                             Icon(
                               Iconsax.hashtag,
                               size: MBGSizes.iconSm,
-                              color: MBGColors.textSecondary,
+                              color: theme.colorScheme.onSurfaceVariant,
                             ),
                             const SizedBox(width: MBGSizes.xs),
                             Text(
                               'NIS: $nisValue',
-                              style: Theme.of(context).textTheme.bodySmall
-                                  ?.copyWith(color: MBGColors.textSecondary),
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: theme.colorScheme.onSurfaceVariant,
+                              ),
                             ),
                           ],
                         ),
+
                         const SizedBox(height: MBGSizes.xs),
+
+                        /// Kelas
                         Row(
                           children: [
                             Icon(
                               Iconsax.book_square,
                               size: MBGSizes.iconSm,
-                              color: MBGColors.textSecondary,
+                              color: theme.colorScheme.onSurfaceVariant,
                             ),
                             const SizedBox(width: MBGSizes.xs),
                             Expanded(
                               child: Text(
                                 kelasLabel,
-                                style: Theme.of(context).textTheme.bodySmall
-                                    ?.copyWith(color: MBGColors.textSecondary),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: theme.colorScheme.onSurfaceVariant,
+                                ),
                               ),
                             ),
                           ],
@@ -232,7 +243,10 @@ class SekolahSiswaCardWidget extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: MBGSizes.xs),
+
+              const SizedBox(height: MBGSizes.sm),
+
+              /// === PILLS ROW ===
               Wrap(
                 spacing: MBGSizes.sm,
                 runSpacing: MBGSizes.xs,
@@ -245,31 +259,29 @@ class SekolahSiswaCardWidget extends StatelessWidget {
                     context,
                   ),
                   _buildInfoPill(Iconsax.calendar, '$umur tahun', context),
+
+                  /// Status gizi pill
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: MBGSizes.sm,
                       vertical: MBGSizes.xs,
                     ),
                     decoration: BoxDecoration(
-                      color: statusColor.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(
-                        MBGSizes.cardRadiusSm,
-                      ),
+                      color: statusColor.withOpacity(0.15),
+                      borderRadius:
+                          BorderRadius.circular(MBGSizes.cardRadiusSm),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(
-                          Iconsax.heart,
-                          size: MBGSizes.iconSm,
-                          color: statusColor,
-                        ),
+                        Icon(Iconsax.heart,
+                            size: MBGSizes.iconSm, color: statusColor),
                         const SizedBox(width: MBGSizes.xs),
                         Text(
                           _getStatusGiziLabel(siswa.statusGizi),
-                          style: Theme.of(
-                            context,
-                          ).textTheme.bodySmall?.copyWith(color: statusColor),
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: statusColor,
+                          ),
                         ),
                       ],
                     ),

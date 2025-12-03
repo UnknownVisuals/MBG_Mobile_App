@@ -110,7 +110,7 @@ class SekolahDashboardController extends GetxController {
       final menus = await _sekolahService.getMenuBySekolah(id);
       menuList.assignAll(menus);
     } catch (e) {
-      debugPrint('Error fetching menu: $e');
+      debugPrint('Gagal mengambil data menu: $e');
     }
   }
 

@@ -33,7 +33,7 @@ class DapurMenuPlanningHeader extends StatelessWidget {
                   ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  'Manage weekly menu plans',
+                  'Kelola rencana menu mingguan',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: MBGColors.textSecondary,
                   ),

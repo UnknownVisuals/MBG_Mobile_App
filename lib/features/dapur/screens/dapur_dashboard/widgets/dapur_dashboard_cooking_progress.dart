@@ -38,7 +38,7 @@ class DapurDashboardCookingProgress extends StatelessWidget {
                 const Icon(Iconsax.timer_1, color: MBGColors.primary),
                 const SizedBox(width: MBGSizes.spaceBtwItems / 2),
                 Text(
-                  'Today\'s Cooking Progress',
+                  'Progres Memasak Hari Ini',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -82,13 +82,13 @@ class DapurDashboardCookingProgress extends StatelessWidget {
             const SizedBox(height: MBGSizes.spaceBtwItems),
 
             Text(
-              '✓ $totalMenus menus today',
+              '✓ $totalMenus menu hari ini',
               style: Theme.of(
                 context,
               ).textTheme.bodySmall?.copyWith(color: MBGColors.textSecondary),
             ),
             Text(
-              '✓ $completed checkpoints completed',
+              '✓ $completed checkpoints selesai',
               style: Theme.of(
                 context,
               ).textTheme.bodySmall?.copyWith(color: MBGColors.textSecondary),

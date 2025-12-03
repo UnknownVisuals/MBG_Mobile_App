@@ -18,10 +18,19 @@ class DapurInfoHorizontalCardList<T> extends StatelessWidget {
   final Widget Function(BuildContext context, T item, int index) itemBuilder;
   final String emptyMessage;
 
+  /// Fungsi deteksi tablet (tanpa responsive.dart)
+  bool _isTablet(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    return width > 600; // standard threshold tablet
+  }
+
   @override
   Widget build(BuildContext context) {
     final bool isDarkMode = MBGHelperFunctions.isDarkMode(context);
 
+    // ==============================
+    // EMPTY STATE
+    // ==============================
     if (items.isEmpty) {
       return Container(
         decoration: BoxDecoration(
@@ -47,8 +56,8 @@ class DapurInfoHorizontalCardList<T> extends StatelessWidget {
               Text(
                 emptyMessage,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: MBGColors.textSecondary,
-                ),
+                      color: MBGColors.textSecondary,
+                    ),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -57,28 +66,31 @@ class DapurInfoHorizontalCardList<T> extends StatelessWidget {
       );
     }
 
-    return SizedBox(
-      height: listHeight,
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          return ListView.separated(
-            scrollDirection: Axis.horizontal,
-            itemCount: items.length,
-            separatorBuilder: (_, _) =>
-                const SizedBox(width: MBGSizes.spaceBtwItems),
-            itemBuilder: (context, index) {
-              final T item = items[index];
-              final Widget child = itemBuilder(context, item, index);
+    // ==============================
+    // FIX OVERFLOW untuk tablet
+    // ==============================
+    final double adaptiveHeight =
+        _isTablet(context) ? listHeight + 40 : listHeight;
 
-              return ConstrainedBox(
-                constraints: BoxConstraints(
-                  // ⛔ Mencegah card lebih tinggi dari listHeight
-                  maxHeight: constraints.maxHeight,
-                ),
-                child: child,
-              );
-            },
-            padding: const EdgeInsets.only(left: MBGSizes.defaultSpace),
+    return SizedBox(
+      height: adaptiveHeight,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.only(left: MBGSizes.defaultSpace),
+        itemCount: items.length,
+        separatorBuilder: (_, __) =>
+            const SizedBox(width: MBGSizes.spaceBtwItems),
+        itemBuilder: (context, index) {
+          final T item = items[index];
+          final Widget child = itemBuilder(context, item, index);
+
+          return IntrinsicHeight(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: adaptiveHeight - 20, // fleksibel untuk tablet
+              ),
+              child: child,
+            ),
           );
         },
       ),

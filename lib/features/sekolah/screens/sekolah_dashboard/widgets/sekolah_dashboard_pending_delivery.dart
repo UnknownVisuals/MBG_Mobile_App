@@ -61,7 +61,7 @@ class SekolahDashboardPendingDelivery extends StatelessWidget {
                 ),
                 const SizedBox(width: MBGSizes.spaceBtwItems),
                 Text(
-                  'Pending Deliveries',
+                  'Menunggu Driver',
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w700,
                     color: color.onSurface, // adaptif

@@ -408,7 +408,7 @@ class DapurService extends GetxService {
 
     if (!_isSuccess(response)) {
       throw Exception(
-        _responseMessage(response, 'Gagal memperbarui menu planning'),
+        _responseMessage(response, 'Gagal memperbarui '),
       );
     }
 

@@ -26,9 +26,9 @@ class DapurDashboardTodayMenu extends StatelessWidget {
           MBGSectionHeading(
             showLeadingIcon: true,
             leadingIcon: Iconsax.note,
-            title: "Today's Menus",
+            title: "Menu Hari Ini",
             showActionButton: true,
-            actionButtonTitle: '$totalMenus menus',
+            actionButtonTitle: '$totalMenus menu',
           ),
 
           const SizedBox(height: MBGSizes.spaceBtwItems / 2),
@@ -55,7 +55,7 @@ class DapurDashboardTodayMenu extends StatelessWidget {
                     ),
                     const SizedBox(height: MBGSizes.spaceBtwItems),
                     Text(
-                      'No menus scheduled for today',
+                      'Tidak ada menu yang dijadwalkan hari ini',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: MBGColors.textSecondary,
                       ),

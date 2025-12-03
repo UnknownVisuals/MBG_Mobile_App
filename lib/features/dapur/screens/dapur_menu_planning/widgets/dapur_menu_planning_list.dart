@@ -94,7 +94,7 @@ class DapurMenuPlanningList extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Week ${menuPlan.mingguanKe}',
+                        'Minggu ${menuPlan.mingguanKe}',
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: isSelected ? MBGColors.primary : null,

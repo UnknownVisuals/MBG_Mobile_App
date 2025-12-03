@@ -26,7 +26,7 @@ class DapurDashboardPendingDelivery extends StatelessWidget {
           MBGSectionHeading(
             showLeadingIcon: true,
             leadingIcon: Iconsax.truck,
-            title: 'Pending Deliveries',
+            title: 'Menunggu Pengiriman',
             showActionButton: true,
             actionButtonTitle: '$pendingCount pending',
           ),
@@ -57,7 +57,7 @@ class DapurDashboardPendingDelivery extends StatelessWidget {
                     const SizedBox(height: MBGSizes.spaceBtwItems),
 
                     Text(
-                      'All deliveries completed',
+                      'Seluruh pengantaran telah selesai',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: MBGColors.textSecondary,
                       ),

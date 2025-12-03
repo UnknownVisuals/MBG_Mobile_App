@@ -97,7 +97,7 @@ class DapurCheckpointController extends GetxController {
       case 'SELESAI_MEMASAK':
         return 'Selesai Memasak';
       case 'SELESAI_PACKING':
-        return 'Selesai Packing';
+        return 'Selesai Dikemas';
       case 'SCHOOL_TO_DRIVER_RETURN':
         return 'Sekolah ke Driver (Pulang)';
       case 'DRIVER_TO_KITCHEN':

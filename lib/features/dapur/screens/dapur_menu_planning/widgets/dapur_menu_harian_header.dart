@@ -38,7 +38,7 @@ class DapurMenuHarianHeader extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Week ${selectedPlanning.mingguanKe} Menu Planning',
+                'Minggu ${selectedPlanning.mingguanKe} Menu Planning',
                 style: textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),

@@ -52,7 +52,7 @@ class DriverDashboardQuickActionCard extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'Scan delivery QR to update status',
+                  'Scan delivery QR untuk memperbarui status',
                   style: Theme.of(
                     context,
                   ).textTheme.bodyMedium?.copyWith(color: MBGColors.textWhite),
