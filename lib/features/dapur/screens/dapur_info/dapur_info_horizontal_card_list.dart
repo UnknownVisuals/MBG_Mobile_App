@@ -56,8 +56,8 @@ class DapurInfoHorizontalCardList<T> extends StatelessWidget {
               Text(
                 emptyMessage,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: MBGColors.textSecondary,
-                    ),
+                  color: MBGColors.textSecondary,
+                ),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -69,8 +69,9 @@ class DapurInfoHorizontalCardList<T> extends StatelessWidget {
     // ==============================
     // FIX OVERFLOW untuk tablet
     // ==============================
-    final double adaptiveHeight =
-        _isTablet(context) ? listHeight + 40 : listHeight;
+    final double adaptiveHeight = _isTablet(context)
+        ? listHeight + 40
+        : listHeight;
 
     return SizedBox(
       height: adaptiveHeight,
@@ -78,7 +79,7 @@ class DapurInfoHorizontalCardList<T> extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.only(left: MBGSizes.defaultSpace),
         itemCount: items.length,
-        separatorBuilder: (_, __) =>
+        separatorBuilder: (_, _) =>
             const SizedBox(width: MBGSizes.spaceBtwItems),
         itemBuilder: (context, index) {
           final T item = items[index];

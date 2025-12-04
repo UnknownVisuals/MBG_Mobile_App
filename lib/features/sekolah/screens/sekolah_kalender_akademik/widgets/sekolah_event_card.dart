@@ -1,153 +1,115 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
-
+import 'package:mbg_mobile_app/features/sekolah/controllers/sekolah_kalender_akademik_controller.dart';
 import 'package:mbg_mobile_app/features/sekolah/models/sekolah_kalender_akademik_model.dart';
+import 'package:mbg_mobile_app/features/sekolah/screens/sekolah_kalender_akademik/widgets/sekolah_kalender_akademik_delete.dart';
+import 'package:mbg_mobile_app/features/sekolah/screens/sekolah_kalender_akademik/widgets/sekolah_kalender_akademik_edit.dart';
 import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
+import 'package:mbg_mobile_app/utils/helpers/helper_functions.dart';
 
 class SekolahEventCard extends StatelessWidget {
   const SekolahEventCard({super.key, required this.event});
 
   final SekolahKalenderAkademikModel event;
 
-  String _buildDateLabel() {
-    final start = event.tanggalMulai;
-    final end = event.tanggalSelesai;
-    if (start == null) return 'Tanggal tidak tersedia';
-    final formatter = DateFormat('dd MMM yyyy', 'id_ID');
-    if (end != null && !_isSameDay(start, end)) {
-      return '${formatter.format(start)} • ${formatter.format(end)}';
-    }
-    return formatter.format(start);
-  }
-
-  bool _isSameDay(DateTime date1, DateTime date2) {
-    return date1.year == date2.year &&
-        date1.month == date2.month &&
-        date1.day == date2.day;
-  }
-
   @override
   Widget build(BuildContext context) {
-    final description = event.deskripsi?.trim();
-    final title = description?.isNotEmpty == true
-        ? description
-        : 'Kalender Akademik';
-    final dateLabel = _buildDateLabel();
-    final sekolahBadge = event.sekolahId.length > 5
-        ? event.sekolahId.substring(0, 5)
-        : event.sekolahId;
-    final eventIdentifier = event.id.length > 6
-        ? event.id.substring(0, 6)
-        : event.id;
+    final controller = Get.find<SekolahKalenderAkademikController>();
+    final dark = MBGHelperFunctions.isDarkMode(context);
+    final startDate = event.tanggalMulai;
+    final endDate = event.tanggalSelesai;
+
+    String dateString;
+    if (startDate != null && endDate != null && startDate != endDate) {
+      dateString =
+          '${DateFormat('dd MMM yyyy', 'id_ID').format(startDate)} - ${DateFormat('dd MMM yyyy', 'id_ID').format(endDate)}';
+    } else if (startDate != null) {
+      dateString = DateFormat('dd MMMM yyyy', 'id_ID').format(startDate);
+    } else {
+      dateString = '-';
+    }
 
     return Container(
+      padding: const EdgeInsets.all(MBGSizes.md),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [MBGColors.primary, MBGColors.primary.withValues(alpha: 0.3)],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ),
+        color: dark ? MBGColors.dark : MBGColors.white,
         borderRadius: BorderRadius.circular(MBGSizes.cardRadiusMd),
+        border: Border.all(color: dark ? MBGColors.darkerGrey : MBGColors.grey),
         boxShadow: [
-          BoxShadow(
-            color: MBGColors.dark.withValues(alpha: 0.1),
-            blurRadius: 12,
-            offset: const Offset(0, 6),
+          if (!dark)
+            BoxShadow(
+              color: MBGColors.black.withValues(alpha: 0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(MBGSizes.sm),
+            decoration: BoxDecoration(
+              color: MBGColors.primary.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(MBGSizes.cardRadiusSm),
+            ),
+            child: const Icon(
+              Iconsax.calendar_1,
+              color: MBGColors.primary,
+              size: 24,
+            ),
+          ),
+          const SizedBox(width: MBGSizes.spaceBtwItems),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  event.deskripsi ?? 'Tidak ada deskripsi',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: dark ? MBGColors.white : MBGColors.textPrimary,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: MBGSizes.xs),
+                Text(
+                  dateString,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: dark ? MBGColors.grey : MBGColors.darkGrey,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              IconButton(
+                onPressed: () =>
+                    Get.to(() => SekolahKalenderAkademikEdit(event: event)),
+                icon: const Icon(Iconsax.edit, color: MBGColors.primary),
+                tooltip: 'Edit',
+              ),
+              IconButton(
+                onPressed: () async {
+                  final confirmed = await Get.dialog<bool>(
+                    SekolahKalenderAkademikDelete(event: event),
+                  );
+                  if (confirmed == true) {
+                    controller.deleteEvent(event.id);
+                  }
+                },
+                icon: const Icon(Iconsax.trash, color: MBGColors.error),
+                tooltip: 'Hapus',
+              ),
+            ],
           ),
         ],
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(MBGSizes.sm),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildIconCircle(),
-                const SizedBox(width: MBGSizes.sm),
-                Expanded(child: _buildTitle(context, title!, sekolahBadge)),
-              ],
-            ),
-            const SizedBox(height: MBGSizes.sm),
-            _buildInfoRow(icon: Iconsax.calendar_circle, label: dateLabel),
-            const SizedBox(height: MBGSizes.xs),
-            _buildInfoRow(
-              icon: Iconsax.tag_2,
-              label: 'Event ID: $eventIdentifier',
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildIconCircle() {
-    return Container(
-      padding: const EdgeInsets.all(MBGSizes.xs),
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: MBGColors.primary.withValues(alpha: 0.15),
-      ),
-      child: Icon(
-        Iconsax.calendar_tick,
-        color: MBGColors.primary,
-        size: MBGSizes.iconMd,
-      ),
-    );
-  }
-
-  Widget _buildTitle(BuildContext context, String title, String badge) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
-          child: Text(
-            title,
-            style: Theme.of(
-              context,
-            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
-          ),
-        ),
-        const SizedBox(width: MBGSizes.xs),
-        Container(
-          padding: const EdgeInsets.symmetric(
-            vertical: MBGSizes.xs,
-            horizontal: MBGSizes.sm,
-          ),
-          decoration: BoxDecoration(
-            color: MBGColors.primary.withValues(alpha: 0.18),
-            borderRadius: BorderRadius.circular(MBGSizes.cardRadiusSm),
-          ),
-          child: Text(
-            badge,
-            style: Theme.of(
-              context,
-            ).textTheme.bodySmall?.copyWith(color: MBGColors.primary),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildInfoRow({required IconData icon, required String label}) {
-    return Row(
-      children: [
-        Icon(icon, size: MBGSizes.iconSm, color: MBGColors.textSecondary),
-        const SizedBox(width: MBGSizes.xs),
-        Expanded(
-          child: Text(
-            label,
-            style: TextStyle(
-              color: MBGColors.textSecondary,
-              fontSize: MBGSizes.sm,
-            ),
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-      ],
     );
   }
 }

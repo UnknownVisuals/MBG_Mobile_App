@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
-import 'package:mbg_mobile_app/common/widgets/image_preview_dialog.dart';
+
 import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
 import 'package:mbg_mobile_app/utils/helpers/helper_functions.dart';
@@ -36,20 +36,15 @@ class SekolahDeliveryCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    delivery.sekolah.nama,
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                _buildStatusChip(),
-              ],
+            Text(
+              delivery.sekolah.nama,
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
             ),
-            const SizedBox(height: MBGSizes.spaceBtwItems / 2),
+            const SizedBox(height: MBGSizes.sm),
+            _buildStatusChip(),
+            const SizedBox(height: MBGSizes.spaceBtwItems),
             if (delivery.driver != null)
               Row(
                 children: [
@@ -119,34 +114,19 @@ class SekolahDeliveryCard extends StatelessWidget {
                 ],
               ),
             ],
-            const SizedBox(height: MBGSizes.spaceBtwItems),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: delivery.qrCodeUrl.isEmpty
-                        ? null
-                        : () {
-                            MBGImagePreviewDialog.showData(
-                              context: context,
-                              imageData: delivery.qrCodeUrl,
-                            );
-                          },
-                    icon: const Icon(Iconsax.scan_barcode),
-                    label: const Text('Lihat QR'),
-                  ),
-                ),
-                const SizedBox(width: MBGSizes.spaceBtwItems),
-                Expanded(
-                  child: Text(
-                    delivery.driver?.nomorKendaraan ??
-                        'Nomor kendaraan belum tersedia',
+            if (delivery.driver?.nomorKendaraan != null) ...[
+              const SizedBox(height: MBGSizes.spaceBtwItems / 2),
+              Row(
+                children: [
+                  const Icon(Iconsax.car, size: MBGSizes.iconSm),
+                  const SizedBox(width: MBGSizes.xs),
+                  Text(
+                    delivery.driver!.nomorKendaraan!,
                     style: theme.textTheme.bodySmall,
-                    textAlign: TextAlign.center,
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
+            ],
           ],
         ),
       ),

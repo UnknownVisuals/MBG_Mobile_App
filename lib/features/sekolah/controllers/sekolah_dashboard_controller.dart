@@ -7,6 +7,7 @@ import 'package:mbg_mobile_app/features/sekolah/controllers/sekolah_kelas_contro
 import 'package:mbg_mobile_app/features/sekolah/controllers/sekolah_siswa_controller.dart';
 import 'package:mbg_mobile_app/features/sekolah/models/sekolah_delivery_model.dart';
 import 'package:mbg_mobile_app/features/dapur/models/dapur_menu_planning_model.dart';
+import 'package:mbg_mobile_app/features/dapur/models/dapur_menu_harian_model.dart';
 import 'package:mbg_mobile_app/utils/services/sekolah_service.dart';
 
 class SekolahDashboardController extends GetxController {
@@ -31,6 +32,9 @@ class SekolahDashboardController extends GetxController {
   // Data
   final RxList<DapurMenuPlanningModel> menuList =
       <DapurMenuPlanningModel>[].obs;
+  final Rx<DapurMenuHarianModel?> todayMenuHarian = Rx<DapurMenuHarianModel?>(
+    null,
+  );
 
   DateTime get currentTime => _currentTime.value;
 
@@ -55,7 +59,7 @@ class SekolahDashboardController extends GetxController {
         .toList();
   }
 
-  DapurMenuPlanningModel? get todayMenu {
+  DapurMenuPlanningModel? get todayPlanning {
     final now = DateTime.now();
     try {
       return menuList.firstWhere((menu) {
@@ -64,8 +68,8 @@ class SekolahDashboardController extends GetxController {
           return false;
         }
 
-        final start = menu.tanggalMulai!;
-        final end = menu.tanggalSelesai!;
+        final start = menu.tanggalMulai!.toLocal();
+        final end = menu.tanggalSelesai!.toLocal();
 
         // Normalize dates to ignore time
         final today = DateTime(now.year, now.month, now.day);
@@ -109,8 +113,38 @@ class SekolahDashboardController extends GetxController {
     try {
       final menus = await _sekolahService.getMenuBySekolah(id);
       menuList.assignAll(menus);
+
+      // Fetch today's menu details
+      final planning = todayPlanning;
+      if (planning != null) {
+        final dailyMenus = await _sekolahService.getMenuHarianByPlanning(
+          planning.id,
+        );
+
+        final now = DateTime.now();
+        final today = DateTime(now.year, now.month, now.day);
+
+        try {
+          final todayMenu = dailyMenus.firstWhere((menu) {
+            if (menu.tanggal == null) return false;
+            final menuDateLocal = menu.tanggal!.toLocal();
+            final menuDate = DateTime(
+              menuDateLocal.year,
+              menuDateLocal.month,
+              menuDateLocal.day,
+            );
+            return menuDate.isAtSameMomentAs(today);
+          });
+          todayMenuHarian.value = todayMenu;
+        } catch (_) {
+          todayMenuHarian.value = null;
+        }
+      } else {
+        todayMenuHarian.value = null;
+      }
     } catch (e) {
       debugPrint('Gagal mengambil data menu: $e');
+      todayMenuHarian.value = null;
     }
   }
 

@@ -41,7 +41,8 @@ class SekolahDeliveryScreen extends StatelessWidget {
                   },
                   isProcessing: controller.isSubmitting.value,
                 ),
-                const SizedBox(height: MBGSizes.spaceBtwItems),
+                const SizedBox(height: MBGSizes.spaceBtwSections),
+
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(

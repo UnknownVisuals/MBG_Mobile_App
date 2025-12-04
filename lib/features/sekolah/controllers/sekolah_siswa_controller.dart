@@ -8,6 +8,7 @@ import 'package:mbg_mobile_app/features/sekolah/controllers/sekolah_kelas_contro
 import 'package:mbg_mobile_app/features/sekolah/models/sekolah_siswa_model.dart';
 import 'package:mbg_mobile_app/utils/popups/loaders.dart';
 import 'package:mbg_mobile_app/utils/services/sekolah_service.dart';
+import 'package:mbg_mobile_app/utils/helpers/loading_overlay.dart';
 
 class SekolahSiswaController extends GetxController {
   SekolahSiswaController({
@@ -86,6 +87,7 @@ class SekolahSiswaController extends GetxController {
 
     try {
       isLoading.value = true;
+      MBGLoadingOverlay.show();
 
       await _sekolahService.createSiswa(
         sekolahId: id,
@@ -101,17 +103,20 @@ class SekolahSiswaController extends GetxController {
 
       await fetchSiswa(id);
 
-      MBGLoaders.successSnackBar(
-        title: 'Siswa Ditambahkan',
-        message: 'Data siswa berhasil tersimpan.',
-      );
+      MBGLoadingOverlay.hide(); // Hide before navigation
 
       if (Get.isRegistered<CameraController>()) {
         Get.find<CameraController>().clearImage();
       }
       _kelasController.refreshKelas();
       Get.back();
+
+      MBGLoaders.successSnackBar(
+        title: 'Siswa Ditambahkan',
+        message: 'Data siswa berhasil tersimpan.',
+      );
     } catch (e) {
+      MBGLoadingOverlay.hide(); // Ensure hide on error
       MBGLoaders.errorSnackBar(
         title: 'Gagal menambahkan siswa',
         message: e.toString(),
@@ -143,6 +148,7 @@ class SekolahSiswaController extends GetxController {
 
     try {
       isLoading.value = true;
+      MBGLoadingOverlay.show();
 
       await _sekolahService.updateSiswa(
         siswaId: siswaId,
@@ -158,17 +164,20 @@ class SekolahSiswaController extends GetxController {
 
       await fetchSiswa(id);
 
-      MBGLoaders.successSnackBar(
-        title: 'Data Diperbarui',
-        message: 'Perubahan siswa tersimpan.',
-      );
+      MBGLoadingOverlay.hide(); // Hide before navigation
 
       if (Get.isRegistered<CameraController>()) {
         Get.find<CameraController>().clearImage();
       }
       _kelasController.refreshKelas();
       Get.back();
+
+      MBGLoaders.successSnackBar(
+        title: 'Data Diperbarui',
+        message: 'Perubahan siswa tersimpan.',
+      );
     } catch (e) {
+      MBGLoadingOverlay.hide(); // Ensure hide on error
       MBGLoaders.errorSnackBar(
         title: 'Gagal memperbarui siswa',
         message: e.toString(),
@@ -191,10 +200,13 @@ class SekolahSiswaController extends GetxController {
     try {
       deletingSiswaId.value = siswaId;
       isLoading.value = true;
+      MBGLoadingOverlay.show();
 
       await _sekolahService.deleteSiswa(siswaId);
 
       await fetchSiswa(id);
+
+      MBGLoadingOverlay.hide(); // Hide before navigation
 
       if (Get.isDialogOpen ?? false) {
         Get.back();
@@ -205,6 +217,7 @@ class SekolahSiswaController extends GetxController {
         message: 'Data siswa berhasil dihapus.',
       );
     } catch (e) {
+      MBGLoadingOverlay.hide(); // Ensure hide on error
       MBGLoaders.errorSnackBar(
         title: 'Gagal menghapus siswa',
         message: e.toString(),

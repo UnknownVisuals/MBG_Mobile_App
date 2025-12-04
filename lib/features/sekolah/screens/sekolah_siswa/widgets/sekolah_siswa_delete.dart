@@ -16,15 +16,14 @@ class SekolahSiswaDelete extends StatelessWidget {
       AlertDialog(
         title: const Text('Hapus Siswa'),
         content: Text(
-          'Apakah Anda yakin ingin menghapus ${siswa.nama ?? 'siswa ini'}?',
+          'Apakah Anda yakin ingin menghapus "${siswa.nama ?? 'siswa ini'}"?',
         ),
         actions: [
-          TextButton(
+          OutlinedButton(
             onPressed: () => Get.back(result: false),
             child: const Text('Batal'),
           ),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: MBGColors.error),
             onPressed: () => Get.back(result: true),
             child: const Text('Hapus'),
           ),

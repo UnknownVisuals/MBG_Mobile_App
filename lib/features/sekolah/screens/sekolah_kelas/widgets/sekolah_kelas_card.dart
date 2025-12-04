@@ -117,9 +117,11 @@ class SekolahKelasCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: MBGSizes.spaceBtwItems),
-          const Divider(color: Colors.white70),
-          const SizedBox(height: MBGSizes.spaceBtwItems),
+
+          const SizedBox(height: MBGSizes.spaceBtwItems / 2),
+          const Divider(color: MBGColors.white),
+          const SizedBox(height: MBGSizes.spaceBtwItems / 2),
+
           Row(
             children: [
               const Icon(Iconsax.briefcase, color: MBGColors.white, size: 16),

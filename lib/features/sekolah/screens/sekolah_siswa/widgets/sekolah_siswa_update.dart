@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:mbg_mobile_app/common/controllers/camera_controller.dart';
 import 'package:mbg_mobile_app/common/styles/spacing_styles.dart';
+import 'package:mbg_mobile_app/common/widgets/appbar.dart';
 import 'package:mbg_mobile_app/common/widgets/image_picker_bottom_sheet.dart';
 import 'package:mbg_mobile_app/common/widgets/image_preview_dialog.dart';
 import 'package:mbg_mobile_app/common/widgets/section_heading.dart';
@@ -75,7 +76,7 @@ class _SekolahSiswaUpdateState extends State<SekolahSiswaUpdate> {
         : Get.put(SekolahKelasController());
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Edit Data Siswa'), centerTitle: true),
+      appBar: MBGAppBar(showBackArrow: true),
       body: SingleChildScrollView(
         padding: MBGSpacingStyles.homeScreenPadding,
         child: Form(
@@ -279,65 +280,62 @@ class _SekolahSiswaUpdateState extends State<SekolahSiswaUpdate> {
                 ),
               ),
               const SizedBox(height: MBGSizes.spaceBtwSections),
+            ],
+          ),
+        ),
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(MBGSizes.defaultSpace),
+        child: Obx(
+          () => Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: cameraController.selectedImage.value != null
+                      ? () => MBGImagePickerBottomSheet.show(context: context)
+                      : null,
+                  child: const Text('Ubah Foto'),
+                ),
+              ),
+              const SizedBox(width: MBGSizes.spaceBtwItems),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () async {
+                    if (!formKey.currentState!.validate()) {
+                      return;
+                    }
 
-              Obx(
-                () => Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: cameraController.selectedImage.value != null
-                            ? () => MBGImagePickerBottomSheet.show(
-                                context: context,
-                              )
-                            : null,
-                        child: const Text('Ubah Foto'),
-                      ),
-                    ),
-                    const SizedBox(width: MBGSizes.spaceBtwItems),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          if (!formKey.currentState!.validate()) {
-                            return;
-                          }
+                    final kelasId =
+                        selectedKelasId.value ?? widget.siswa.kelasId;
 
-                          final kelasId =
-                              selectedKelasId.value ?? widget.siswa.kelasId;
+                    final umur = int.tryParse(umurController.text.trim());
+                    final tinggi = double.tryParse(
+                      tinggiController.text.trim(),
+                    );
+                    final berat = double.tryParse(beratController.text.trim());
 
-                          final umur = int.tryParse(umurController.text.trim());
-                          final tinggi = double.tryParse(
-                            tinggiController.text.trim(),
-                          );
-                          final berat = double.tryParse(
-                            beratController.text.trim(),
-                          );
+                    if (umur == null || tinggi == null || berat == null) {
+                      MBGLoaders.errorSnackBar(
+                        title: 'Format Angka Salah',
+                        message:
+                            'Periksa kembali kolom umur, tinggi, dan berat.',
+                      );
+                      return;
+                    }
 
-                          if (umur == null || tinggi == null || berat == null) {
-                            MBGLoaders.errorSnackBar(
-                              title: 'Format Angka Salah',
-                              message:
-                                  'Periksa kembali kolom umur, tinggi, dan berat.',
-                            );
-                            return;
-                          }
-
-                          await controller.updateSiswa(
-                            siswaId: widget.siswa.id,
-                            nama: namaController.text.trim(),
-                            nis: nisController.text.trim(),
-                            jenisKelamin:
-                                selectedJenisKelamin.value ?? 'LAKI_LAKI',
-                            umur: umur,
-                            tinggiBadan: tinggi,
-                            beratBadan: berat,
-                            kelasId: kelasId,
-                            foto: cameraController.selectedImage.value,
-                          );
-                        },
-                        child: const Text('Simpan Perubahan'),
-                      ),
-                    ),
-                  ],
+                    await controller.updateSiswa(
+                      siswaId: widget.siswa.id,
+                      nama: namaController.text.trim(),
+                      nis: nisController.text.trim(),
+                      jenisKelamin: selectedJenisKelamin.value ?? 'LAKI_LAKI',
+                      umur: umur,
+                      tinggiBadan: tinggi,
+                      beratBadan: berat,
+                      kelasId: kelasId,
+                      foto: cameraController.selectedImage.value,
+                    );
+                  },
+                  child: const Text('Simpan'),
                 ),
               ),
             ],

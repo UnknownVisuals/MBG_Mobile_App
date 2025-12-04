@@ -5,6 +5,7 @@ import 'package:mbg_mobile_app/features/sekolah/controllers/sekolah_dashboard_co
 import 'package:mbg_mobile_app/features/sekolah/models/sekolah_delivery_model.dart';
 import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
+import 'package:mbg_mobile_app/utils/helpers/helper_functions.dart';
 
 /// Widget untuk menampilkan daftar pengiriman yang masih pending (UI Only)
 class SekolahDashboardPendingDelivery extends StatelessWidget {
@@ -13,8 +14,7 @@ class SekolahDashboardPendingDelivery extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<SekolahDashboardController>();
-    final theme = Theme.of(context);
-    final color = theme.colorScheme;
+    final dark = MBGHelperFunctions.isDarkMode(context);
 
     return Obx(() {
       final deliveries = controller.pendingDeliveries;
@@ -26,19 +26,19 @@ class SekolahDashboardPendingDelivery extends StatelessWidget {
       return Container(
         padding: const EdgeInsets.all(MBGSizes.md),
         decoration: BoxDecoration(
-          color: color.surface, // adaptif
+          color: dark ? MBGColors.dark : MBGColors.white,
           borderRadius: BorderRadius.circular(MBGSizes.cardRadiusLg),
           boxShadow: [
-            if (theme.brightness == Brightness.light)
+            if (!dark)
               BoxShadow(
-                color: color.shadow.withValues(alpha: 0.08),
+                color: MBGColors.black.withValues(alpha: 0.08),
                 blurRadius: 10,
                 spreadRadius: 2,
                 offset: const Offset(0, 4),
               ),
           ],
           border: Border.all(
-            color: color.outlineVariant.withValues(alpha: 0.4), // adaptif
+            color: dark ? MBGColors.darkerGrey : MBGColors.grey,
           ),
         ),
         child: Column(
@@ -62,9 +62,9 @@ class SekolahDashboardPendingDelivery extends StatelessWidget {
                 const SizedBox(width: MBGSizes.spaceBtwItems),
                 Text(
                   'Menunggu Driver',
-                  style: theme.textTheme.titleMedium?.copyWith(
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w700,
-                    color: color.onSurface, // adaptif
+                    color: dark ? MBGColors.white : MBGColors.textPrimary,
                   ),
                 ),
               ],
@@ -78,7 +78,7 @@ class SekolahDashboardPendingDelivery extends StatelessWidget {
               physics: const NeverScrollableScrollPhysics(),
               itemCount: deliveries.length,
               separatorBuilder: (context, index) =>
-                  Divider(color: color.outlineVariant.withValues(alpha: 0.4)),
+                  Divider(color: dark ? MBGColors.darkerGrey : MBGColors.grey),
               itemBuilder: (context, index) {
                 final delivery = deliveries[index];
                 return _PendingItem(
@@ -90,6 +90,7 @@ class SekolahDashboardPendingDelivery extends StatelessWidget {
                       ? Iconsax.truck_fast
                       : Iconsax.timer_1,
                   color: delivery.statusColor,
+                  dark: dark,
                 );
               },
             ),
@@ -106,33 +107,32 @@ class _PendingItem extends StatelessWidget {
   final String status;
   final IconData icon;
   final Color color;
+  final bool dark;
 
   const _PendingItem({
     required this.name,
     required this.status,
     required this.icon,
     required this.color,
+    required this.dark,
   });
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final cs = theme.colorScheme;
-
     return ListTile(
       dense: true,
       contentPadding: EdgeInsets.zero,
       leading: Icon(icon, color: color, size: 22),
       title: Text(
         name,
-        style: theme.textTheme.bodyMedium?.copyWith(
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
           fontWeight: FontWeight.w600,
-          color: cs.onSurface, // adaptif
+          color: dark ? MBGColors.white : MBGColors.textPrimary,
         ),
       ),
       subtitle: Text(
         status,
-        style: theme.textTheme.bodySmall?.copyWith(
+        style: Theme.of(context).textTheme.bodySmall?.copyWith(
           color: color,
           fontWeight: FontWeight.w500,
         ),
@@ -140,7 +140,7 @@ class _PendingItem extends StatelessWidget {
       trailing: Icon(
         Iconsax.arrow_right_3,
         size: 18,
-        color: cs.onSurfaceVariant, // adaptif
+        color: dark ? MBGColors.darkGrey : MBGColors.darkGrey,
       ),
     );
   }

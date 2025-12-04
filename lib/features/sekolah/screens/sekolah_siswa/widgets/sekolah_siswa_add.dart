@@ -237,82 +237,77 @@ class SekolahSiswaAdd extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: MBGSizes.spaceBtwSections),
-
-              Obx(
-                () => Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: selectedImage.value != null
-                            ? () => MBGImagePickerBottomSheet.show(
-                                context: context,
-                              )
-                            : null,
-                        child: const Text('Ubah Foto'),
-                      ),
-                    ),
-                    const SizedBox(width: MBGSizes.spaceBtwItems),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          if (!formKey.currentState!.validate()) {
-                            return;
-                          }
-
-                          if (selectedImage.value == null) {
-                            MBGLoaders.errorSnackBar(
-                              title: 'Foto Kosong',
-                              message:
-                                  'Silakan unggah foto siswa terlebih dahulu.',
-                            );
-                            return;
-                          }
-
-                          final kelasId = selectedKelasId.value;
-                          if (kelasId == null) {
-                            MBGLoaders.errorSnackBar(
-                              title: 'Kelas Belum Dipilih',
-                              message: 'Pilih kelas terlebih dahulu.',
-                            );
-                            return;
-                          }
-
-                          final umur = int.tryParse(umurController.text.trim());
-                          final tinggi = double.tryParse(
-                            tinggiController.text.trim(),
-                          );
-                          final berat = double.tryParse(
-                            beratController.text.trim(),
-                          );
-
-                          if (umur == null || tinggi == null || berat == null) {
-                            MBGLoaders.errorSnackBar(
-                              title: 'Format Angka Salah',
-                              message:
-                                  'Periksa kembali kolom umur, tinggi, dan berat.',
-                            );
-                            return;
-                          }
-
-                          await controller.createSiswa(
-                            nama: namaController.text.trim(),
-                            nis: nisController.text.trim(),
-                            jenisKelamin:
-                                selectedJenisKelamin.value ?? 'LAKI_LAKI',
-                            umur: umur,
-                            tinggiBadan: tinggi,
-                            beratBadan: berat,
-                            kelasId: kelasId,
-                            foto: selectedImage.value!,
-                          );
-                        },
-                        child: const Text('Kirim'),
-                      ),
-                    ),
-                  ],
+            ],
+          ),
+        ),
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(MBGSizes.defaultSpace),
+        child: Obx(
+          () => Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: selectedImage.value != null
+                      ? () => MBGImagePickerBottomSheet.show(context: context)
+                      : null,
+                  child: const Text('Ubah Foto'),
                 ),
               ),
-              const SizedBox(height: MBGSizes.spaceBtwSections),
+              const SizedBox(width: MBGSizes.spaceBtwItems),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () async {
+                    if (!formKey.currentState!.validate()) {
+                      return;
+                    }
+
+                    if (selectedImage.value == null) {
+                      MBGLoaders.errorSnackBar(
+                        title: 'Foto Kosong',
+                        message: 'Silakan unggah foto siswa terlebih dahulu.',
+                      );
+                      return;
+                    }
+
+                    final kelasId = selectedKelasId.value;
+                    if (kelasId == null) {
+                      MBGLoaders.errorSnackBar(
+                        title: 'Kelas Belum Dipilih',
+                        message: 'Pilih kelas terlebih dahulu.',
+                      );
+                      return;
+                    }
+
+                    final umur = int.tryParse(umurController.text.trim());
+                    final tinggi = double.tryParse(
+                      tinggiController.text.trim(),
+                    );
+                    final berat = double.tryParse(beratController.text.trim());
+
+                    if (umur == null || tinggi == null || berat == null) {
+                      MBGLoaders.errorSnackBar(
+                        title: 'Format Angka Salah',
+                        message:
+                            'Periksa kembali kolom umur, tinggi, dan berat.',
+                      );
+                      return;
+                    }
+
+                    await controller.createSiswa(
+                      nama: namaController.text.trim(),
+                      nis: nisController.text.trim(),
+                      jenisKelamin: selectedJenisKelamin.value ?? 'LAKI_LAKI',
+                      umur: umur,
+                      tinggiBadan: tinggi,
+                      beratBadan: berat,
+                      kelasId: kelasId,
+                      foto: selectedImage.value!,
+                    );
+                  },
+                  child: const Text('Kirim'),
+                ),
+              ),
             ],
           ),
         ),

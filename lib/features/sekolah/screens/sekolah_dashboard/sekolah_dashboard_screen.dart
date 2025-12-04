@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mbg_mobile_app/common/styles/spacing_styles.dart';
-import 'package:mbg_mobile_app/features/sekolah/screens/sekolah_dashboard/widgets/attendance_summary_widget.dart';
+import 'package:mbg_mobile_app/common/widgets/section_heading.dart';
+import 'package:mbg_mobile_app/features/sekolah/screens/sekolah_dashboard/widgets/sekolah_dashboard_stat_card.dart';
 import 'package:mbg_mobile_app/features/sekolah/screens/sekolah_dashboard/widgets/sekolah_dashboard_pending_delivery.dart';
 import 'package:mbg_mobile_app/features/sekolah/screens/sekolah_dashboard/widgets/sekolah_dashboard_today_menu.dart';
 import 'package:mbg_mobile_app/utils/constants/colors.dart';
@@ -28,15 +29,19 @@ class SekolahDashboardScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 📊 ATTENDANCE SUMMARY
-              const AttendanceSummaryWidget(),
+              // 📊 STATISTICS
+              const SekolahDashboardStatCard(),
               const SizedBox(height: MBGSizes.spaceBtwSections),
 
               // 🍱 TODAY’S MENU
+              const MBGSectionHeading(title: 'Menu Hari Ini'),
+              const SizedBox(height: MBGSizes.spaceBtwItems),
               const SekolahDashboardTodayMenu(),
               const SizedBox(height: MBGSizes.spaceBtwSections),
 
               // 🚚 PENDING DELIVERIES
+              const MBGSectionHeading(title: 'Pengiriman'),
+              const SizedBox(height: MBGSizes.spaceBtwItems),
               const SekolahDashboardPendingDelivery(),
               const SizedBox(height: MBGSizes.spaceBtwSections * 2),
             ],

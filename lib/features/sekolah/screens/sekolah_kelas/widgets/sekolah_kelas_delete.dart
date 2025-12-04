@@ -17,7 +17,7 @@ class SekolahKelasDeleteDialog extends StatelessWidget {
       title: const Text('Konfirmasi Hapus'),
       content: Text('Hapus kelas "${kelas.nama ?? 'Kelas'}"?'),
       actions: [
-        TextButton(onPressed: () => Get.back(), child: const Text('Batal')),
+        OutlinedButton(onPressed: () => Get.back(), child: const Text('Batal')),
         ElevatedButton(
           onPressed: () => controller.deleteKelas(kelas.id),
           child: const Text('Hapus'),

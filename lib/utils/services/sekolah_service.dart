@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:get/get.dart';
 import 'package:mbg_mobile_app/features/dapur/models/dapur_menu_planning_model.dart';
+import 'package:mbg_mobile_app/features/dapur/models/dapur_menu_harian_model.dart';
 import 'package:mbg_mobile_app/features/sekolah/models/sekolah_alergi_model.dart';
 import 'package:mbg_mobile_app/features/sekolah/models/sekolah_delivery_model.dart';
 import 'package:mbg_mobile_app/features/sekolah/models/sekolah_info_model.dart';
@@ -149,6 +150,56 @@ class SekolahService extends GetxService {
     }
 
     throw Exception('Format respons tidak valid');
+  }
+
+  Future<SekolahKalenderAkademikModel> createKalenderAkademik(
+    Map<String, dynamic> payload,
+  ) async {
+    MBGHttpHelper.loadSessionToken();
+    final response = await _httpHelper.postRequest(
+      'kalender-akademik',
+      payload,
+    );
+
+    if (response.statusCode != 201 || !_isSuccess(response)) {
+      throw Exception(
+        _responseMessage(response, 'Gagal membuat kalender akademik'),
+      );
+    }
+
+    final data = _extractDataObject(response);
+    return SekolahKalenderAkademikModel.fromJson(data);
+  }
+
+  Future<SekolahKalenderAkademikModel> updateKalenderAkademik(
+    String id,
+    Map<String, dynamic> payload,
+  ) async {
+    MBGHttpHelper.loadSessionToken();
+    final response = await _httpHelper.putRequest(
+      'kalender-akademik/$id',
+      payload,
+    );
+
+    if (!_isSuccess(response)) {
+      throw Exception(
+        _responseMessage(response, 'Gagal memperbarui kalender akademik'),
+      );
+    }
+
+    final data = _extractDataObject(response);
+    return SekolahKalenderAkademikModel.fromJson(data);
+  }
+
+  Future<void> deleteKalenderAkademik(String id) async {
+    MBGHttpHelper.loadSessionToken();
+    final response = await _httpHelper.deleteRequest('kalender-akademik/$id');
+
+    if (!_isSuccess(response)) {
+      throw Exception(
+        _responseMessage(response, 'Gagal menghapus kalender akademik'),
+      );
+    }
   }
 
   Future<SekolahKelasModel> createKelas(
@@ -370,6 +421,22 @@ class SekolahService extends GetxService {
 
     final data = _extractDataObject(response);
     return SekolahInfoModel.fromJson(data);
+  }
+
+  Future<List<DapurMenuHarianModel>> getMenuHarianByPlanning(
+    String planningId,
+  ) async {
+    MBGHttpHelper.loadSessionToken();
+    final response = await _httpHelper.getRequest(
+      'menu-planning/$planningId/menu-harian',
+    );
+
+    if (!_isSuccess(response)) {
+      throw Exception(_responseMessage(response, 'Gagal memuat menu harian'));
+    }
+
+    final data = _extractDataList(response);
+    return data.map(DapurMenuHarianModel.fromJson).toList();
   }
 
   bool _isSuccess(Response<dynamic> response) {

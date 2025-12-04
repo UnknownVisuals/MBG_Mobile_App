@@ -128,6 +128,22 @@ class DapurDashboardController extends GetxController {
     }
   }
 
+  Future<void> fetchDashboardData() async {
+    try {
+      await Future.wait([
+        _menuPlanningController.fetchAllMenuPlanning(),
+        _menuHarianController.refreshMenuHarian(),
+        _pengirimanController.fetchPengiriman(),
+        if (_checkpointController.currentMenuHarianId.value != null)
+          _checkpointController.fetchCheckpointsByMenuHarian(
+            _checkpointController.currentMenuHarianId.value!,
+          ),
+      ]);
+    } catch (e) {
+      // Handle error silently or show snackbar if needed
+    }
+  }
+
   void selectDapurById(String? id) {
     if (id == null) return;
     final available = dapurOptions;

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:mbg_mobile_app/features/dapur/controllers/dapur_dashboard_controller.dart';
 import 'package:mbg_mobile_app/common/styles/spacing_styles.dart';
 import 'package:mbg_mobile_app/features/dapur/screens/dapur_dashboard/widgets/dapur_dashboard_card.dart';
 import 'package:mbg_mobile_app/features/dapur/screens/dapur_dashboard/widgets/dapur_dashboard_cooking_progress.dart';
@@ -17,7 +19,10 @@ class DapurDashboardScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: RefreshIndicator(
-        onRefresh: () async {},
+        onRefresh: () async {
+          final controller = Get.find<DapurDashboardController>();
+          await controller.fetchDashboardData();
+        },
         color: MBGColors.primary,
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),

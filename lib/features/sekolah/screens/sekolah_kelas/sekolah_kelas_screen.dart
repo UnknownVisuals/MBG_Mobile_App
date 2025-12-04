@@ -52,11 +52,13 @@ class SekolahKelasScreen extends StatelessWidget {
           ),
         );
       }),
-      bottomNavigationBar: Container(
-        padding: const EdgeInsets.all(MBGSizes.defaultSpace),
-        child: ElevatedButton(
-          onPressed: () => Get.to(() => const SekolahKelasAdd()),
-          child: const Text('Tambah Kelas'),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => Get.to(() => const SekolahKelasAdd()),
+        backgroundColor: MBGColors.primary,
+        icon: const Icon(Icons.add, color: Colors.white),
+        label: const Text(
+          'Tambah Kelas',
+          style: TextStyle(color: Colors.white),
         ),
       ),
     );

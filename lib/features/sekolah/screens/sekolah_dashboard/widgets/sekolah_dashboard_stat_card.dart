@@ -6,8 +6,8 @@ import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
 
 /// Attendance summary card widget (UI-only, tanpa controller)
-class AttendanceSummaryWidget extends StatelessWidget {
-  const AttendanceSummaryWidget({super.key});
+class SekolahDashboardStatCard extends StatelessWidget {
+  const SekolahDashboardStatCard({super.key});
 
   @override
   Widget build(BuildContext context) {

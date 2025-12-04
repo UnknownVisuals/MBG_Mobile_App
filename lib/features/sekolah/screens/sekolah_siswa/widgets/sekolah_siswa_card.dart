@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:mbg_mobile_app/features/sekolah/models/sekolah_siswa_model.dart';
 import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
-
-import '../../../models/sekolah_siswa_model.dart';
 
 class SekolahSiswaCardWidget extends StatelessWidget {
   final SekolahSiswaModel siswa;
@@ -60,8 +59,8 @@ class SekolahSiswaCardWidget extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         color: isDark
-            ? MBGColors.darkGrey.withValues(alpha: 0.4)
-            : MBGColors.lightGrey.withValues(alpha: 0.4),
+            ? MBGColors.darkerGrey.withValues(alpha: 0.4)
+            : MBGColors.grey.withValues(alpha: 0.4),
         borderRadius: BorderRadius.circular(MBGSizes.cardRadiusSm),
       ),
       child: Row(
@@ -103,7 +102,7 @@ class SekolahSiswaCardWidget extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color: isDark
-                ? Colors.black.withOpacity(0.4)
+                ? Colors.black.withValues(alpha: 0.4)
                 : MBGColors.primary.withValues(alpha: 0.1),
             blurRadius: isDark ? 10 : 18,
             offset: const Offset(0, 6),
@@ -128,8 +127,8 @@ class SekolahSiswaCardWidget extends StatelessWidget {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: isDark
-                          ? MBGColors.darkGrey.withOpacity(0.4)
-                          : MBGColors.lightGrey.withOpacity(0.3),
+                          ? MBGColors.darkGrey.withValues(alpha: 0.4)
+                          : MBGColors.lightGrey.withValues(alpha: 0.3),
                     ),
                     child: CircleAvatar(
                       radius: 28,
@@ -178,7 +177,7 @@ class SekolahSiswaCardWidget extends StatelessWidget {
                                   onPressed: onTap,
                                   icon: Icon(
                                     Iconsax.edit,
-                                    color: theme.colorScheme.primary,
+                                    color: MBGColors.primary,
                                   ),
                                   tooltip: 'Edit siswa',
                                 ),
@@ -186,7 +185,7 @@ class SekolahSiswaCardWidget extends StatelessWidget {
                                   onPressed: onDelete,
                                   icon: Icon(
                                     Iconsax.trash,
-                                    color: theme.colorScheme.error,
+                                    color: MBGColors.error,
                                   ),
                                   tooltip: 'Hapus siswa',
                                 ),
@@ -267,15 +266,19 @@ class SekolahSiswaCardWidget extends StatelessWidget {
                       vertical: MBGSizes.xs,
                     ),
                     decoration: BoxDecoration(
-                      color: statusColor.withOpacity(0.15),
-                      borderRadius:
-                          BorderRadius.circular(MBGSizes.cardRadiusSm),
+                      color: statusColor.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(
+                        MBGSizes.cardRadiusSm,
+                      ),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Iconsax.heart,
-                            size: MBGSizes.iconSm, color: statusColor),
+                        Icon(
+                          Iconsax.heart,
+                          size: MBGSizes.iconSm,
+                          color: statusColor,
+                        ),
                         const SizedBox(width: MBGSizes.xs),
                         Text(
                           _getStatusGiziLabel(siswa.statusGizi),

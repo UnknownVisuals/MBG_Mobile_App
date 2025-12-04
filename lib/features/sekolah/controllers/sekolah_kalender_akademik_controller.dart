@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:mbg_mobile_app/features/sekolah/models/sekolah_kalender_akademik_model.dart';
 import 'package:mbg_mobile_app/utils/popups/loaders.dart';
+import 'package:mbg_mobile_app/utils/helpers/loading_overlay.dart';
 import 'package:mbg_mobile_app/utils/services/sekolah_service.dart';
 
 class SekolahKalenderAkademikController extends GetxController {
@@ -60,5 +61,55 @@ class SekolahKalenderAkademikController extends GetxController {
   List<SekolahKalenderAkademikModel> getEventsForDate(DateTime date) {
     final key = DateTime(date.year, date.month, date.day);
     return kalenderByDate[key] ?? [];
+  }
+
+  Future<void> createEvent(Map<String, dynamic> payload) async {
+    try {
+      MBGLoadingOverlay.show();
+      await _sekolahService.createKalenderAkademik(payload);
+      await fetchKalenderAkademik();
+      MBGLoadingOverlay.hide();
+      Get.back(); // Close form
+      MBGLoaders.successSnackBar(
+        title: 'Berhasil',
+        message: 'Event kalender berhasil ditambahkan',
+      );
+    } catch (e) {
+      MBGLoadingOverlay.hide();
+      MBGLoaders.errorSnackBar(title: 'Gagal', message: e.toString());
+    }
+  }
+
+  Future<void> updateEvent(String id, Map<String, dynamic> payload) async {
+    try {
+      MBGLoadingOverlay.show();
+      await _sekolahService.updateKalenderAkademik(id, payload);
+      await fetchKalenderAkademik();
+      MBGLoadingOverlay.hide();
+      Get.back(); // Close form
+      MBGLoaders.successSnackBar(
+        title: 'Berhasil',
+        message: 'Event kalender berhasil diperbarui',
+      );
+    } catch (e) {
+      MBGLoadingOverlay.hide();
+      MBGLoaders.errorSnackBar(title: 'Gagal', message: e.toString());
+    }
+  }
+
+  Future<void> deleteEvent(String id) async {
+    try {
+      MBGLoadingOverlay.show();
+      await _sekolahService.deleteKalenderAkademik(id);
+      await fetchKalenderAkademik();
+      MBGLoadingOverlay.hide();
+      MBGLoaders.successSnackBar(
+        title: 'Berhasil',
+        message: 'Event kalender berhasil dihapus',
+      );
+    } catch (e) {
+      MBGLoadingOverlay.hide();
+      MBGLoaders.errorSnackBar(title: 'Gagal', message: e.toString());
+    }
   }
 }
