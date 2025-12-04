@@ -5,7 +5,9 @@ import 'package:mbg_mobile_app/common/controllers/camera_controller.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
 
 class MBGImagePickerBottomSheet extends StatelessWidget {
-  const MBGImagePickerBottomSheet({super.key});
+  const MBGImagePickerBottomSheet({super.key, this.addWatermark = false});
+
+  final bool addWatermark;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +31,9 @@ class MBGImagePickerBottomSheet extends StatelessWidget {
             child: OutlinedButton.icon(
               onPressed: () async {
                 Navigator.pop(context);
-                await cameraController.captureImageWithCamera();
+                await cameraController.captureImageWithCamera(
+                  addWatermark: addWatermark,
+                );
               },
               icon: const Icon(Iconsax.camera),
               label: Text(
@@ -46,7 +50,9 @@ class MBGImagePickerBottomSheet extends StatelessWidget {
             child: OutlinedButton.icon(
               onPressed: () async {
                 Navigator.pop(context);
-                await cameraController.pickImageFromGallery();
+                await cameraController.pickImageFromGallery(
+                  addWatermark: addWatermark,
+                );
               },
               icon: const Icon(Iconsax.gallery),
               label: Text(
@@ -62,14 +68,14 @@ class MBGImagePickerBottomSheet extends StatelessWidget {
   }
 
   /// Static method to show the bottom sheet
-  static void show({required BuildContext context}) {
+  static void show({required BuildContext context, bool addWatermark = false}) {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (BuildContext context) {
-        return const MBGImagePickerBottomSheet();
+        return MBGImagePickerBottomSheet(addWatermark: addWatermark);
       },
     );
   }

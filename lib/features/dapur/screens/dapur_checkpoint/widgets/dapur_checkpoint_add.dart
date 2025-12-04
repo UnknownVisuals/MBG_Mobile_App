@@ -101,7 +101,10 @@ class DapurCheckpointAdd extends StatelessWidget {
                   () => GestureDetector(
                     onTap: () {
                       if (selectedImage.value == null) {
-                        MBGImagePickerBottomSheet.show(context: context);
+                        MBGImagePickerBottomSheet.show(
+                          context: context,
+                          addWatermark: true,
+                        );
                       } else {
                         MBGImagePreviewDialog.showFile(
                           context: context,
@@ -173,7 +176,10 @@ class DapurCheckpointAdd extends StatelessWidget {
                 Expanded(
                   child: OutlinedButton(
                     onPressed: selectedImage.value != null
-                        ? () => MBGImagePickerBottomSheet.show(context: context)
+                        ? () => MBGImagePickerBottomSheet.show(
+                            context: context,
+                            addWatermark: true,
+                          )
                         : null,
                     child: const Text('Ubah Foto'),
                   ),
