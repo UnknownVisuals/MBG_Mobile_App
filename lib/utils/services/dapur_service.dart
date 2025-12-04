@@ -407,9 +407,7 @@ class DapurService extends GetxService {
     );
 
     if (!_isSuccess(response)) {
-      throw Exception(
-        _responseMessage(response, 'Gagal memperbarui '),
-      );
+      throw Exception(_responseMessage(response, 'Gagal memperbarui '));
     }
 
     final data = _extractDataObject(response);
@@ -616,5 +614,22 @@ class DapurService extends GetxService {
     if (!_isSuccess(response)) {
       throw Exception(_responseMessage(response, 'Gagal menghapus pengiriman'));
     }
+  }
+
+  // ====================
+  // RFID TRAY SUMMARY
+  // ====================
+
+  // Get Tray Summary
+  Future<Map<String, dynamic>> getTraySummary() async {
+    MBGHttpHelper.loadSessionToken();
+    final response = await _httpHelper.getRequest('rfid/tray-summary');
+
+    if (!_isSuccess(response)) {
+      throw Exception(_responseMessage(response, 'Gagal memuat data tray'));
+    }
+
+    final data = _extractDataObject(response);
+    return data;
   }
 }

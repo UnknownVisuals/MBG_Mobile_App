@@ -10,14 +10,26 @@ import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
 import 'package:mbg_mobile_app/utils/validators/validation.dart';
 
-class DapurPengirimanAdd extends StatelessWidget {
+class DapurPengirimanAdd extends StatefulWidget {
   const DapurPengirimanAdd({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final DapurPengirimanController controller =
-        Get.find<DapurPengirimanController>();
+  State<DapurPengirimanAdd> createState() => _DapurPengirimanAddState();
+}
 
+class _DapurPengirimanAddState extends State<DapurPengirimanAdd> {
+  final DapurPengirimanController controller =
+      Get.find<DapurPengirimanController>();
+
+  @override
+  void initState() {
+    super.initState();
+    // Fetch tray summary when screen opens
+    controller.fetchTraySummary();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     // Form state with GetX
     final selectedSekolahId = Rx<String?>(null);
 

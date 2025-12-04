@@ -246,4 +246,20 @@ class DapurPengirimanController extends GetxController {
   Future<void> refreshPengiriman() async {
     await fetchPengiriman();
   }
+
+  // ==================
+  // RFID TRAY SUMMARY
+  // ==================
+  Future<void> fetchTraySummary() async {
+    try {
+      final data = await _dapurService.getTraySummary();
+      final totalTrayUnik = data['totalTrayUnik'] as int? ?? 0;
+
+      // Update controller text
+      jumlahTrayController.text = totalTrayUnik.toString();
+    } catch (e) {
+      // Silent error or log
+      debugPrint('Error fetching tray summary: $e');
+    }
+  }
 }
