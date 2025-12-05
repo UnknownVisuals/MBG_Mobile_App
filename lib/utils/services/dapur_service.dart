@@ -621,9 +621,9 @@ class DapurService extends GetxService {
   // ====================
 
   // Get Tray Summary
-  Future<Map<String, dynamic>> getTraySummary() async {
+  Future<Map<String, dynamic>> getTraySummary(String sekolahId) async {
     MBGHttpHelper.loadSessionToken();
-    final response = await _httpHelper.getRequest('rfid/tray-summary');
+    final response = await _httpHelper.getRequest('rfid/tray-summary?sekolahId=$sekolahId');
 
     if (!_isSuccess(response)) {
       throw Exception(_responseMessage(response, 'Gagal memuat data tray'));

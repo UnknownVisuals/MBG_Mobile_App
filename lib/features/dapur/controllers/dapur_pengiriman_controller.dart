@@ -252,7 +252,10 @@ class DapurPengirimanController extends GetxController {
   // ==================
   Future<void> fetchTraySummary() async {
     try {
-      final data = await _dapurService.getTraySummary();
+      final currentSekolahId = sekolahId;
+      if (currentSekolahId == null) return;
+
+      final data = await _dapurService.getTraySummary(currentSekolahId);
       final totalTrayUnik = data['totalTrayUnik'] as int? ?? 0;
 
       // Update controller text
