@@ -81,6 +81,14 @@ class DriverDrawer extends StatelessWidget {
                 Get.back();
               },
             ),
+            SidebarXItem(
+              icon: Iconsax.box_remove,
+              label: 'Pengembalian',
+              onTap: () {
+                driverController.drawerSelectedIndex.value = 2;
+                Get.back();
+              },
+            ),
           ],
           footerBuilder: (context, extended) =>
               MBGDrawerFooter(logoutController: logoutController),

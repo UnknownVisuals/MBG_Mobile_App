@@ -4,7 +4,14 @@ import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
 
 class DriverDashboardQuickActionCard extends StatelessWidget {
-  const DriverDashboardQuickActionCard({super.key});
+  const DriverDashboardQuickActionCard({
+    super.key,
+    this.title = 'Scan QR Code',
+    this.subtitle = 'Scan delivery QR untuk memperbarui status',
+  });
+
+  final String title;
+  final String subtitle;
 
   @override
   Widget build(BuildContext context) {
@@ -45,14 +52,14 @@ class DriverDashboardQuickActionCard extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Scan QR Code',
+                  title,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     color: MBGColors.textWhite,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 Text(
-                  'Scan delivery QR untuk memperbarui status',
+                  subtitle,
                   style: Theme.of(
                     context,
                   ).textTheme.bodyMedium?.copyWith(color: MBGColors.textWhite),

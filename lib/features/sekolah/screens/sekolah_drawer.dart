@@ -140,6 +140,14 @@ class SekolahDrawer extends StatelessWidget {
                 Navigator.pop(context);
               },
             ),
+            SidebarXItem(
+              icon: Iconsax.box_remove,
+              label: 'Pengembalian',
+              onTap: () {
+                sekolahController.drawerSelectedIndex.value = 6;
+                Navigator.pop(context);
+              },
+            ),
           ],
 
           // Drawer Footer

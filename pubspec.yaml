@@ -59,6 +59,7 @@ dependencies:
   latlong2: ^0.9.1
   geolocator: ^14.0.2
   image: ^4.5.4
+  pretty_qr_code: ^3.5.0
 
 dev_dependencies:
   icons_launcher: ^3.0.0

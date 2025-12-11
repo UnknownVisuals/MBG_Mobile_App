@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:get/get.dart';
 import 'package:mbg_mobile_app/features/driver/models/driver_delivery_model.dart';
 import 'package:mbg_mobile_app/features/driver/models/driver_menu_harian_model.dart';
 import 'package:mbg_mobile_app/features/driver/models/driver_menu_planning_model.dart';
 import 'package:mbg_mobile_app/features/driver/models/driver_sekolah_model.dart';
+import 'package:mbg_mobile_app/features/driver/models/driver_tray_return_model.dart';
 import 'package:mbg_mobile_app/utils/http/http_client.dart';
 
 class DriverService extends GetxService {
@@ -151,6 +154,47 @@ class DriverService extends GetxService {
 
     final data = _extractDataList(response);
     return data.map(DriverMenuHarianModel.fromJson).toList();
+  }
+
+  // ====================
+  // TRAY RETURN
+  // ====================
+
+  Future<DriverTrayReturnModel> scanTrayReturnPickup({
+    required String qrCodeId,
+    required File foto,
+    required int jumlahTrayDiterima,
+  }) async {
+    MBGHttpHelper.loadSessionToken();
+    final response = await _httpHelper.postMultipartRequest(
+      'tray-return/$qrCodeId/pickup',
+      fields: {'jumlahTrayDiterima': jumlahTrayDiterima.toString()},
+      file: foto,
+      fileFieldName: 'foto',
+    );
+
+    if (!_isSuccess(response)) {
+      throw Exception(
+        _responseMessage(response, 'Gagal memproses pickup tray'),
+      );
+    }
+
+    final data = _extractDataObject(response);
+    return DriverTrayReturnModel.fromJson(data);
+  }
+
+  Future<List<DriverTrayReturnModel>> getMyTrayPickups() async {
+    MBGHttpHelper.loadSessionToken();
+    final response = await _httpHelper.getRequest('tray-return/my-pickups');
+
+    if (!_isSuccess(response)) {
+      throw Exception(
+        _responseMessage(response, 'Gagal memuat riwayat pickup tray'),
+      );
+    }
+
+    final data = _extractDataList(response);
+    return data.map(DriverTrayReturnModel.fromJson).toList();
   }
 
   // ====================

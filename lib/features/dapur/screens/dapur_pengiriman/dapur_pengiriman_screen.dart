@@ -83,7 +83,7 @@ class DapurPengirimanScreen extends StatelessWidget {
                           MBChipFilter(
                             chipFilterString:
                                 'Semua (${controller.totalCount})',
-                            chipFilterColor: Colors.blue,
+                            chipFilterColor: MBGColors.darkGrey,
                             chipFilterIcon: Iconsax.category,
                             isSelected:
                                 controller.selectedFilter.value == 'all',
@@ -93,7 +93,7 @@ class DapurPengirimanScreen extends StatelessWidget {
                           MBChipFilter(
                             chipFilterString:
                                 'Pending (${controller.pendingCount})',
-                            chipFilterColor: Colors.orange,
+                            chipFilterColor: MBGColors.warning,
                             chipFilterIcon: Iconsax.clock,
                             isSelected:
                                 controller.selectedFilter.value == 'pending',
@@ -103,7 +103,7 @@ class DapurPengirimanScreen extends StatelessWidget {
                           MBChipFilter(
                             chipFilterString:
                                 'Dikirim (${controller.inTransitCount})',
-                            chipFilterColor: Colors.purple,
+                            chipFilterColor: MBGColors.info,
                             chipFilterIcon: Iconsax.truck_fast,
                             isSelected:
                                 controller.selectedFilter.value == 'in_transit',
@@ -113,7 +113,7 @@ class DapurPengirimanScreen extends StatelessWidget {
                           MBChipFilter(
                             chipFilterString:
                                 'Selesai (${controller.completedCount})',
-                            chipFilterColor: Colors.green,
+                            chipFilterColor: MBGColors.success,
                             chipFilterIcon: Iconsax.tick_circle,
                             isSelected:
                                 controller.selectedFilter.value == 'completed',

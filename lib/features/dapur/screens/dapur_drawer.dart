@@ -147,6 +147,14 @@ class DapurDrawer extends StatelessWidget {
                 Navigator.pop(context);
               },
             ),
+            SidebarXItem(
+              icon: Iconsax.box_remove,
+              label: 'Pengembalian',
+              onTap: () {
+                dapurController.drawerSelectedIndex.value = 7;
+                Navigator.pop(context);
+              },
+            ),
           ],
 
           /// ---- FOOTER ----

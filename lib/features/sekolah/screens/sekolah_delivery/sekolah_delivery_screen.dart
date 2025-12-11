@@ -49,7 +49,7 @@ class SekolahDeliveryScreen extends StatelessWidget {
                     children: [
                       MBChipFilter(
                         chipFilterString: 'Semua (${controller.totalCount})',
-                        chipFilterColor: Colors.blue,
+                        chipFilterColor: MBGColors.darkGrey,
                         chipFilterIcon: Iconsax.grid_3,
                         isSelected: controller.selectedFilter.value == 'all',
                         onTap: () => controller.setFilter('all'),
@@ -58,7 +58,7 @@ class SekolahDeliveryScreen extends StatelessWidget {
                       MBChipFilter(
                         chipFilterString:
                             'Pending (${controller.pendingCount})',
-                        chipFilterColor: Colors.orange,
+                        chipFilterColor: MBGColors.warning,
                         chipFilterIcon: Iconsax.clock,
                         isSelected:
                             controller.selectedFilter.value == 'pending',
@@ -68,7 +68,7 @@ class SekolahDeliveryScreen extends StatelessWidget {
                       MBChipFilter(
                         chipFilterString:
                             'Dalam Perjalanan (${controller.inTransitCount})',
-                        chipFilterColor: Colors.purple,
+                        chipFilterColor: MBGColors.info,
                         chipFilterIcon: Iconsax.truck_fast,
                         isSelected:
                             controller.selectedFilter.value == 'in_transit',
@@ -78,7 +78,7 @@ class SekolahDeliveryScreen extends StatelessWidget {
                       MBChipFilter(
                         chipFilterString:
                             'Selesai (${controller.completedCount})',
-                        chipFilterColor: Colors.green,
+                        chipFilterColor: MBGColors.success,
                         chipFilterIcon: Iconsax.tick_circle,
                         isSelected:
                             controller.selectedFilter.value == 'completed',

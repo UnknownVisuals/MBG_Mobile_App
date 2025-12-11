@@ -12,6 +12,7 @@ import 'package:mbg_mobile_app/features/sekolah/screens/sekolah_info/sekolah_inf
 import 'package:mbg_mobile_app/features/sekolah/screens/sekolah_kalender_akademik/sekolah_kalendar_akademik_screen.dart';
 import 'package:mbg_mobile_app/features/sekolah/screens/sekolah_kelas/sekolah_kelas_screen.dart';
 import 'package:mbg_mobile_app/features/sekolah/screens/sekolah_siswa/sekolah_siswa_screen.dart';
+import 'package:mbg_mobile_app/features/sekolah/screens/sekolah_tray_return/sekolah_tray_return_screen.dart';
 
 class SekolahScreen extends StatelessWidget {
   const SekolahScreen({super.key});
@@ -44,7 +45,7 @@ class SekolahScreen extends StatelessWidget {
         drawer: const SekolahDrawer(),
         body: IndexedStack(
           index: sekolahController.drawerSelectedIndex.value,
-          children: const [
+          children: [
             // 0 - Dashboard
             SekolahDashboardScreen(),
             // 1 - Sekolah Info
@@ -57,6 +58,8 @@ class SekolahScreen extends StatelessWidget {
             SekolahKalendarAkademikScreen(),
             // 5 - Delivery
             SekolahDeliveryScreen(),
+            // 6 - Tray Return
+            SekolahTrayReturnScreen(),
           ],
         ),
       ),

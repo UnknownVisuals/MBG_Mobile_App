@@ -9,6 +9,7 @@ import 'package:mbg_mobile_app/features/dapur/models/dapur_menu_planning_model.d
 import 'package:mbg_mobile_app/features/dapur/models/dapur_pengiriman_model.dart';
 import 'package:mbg_mobile_app/features/dapur/models/dapur_sekolah_model.dart';
 import 'package:mbg_mobile_app/features/dapur/models/dapur_stock_model.dart';
+import 'package:mbg_mobile_app/features/dapur/models/dapur_tray_return_model.dart';
 import 'package:mbg_mobile_app/utils/http/http_client.dart';
 
 class DapurService extends GetxService {
@@ -623,7 +624,9 @@ class DapurService extends GetxService {
   // Get Tray Summary
   Future<Map<String, dynamic>> getTraySummary(String sekolahId) async {
     MBGHttpHelper.loadSessionToken();
-    final response = await _httpHelper.getRequest('rfid/tray-summary?sekolahId=$sekolahId');
+    final response = await _httpHelper.getRequest(
+      'rfid/tray-summary?sekolahId=$sekolahId',
+    );
 
     if (!_isSuccess(response)) {
       throw Exception(_responseMessage(response, 'Gagal memuat data tray'));
@@ -631,5 +634,40 @@ class DapurService extends GetxService {
 
     final data = _extractDataObject(response);
     return data;
+  }
+
+  // ====================
+  // TRAY RETURN
+  // ====================
+
+  Future<DapurTrayReturnModel> receiveTrayReturn(String qrCodeId) async {
+    MBGHttpHelper.loadSessionToken();
+    final response = await _httpHelper.postRequest(
+      'tray-return/$qrCodeId/received-at-kitchen',
+      const {},
+    );
+
+    if (!_isSuccess(response)) {
+      throw Exception(
+        _responseMessage(response, 'Gagal mencatat penerimaan tray'),
+      );
+    }
+
+    final data = _extractDataObject(response);
+    return DapurTrayReturnModel.fromJson(data);
+  }
+
+  Future<List<DapurTrayReturnModel>> getMyTrayReceives() async {
+    MBGHttpHelper.loadSessionToken();
+    final response = await _httpHelper.getRequest('tray-return/my-receives');
+
+    if (!_isSuccess(response)) {
+      throw Exception(
+        _responseMessage(response, 'Gagal memuat riwayat penerimaan tray'),
+      );
+    }
+
+    final data = _extractDataList(response);
+    return data.map(DapurTrayReturnModel.fromJson).toList();
   }
 }

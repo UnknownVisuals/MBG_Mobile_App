@@ -11,6 +11,7 @@ import 'package:mbg_mobile_app/features/dapur/screens/dapur_karyawan/dapur_karya
 import 'package:mbg_mobile_app/features/dapur/screens/dapur_menu_planning/dapur_menu_planning_screen.dart';
 import 'package:mbg_mobile_app/features/dapur/screens/dapur_pengiriman/dapur_pengiriman_screen.dart';
 import 'package:mbg_mobile_app/features/dapur/screens/dapur_stok/dapur_stock_screen.dart';
+import 'package:mbg_mobile_app/features/dapur/screens/dapur_tray_return/dapur_tray_return_screen.dart';
 
 class DapurScreen extends StatelessWidget {
   const DapurScreen({super.key});
@@ -43,7 +44,7 @@ class DapurScreen extends StatelessWidget {
         drawer: DapurDrawer(),
         body: IndexedStack(
           index: dapurController.drawerSelectedIndex.value,
-          children: const [
+          children: [
             // 0 - Dashboard
             DapurDashboardScreen(),
             // 1 - Dapur Info
@@ -58,6 +59,8 @@ class DapurScreen extends StatelessWidget {
             DapurCheckpointScreen(),
             // 6 - Pengiriman
             DapurPengirimanScreen(),
+            // 7 - Tray Return
+            DapurTrayReturnScreen(),
           ],
         ),
       ),

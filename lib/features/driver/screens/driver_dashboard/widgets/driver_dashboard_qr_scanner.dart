@@ -5,10 +5,18 @@ import 'package:mbg_mobile_app/utils/constants/sizes.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 class DriverDashboardQrScanner extends StatefulWidget {
-  const DriverDashboardQrScanner({super.key, this.onScanned, this.onClose});
+  const DriverDashboardQrScanner({
+    super.key,
+    this.onScanned,
+    this.onClose,
+    this.title = 'Scan delivery QR code',
+    this.subtitle = '',
+  });
 
   final Future<void> Function(String code)? onScanned;
   final VoidCallback? onClose;
+  final String title;
+  final String subtitle;
 
   @override
   State<DriverDashboardQrScanner> createState() =>
@@ -209,14 +217,24 @@ class _DriverDashboardQrScannerState extends State<DriverDashboardQrScanner> {
                     size: MBGSizes.iconLg,
                   ),
                   const SizedBox(height: MBGSizes.sm),
-                  const Text(
-                    'Scan delivery QR code',
-                    style: TextStyle(
+                  Text(
+                    widget.title,
+                    style: const TextStyle(
                       color: MBGColors.white,
                       fontSize: MBGSizes.fontSizeMd,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
+                  if (widget.subtitle.isNotEmpty) ...[
+                    const SizedBox(height: MBGSizes.xs),
+                    Text(
+                      widget.subtitle,
+                      style: const TextStyle(
+                        color: MBGColors.white,
+                        fontSize: MBGSizes.fontSizeSm,
+                      ),
+                    ),
+                  ],
                   const SizedBox(height: MBGSizes.sm),
                   Container(
                     width: 140,

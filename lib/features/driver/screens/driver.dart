@@ -6,6 +6,7 @@ import 'package:mbg_mobile_app/features/driver/controllers/driver_controller.dar
 import 'package:mbg_mobile_app/features/driver/screens/driver_checkpoint/driver_checkpoint_screen.dart';
 import 'package:mbg_mobile_app/features/driver/screens/driver_dashboard/driver_dashboard_screen.dart';
 import 'package:mbg_mobile_app/features/driver/screens/driver_drawer.dart';
+import 'package:mbg_mobile_app/features/driver/screens/driver_tray_return/driver_tray_return_screen.dart';
 
 class DriverScreen extends StatelessWidget {
   const DriverScreen({super.key});
@@ -38,11 +39,13 @@ class DriverScreen extends StatelessWidget {
         drawer: const DriverDrawer(),
         body: IndexedStack(
           index: driverController.drawerSelectedIndex.value,
-          children: const [
+          children: [
             // 0 - Dashboard
             DriverDashboardScreen(),
             // 1 - Checkpoint
             DriverCheckpointScreen(),
+            // 2 - Tray Return
+            DriverTrayReturnScreen(),
           ],
         ),
       ),

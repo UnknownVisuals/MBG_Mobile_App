@@ -11,6 +11,8 @@ import 'package:mbg_mobile_app/features/sekolah/models/sekolah_kelas_model.dart'
 import 'package:mbg_mobile_app/features/sekolah/models/sekolah_siswa_model.dart';
 import 'package:mbg_mobile_app/utils/http/http_client.dart';
 
+import 'package:mbg_mobile_app/features/sekolah/models/sekolah_tray_return_model.dart';
+
 class SekolahService extends GetxService {
   SekolahService({MBGHttpHelper? httpHelper})
     : _httpHelper = httpHelper ?? Get.find<MBGHttpHelper>();
@@ -437,6 +439,40 @@ class SekolahService extends GetxService {
 
     final data = _extractDataList(response);
     return data.map(DapurMenuHarianModel.fromJson).toList();
+  }
+
+  // ====================
+  // TRAY RETURN
+  // ====================
+
+  Future<SekolahTrayReturnModel> createTrayReturn(
+    Map<String, dynamic> payload,
+  ) async {
+    MBGHttpHelper.loadSessionToken();
+    final response = await _httpHelper.postRequest('tray-return', payload);
+
+    if (response.statusCode != 201 || !_isSuccess(response)) {
+      throw Exception(
+        _responseMessage(response, 'Gagal membuat pengembalian tray'),
+      );
+    }
+
+    final data = _extractDataObject(response);
+    return SekolahTrayReturnModel.fromJson(data);
+  }
+
+  Future<List<SekolahTrayReturnModel>> getMyTrayReturns() async {
+    MBGHttpHelper.loadSessionToken();
+    final response = await _httpHelper.getRequest('tray-return/my-submissions');
+
+    if (!_isSuccess(response)) {
+      throw Exception(
+        _responseMessage(response, 'Gagal memuat riwayat pengembalian'),
+      );
+    }
+
+    final data = _extractDataList(response);
+    return data.map(SekolahTrayReturnModel.fromJson).toList();
   }
 
   bool _isSuccess(Response<dynamic> response) {
