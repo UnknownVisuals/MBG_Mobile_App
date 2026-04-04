@@ -15,6 +15,18 @@ class DapurInfoSekolahCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool isDarkMode = MBGHelperFunctions.isDarkMode(context);
     const accentColor = Color(0xFFC94D6E);
+    final sekolah = sekolahDilayani.sekolah;
+    final createdAt = sekolahDilayani.createdAt;
+    final latitude = sekolah?.latitude;
+    final longitude = sekolah?.longitude;
+    final sekolahNama = sekolah?.nama ?? '-';
+    final sekolahAlamat = sekolah?.alamat ?? '-';
+    final koordinat = (latitude != null && longitude != null)
+        ? '${latitude.toStringAsFixed(4)}, ${longitude.toStringAsFixed(4)}'
+        : '-';
+    final tanggalDitambahkan = createdAt != null
+        ? DateFormat('dd MMM yyyy', 'id_ID').format(createdAt.toLocal())
+        : '-';
 
     return Container(
       width:
@@ -52,7 +64,7 @@ class DapurInfoSekolahCard extends StatelessWidget {
 
               Expanded(
                 child: Text(
-                  sekolahDilayani.sekolah!.nama ?? '-',
+                  sekolahNama,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     color: isDarkMode
                         ? MBGColors.textWhite
@@ -88,7 +100,7 @@ class DapurInfoSekolahCard extends StatelessWidget {
 
               Expanded(
                 child: Text(
-                  sekolahDilayani.sekolah!.alamat ?? '-',
+                  sekolahAlamat,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: isDarkMode
                         ? MBGColors.textWhite
@@ -115,8 +127,7 @@ class DapurInfoSekolahCard extends StatelessWidget {
 
               Expanded(
                 child: Text(
-                  '${sekolahDilayani.sekolah!.latitude?.toStringAsFixed(4)}, '
-                  '${sekolahDilayani.sekolah!.longitude?.toStringAsFixed(4)}',
+                  koordinat,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: isDarkMode
                         ? MBGColors.textWhite
@@ -148,10 +159,7 @@ class DapurInfoSekolahCard extends StatelessWidget {
                 const Icon(Iconsax.calendar, color: accentColor, size: 12),
                 const SizedBox(width: MBGSizes.xs),
                 Text(
-                  DateFormat(
-                    'dd MMM yyyy',
-                    'id_ID',
-                  ).format(sekolahDilayani.createdAt!.toLocal()),
+                  tanggalDitambahkan,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: accentColor,
                     fontWeight: FontWeight.w500,

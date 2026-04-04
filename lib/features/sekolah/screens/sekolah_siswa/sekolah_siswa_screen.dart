@@ -12,9 +12,14 @@ import 'package:mbg_mobile_app/features/sekolah/screens/sekolah_siswa/widgets/se
 import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
 
-class SekolahSiswaScreen extends StatelessWidget {
+class SekolahSiswaScreen extends StatefulWidget {
   const SekolahSiswaScreen({super.key});
 
+  @override
+  State<SekolahSiswaScreen> createState() => _SekolahSiswaScreenState();
+}
+
+class _SekolahSiswaScreenState extends State<SekolahSiswaScreen> {
   @override
   Widget build(BuildContext context) {
     final SekolahSiswaController controller =
@@ -69,23 +74,35 @@ class SekolahSiswaScreen extends StatelessWidget {
           );
         }
 
-        return RefreshIndicator(
-          color: MBGColors.primary,
-          onRefresh: controller.refreshSiswa,
-          child: ListView.separated(
-            padding: MBGSpacingStyles.homeScreenPadding,
-            physics: const AlwaysScrollableScrollPhysics(),
-            itemCount: controller.siswaList.length,
-            separatorBuilder: (_, _) => const SizedBox(height: 12),
-            itemBuilder: (context, index) {
-              final siswa = controller.siswaList[index];
-              return SekolahSiswaCardWidget(
-                siswa: siswa,
-                onTap: () => _openEditor(context, siswa, controller),
-                onDelete: () => _confirmDelete(context, siswa, controller),
-              );
-            },
-          ),
+        return Column(
+          children: [
+            const SizedBox(height: MBGSizes.spaceBtwSections),
+            _PaginationSection(controller: controller),
+            const SizedBox(height: MBGSizes.spaceBtwItems),
+            Expanded(
+              child: RefreshIndicator(
+                color: MBGColors.primary,
+                onRefresh: controller.refreshSiswa,
+                child: ListView.builder(
+                  padding: MBGSpacingStyles.homeScreenPadding,
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  itemCount: controller.siswaList.length,
+                  itemBuilder: (context, index) {
+                    final siswa = controller.siswaList[index];
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: SekolahSiswaCardWidget(
+                        siswa: siswa,
+                        onTap: () => _openEditor(context, siswa, controller),
+                        onDelete: () =>
+                            _confirmDelete(context, siswa, controller),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ],
         );
       }),
       floatingActionButton: FloatingActionButton.extended(
@@ -126,5 +143,87 @@ class SekolahSiswaScreen extends StatelessWidget {
     if (confirmed == true) {
       await controller.deleteSiswa(siswa.id);
     }
+  }
+}
+
+class _PaginationSection extends StatelessWidget {
+  const _PaginationSection({required this.controller});
+
+  final SekolahSiswaController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    final hasPaginationData = controller.totalItems.value > 0;
+    if (!hasPaginationData) {
+      return const SizedBox.shrink();
+    }
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: MBGSizes.spaceBtwItems),
+      padding: const EdgeInsets.all(MBGSizes.sm),
+      decoration: BoxDecoration(
+        border: Border.all(color: MBGColors.primary.withValues(alpha: 0.2)),
+        borderRadius: BorderRadius.circular(MBGSizes.cardRadiusLg),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          IconButton(
+            icon: const Icon(Iconsax.previous),
+            onPressed: controller.currentPage.value > 1
+                ? () {
+                    final sekolahId = controller.sekolahId;
+                    if (sekolahId != null) {
+                      controller.currentPage.value = 1;
+                      controller.fetchSiswa(sekolahId, page: 1);
+                    }
+                  }
+                : null,
+            tooltip: 'Halaman Pertama',
+          ),
+          IconButton(
+            icon: const Icon(Iconsax.arrow_left_2),
+            onPressed: controller.canGoPreviousPage
+                ? () {
+                    controller.goToPreviousPage();
+                  }
+                : null,
+            tooltip: 'Halaman Sebelumnya',
+          ),
+          Text(
+            '${controller.currentPage.value} dari ${controller.totalPages.value}',
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+          IconButton(
+            icon: const Icon(Iconsax.arrow_right_3),
+            onPressed: controller.canGoNextPage
+                ? () {
+                    controller.goToNextPage();
+                  }
+                : null,
+            tooltip: 'Halaman Berikutnya',
+          ),
+          IconButton(
+            icon: const Icon(Iconsax.next),
+            onPressed:
+                controller.currentPage.value < controller.totalPages.value
+                ? () {
+                    final sekolahId = controller.sekolahId;
+                    if (sekolahId != null) {
+                      controller.currentPage.value =
+                          controller.totalPages.value;
+                      controller.fetchSiswa(
+                        sekolahId,
+                        page: controller.totalPages.value,
+                      );
+                    }
+                  }
+                : null,
+            tooltip: 'Halaman Terakhir',
+          ),
+        ],
+      ),
+    );
   }
 }

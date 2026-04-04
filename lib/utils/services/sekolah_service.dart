@@ -92,16 +92,44 @@ class SekolahService extends GetxService {
     throw Exception('Format respons tidak valid');
   }
 
-  Future<List<SekolahSiswaModel>> getSiswaBySekolah(String sekolahId) async {
+  Future<SekolahSiswaPaginatedResponse> getSiswaBySekolah(
+    String sekolahId, {
+    int page = 1,
+    int limit = 10,
+  }) async {
     MBGHttpHelper.loadSessionToken();
-    final response = await _httpHelper.getRequest('sekolah/$sekolahId/siswa');
+    final response = await _httpHelper.getRequest(
+      'sekolah/$sekolahId/siswa?page=$page&limit=$limit',
+    );
 
     if (!_isSuccess(response)) {
       throw Exception(_responseMessage(response, 'Gagal memuat siswa'));
     }
 
-    final data = _extractDataList(response);
-    return data.map(SekolahSiswaModel.fromJson).toList();
+    final body = response.body;
+    if (body is Map<String, dynamic>) {
+      final data = body['data'];
+      if (data is Map<String, dynamic>) {
+        final items =
+            (data['data'] as List<dynamic>?)
+                ?.whereType<Map<String, dynamic>>()
+                .map(SekolahSiswaModel.fromJson)
+                .toList() ??
+            <SekolahSiswaModel>[];
+
+        final paginationJson = data['pagination'];
+        final pagination = paginationJson is Map<String, dynamic>
+            ? SekolahSiswaPagination.fromJson(paginationJson)
+            : null;
+
+        return SekolahSiswaPaginatedResponse(
+          data: items,
+          pagination: pagination,
+        );
+      }
+    }
+
+    throw Exception('Format data tidak valid');
   }
 
   Future<SekolahSiswaModel> getSiswaById(String siswaId) async {

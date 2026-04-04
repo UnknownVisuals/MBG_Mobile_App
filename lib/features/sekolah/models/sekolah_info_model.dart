@@ -1,8 +1,8 @@
 class SekolahInfoModel {
   SekolahInfoModel({
     required this.id,
-    required this.provinceId,
-    required this.regencyId,
+    this.provinceId,
+    this.regencyId,
     this.nama,
     this.alamat,
     this.latitude,
@@ -18,8 +18,8 @@ class SekolahInfoModel {
   });
 
   String id;
-  String provinceId;
-  String regencyId;
+  String? provinceId;
+  String? regencyId;
   String? nama;
   String? alamat;
   double? latitude;
@@ -42,8 +42,8 @@ class SekolahInfoModel {
       alamat: json['alamat'] as String?,
       latitude: json['latitude'] != null ? toDouble(json['latitude']) : null,
       longitude: json['longitude'] != null ? toDouble(json['longitude']) : null,
-      provinceId: json['provinceId'] as String,
-      regencyId: json['regencyId'] as String,
+      provinceId: json['provinceId'] as String?,
+      regencyId: json['regencyId'] as String?,
       createdAt: json['createdAt'] != null
           ? DateTime.parse(json['createdAt'] as String)
           : null,
@@ -87,11 +87,9 @@ class SekolahInfoModel {
   }
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{
-      'id': id,
-      'provinceId': provinceId,
-      'regencyId': regencyId,
-    };
+    final result = <String, dynamic>{'id': id};
+    if (provinceId != null) result['provinceId'] = provinceId;
+    if (regencyId != null) result['regencyId'] = regencyId;
     if (nama != null) result['nama'] = nama;
     if (alamat != null) result['alamat'] = alamat;
     if (latitude != null) result['latitude'] = latitude;

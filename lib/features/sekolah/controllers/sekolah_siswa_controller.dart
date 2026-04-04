@@ -26,6 +26,13 @@ class SekolahSiswaController extends GetxController {
   RxList<SekolahSiswaModel> siswaList = <SekolahSiswaModel>[].obs;
   final RxBool isLoading = false.obs;
   final RxnString deletingSiswaId = RxnString();
+  final RxInt currentPage = 1.obs;
+  final RxInt pageSize = 10.obs;
+  final RxInt totalPages = 1.obs;
+  final RxInt totalItems = 0.obs;
+
+  bool get canGoPreviousPage => currentPage.value > 1;
+  bool get canGoNextPage => currentPage.value < totalPages.value;
 
   String? get sekolahId {
     final sekolahList = _userController.userModel.value?.sekolahAsPIC;
@@ -44,18 +51,27 @@ class SekolahSiswaController extends GetxController {
   Future<void> _loadSiswa() async {
     final id = sekolahId;
     if (id == null || id.isEmpty) return;
-    await fetchSiswa(id);
+    await fetchSiswa(id, page: currentPage.value);
   }
 
   Future<void> refreshSiswa() async {
     await _loadSiswa();
   }
 
-  Future<void> fetchSiswa(String sekolahId) async {
+  Future<void> fetchSiswa(String sekolahId, {int page = 1}) async {
     try {
       isLoading.value = true;
-      final data = await _sekolahService.getSiswaBySekolah(sekolahId);
-      siswaList.assignAll(data);
+      final response = await _sekolahService.getSiswaBySekolah(
+        sekolahId,
+        page: page,
+        limit: pageSize.value,
+      );
+
+      siswaList.assignAll(response.data);
+      currentPage.value = response.pagination?.page ?? page;
+      pageSize.value = response.pagination?.limit ?? pageSize.value;
+      totalPages.value = response.pagination?.totalPages ?? 1;
+      totalItems.value = response.pagination?.total ?? response.data.length;
     } catch (e) {
       MBGLoaders.errorSnackBar(
         title: 'Gagal memuat siswa',
@@ -64,6 +80,18 @@ class SekolahSiswaController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  Future<void> goToNextPage() async {
+    final id = sekolahId;
+    if (id == null || !canGoNextPage) return;
+    await fetchSiswa(id, page: currentPage.value + 1);
+  }
+
+  Future<void> goToPreviousPage() async {
+    final id = sekolahId;
+    if (id == null || !canGoPreviousPage) return;
+    await fetchSiswa(id, page: currentPage.value - 1);
   }
 
   Future<void> createSiswa({
@@ -101,7 +129,7 @@ class SekolahSiswaController extends GetxController {
         foto: foto,
       );
 
-      await fetchSiswa(id);
+      await fetchSiswa(id, page: currentPage.value);
 
       MBGLoadingOverlay.hide(); // Hide before navigation
 
@@ -162,7 +190,7 @@ class SekolahSiswaController extends GetxController {
         foto: foto,
       );
 
-      await fetchSiswa(id);
+      await fetchSiswa(id, page: currentPage.value);
 
       MBGLoadingOverlay.hide(); // Hide before navigation
 
@@ -204,7 +232,10 @@ class SekolahSiswaController extends GetxController {
 
       await _sekolahService.deleteSiswa(siswaId);
 
-      await fetchSiswa(id);
+      await fetchSiswa(id, page: currentPage.value);
+      if (siswaList.isEmpty && currentPage.value > 1) {
+        await fetchSiswa(id, page: currentPage.value - 1);
+      }
 
       MBGLoadingOverlay.hide(); // Hide before navigation
 

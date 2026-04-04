@@ -1,3 +1,30 @@
+class SekolahSiswaPagination {
+  SekolahSiswaPagination({this.total, this.page, this.limit, this.totalPages});
+
+  final int? total;
+  final int? page;
+  final int? limit;
+  final int? totalPages;
+
+  factory SekolahSiswaPagination.fromJson(Map<String, dynamic> json) {
+    int? toInt(dynamic value) => (value as num?)?.toInt();
+
+    return SekolahSiswaPagination(
+      total: toInt(json['total']),
+      page: toInt(json['page']),
+      limit: toInt(json['limit']),
+      totalPages: toInt(json['totalPages']),
+    );
+  }
+}
+
+class SekolahSiswaPaginatedResponse {
+  SekolahSiswaPaginatedResponse({required this.data, this.pagination});
+
+  final List<SekolahSiswaModel> data;
+  final SekolahSiswaPagination? pagination;
+}
+
 class SekolahSiswaModel {
   SekolahSiswaModel({
     required this.id,

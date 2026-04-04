@@ -46,7 +46,7 @@ class SekolahDashboardController extends GetxController {
   }
 
   // Computed Properties
-  int get totalSiswa => _siswaController.siswaList.length;
+  int get totalSiswa => _siswaController.totalItems.value;
   int get totalKelas => _kelasController.kelasList.length;
 
   List<SekolahDeliveryModel> get pendingDeliveries {
