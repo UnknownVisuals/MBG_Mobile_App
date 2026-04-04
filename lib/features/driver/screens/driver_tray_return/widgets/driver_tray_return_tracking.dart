@@ -42,7 +42,7 @@ class _DriverTrayReturnTrackingState extends State<DriverTrayReturnTracking> {
   bool _lastSyncSuccessful = true;
   bool _isFollowMode = true;
 
-  late final LatLng? _schoolLocation = _resolveSchoolLocation();
+  late final LatLng? _destinationLocation = _resolveDestinationLocation();
 
   @override
   void initState() {
@@ -58,7 +58,17 @@ class _DriverTrayReturnTrackingState extends State<DriverTrayReturnTracking> {
     super.dispose();
   }
 
-  LatLng? _resolveSchoolLocation() {
+  LatLng? _resolveDestinationLocation() {
+    // If returning (SEDANG_RETURN), destination is Dapur
+    if (widget.trayReturn.normalizedStatus ==
+        DriverTrayReturnStatus.sedangReturn) {
+      final dapur = widget.trayReturn.driver?.driverOf;
+      if (dapur != null && dapur.latitude != null && dapur.longitude != null) {
+        return LatLng(dapur.latitude!, dapur.longitude!);
+      }
+    }
+
+    // Default to Sekolah logic (MENUNGGU_PICKUP or fallback)
     final latitude = widget.trayReturn.sekolah.latitude;
     final longitude = widget.trayReturn.sekolah.longitude;
     if (latitude == null || longitude == null) {
@@ -68,10 +78,10 @@ class _DriverTrayReturnTrackingState extends State<DriverTrayReturnTracking> {
   }
 
   Future<void> _initLocationTracking() async {
-    final hasDestination = _schoolLocation != null;
+    final hasDestination = _destinationLocation != null;
     if (!hasDestination) {
       setState(() {
-        _errorMessage = 'Lokasi sekolah tidak tersedia.';
+        _errorMessage = 'Lokasi tujuan tidak tersedia.';
         _isLoading = false;
       });
       return;
@@ -234,7 +244,7 @@ class _DriverTrayReturnTrackingState extends State<DriverTrayReturnTracking> {
 
   Future<void> _updateRoute() async {
     final start = _driverLocation;
-    final destination = _schoolLocation;
+    final destination = _destinationLocation;
     if (start == null || destination == null || _isFetchingRoute) {
       return;
     }
@@ -330,9 +340,9 @@ class _DriverTrayReturnTrackingState extends State<DriverTrayReturnTracking> {
       return _normalizeBearing(_calculateBearing(previous, current));
     }
 
-    final school = _schoolLocation;
-    if (school != null && !_pointsEqual(current, school)) {
-      return _normalizeBearing(_calculateBearing(current, school));
+    final dest = _destinationLocation;
+    if (dest != null && !_pointsEqual(current, dest)) {
+      return _normalizeBearing(_calculateBearing(current, dest));
     }
 
     return _currentBearing;
@@ -397,29 +407,39 @@ class _DriverTrayReturnTrackingState extends State<DriverTrayReturnTracking> {
   }
 
   double? _calculateDistanceKm() {
-    if (_driverLocation == null || _schoolLocation == null) {
+    if (_driverLocation == null || _destinationLocation == null) {
       return null;
     }
     final LatLng? driver = _driverLocation;
-    final LatLng school = _schoolLocation;
+    final LatLng dest = _destinationLocation;
     if (driver == null) {
       return null;
     }
     final meters = Geolocator.distanceBetween(
       driver.latitude,
       driver.longitude,
-      school.latitude,
-      school.longitude,
+      dest.latitude,
+      dest.longitude,
     );
     return meters / 1000;
   }
 
   @override
   Widget build(BuildContext context) {
-    final school = widget.trayReturn.sekolah;
+    final isReturn =
+        widget.trayReturn.normalizedStatus ==
+        DriverTrayReturnStatus.sedangReturn;
+    final destinationName = isReturn
+        ? (widget.trayReturn.driver?.driverOf?.nama ?? 'Dapur')
+        : widget.trayReturn.sekolah.nama;
+    final destinationAddress = isReturn
+        ? widget.trayReturn.driver?.driverOf?.alamat
+        : widget.trayReturn.sekolah.alamat;
+
     final distanceKm = _calculateDistanceKm();
     final driverLocation = _driverLocation;
-    final schoolLocation = _schoolLocation;
+    final destinationLocation = _destinationLocation;
+    final isDestinationDapur = isReturn;
 
     // Build widget tree without waiting for async operations
     return Scaffold(
@@ -508,7 +528,7 @@ class _DriverTrayReturnTrackingState extends State<DriverTrayReturnTracking> {
                 child: FlutterMap(
                   mapController: _mapController,
                   options: MapOptions(
-                    initialCenter: _driverLocation ?? _schoolLocation!,
+                    initialCenter: _driverLocation ?? _destinationLocation!,
                     initialZoom: _defaultZoom,
                     interactionOptions: const InteractionOptions(
                       flags:
@@ -545,18 +565,19 @@ class _DriverTrayReturnTrackingState extends State<DriverTrayReturnTracking> {
                           ),
                         ],
                       )
-                    else if (driverLocation != null && schoolLocation != null)
+                    else if (driverLocation != null &&
+                        destinationLocation != null)
                       PolylineLayer(
                         polylines: [
                           Polyline(
-                            points: [driverLocation, schoolLocation],
+                            points: [driverLocation, destinationLocation],
                             strokeWidth: 7,
                             color: const Color(
                               0xFF1A73E8,
                             ).withValues(alpha: 0.4),
                           ),
                           Polyline(
-                            points: [driverLocation, schoolLocation],
+                            points: [driverLocation, destinationLocation],
                             strokeWidth: 4,
                             color: const Color(0xFF4285F4),
                           ),
@@ -564,15 +585,17 @@ class _DriverTrayReturnTrackingState extends State<DriverTrayReturnTracking> {
                       ),
                     MarkerLayer(
                       markers: [
-                        if (schoolLocation != null)
+                        if (destinationLocation != null)
                           Marker(
-                            point: schoolLocation,
+                            point: destinationLocation,
                             rotate: true,
                             width: 48,
                             height: 48,
                             child: RepaintBoundary(
                               child: _GoogleMapMarker(
-                                icon: Icons.location_on,
+                                icon: isDestinationDapur
+                                    ? Icons.restaurant
+                                    : Icons.location_on,
                                 color: const Color(0xFFEA4335),
                                 isDestination: true,
                               ),
@@ -642,20 +665,58 @@ class _DriverTrayReturnTrackingState extends State<DriverTrayReturnTracking> {
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color:
+                                        (isDestinationDapur
+                                                ? MBGColors.primary
+                                                : const Color(0xFFEA4335))
+                                            .withValues(alpha: 0.1),
+                                    borderRadius: BorderRadius.circular(4),
+                                    border: Border.all(
+                                      color:
+                                          (isDestinationDapur
+                                                  ? MBGColors.primary
+                                                  : const Color(0xFFEA4335))
+                                              .withValues(alpha: 0.2),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    isDestinationDapur
+                                        ? 'Ke Dapur'
+                                        : 'Ke Sekolah',
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                      color: isDestinationDapur
+                                          ? MBGColors.primary
+                                          : const Color(0xFFEA4335),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
                             Text(
-                              school.nama,
+                              destinationName,
                               style: Theme.of(context).textTheme.titleMedium
                                   ?.copyWith(
                                     fontWeight: FontWeight.w600,
                                     color: const Color(0xFF202124),
                                   ),
                             ),
-                            if (school.alamat != null &&
-                                school.alamat!.isNotEmpty)
+                            if (destinationAddress != null &&
+                                destinationAddress.isNotEmpty)
                               Padding(
                                 padding: const EdgeInsets.only(top: 4),
                                 child: Text(
-                                  school.alamat!,
+                                  destinationAddress,
                                   style: Theme.of(context).textTheme.bodySmall
                                       ?.copyWith(
                                         color: const Color(0xFF5F6368),
@@ -719,10 +780,10 @@ class _DriverTrayReturnTrackingState extends State<DriverTrayReturnTracking> {
                                 const SizedBox(width: MBGSizes.sm),
                                 Expanded(
                                   child: OutlinedButton.icon(
-                                    onPressed: schoolLocation == null
+                                    onPressed: destinationLocation == null
                                         ? null
                                         : () => _moveCamera(
-                                            schoolLocation,
+                                            destinationLocation,
                                             rotation: _currentBearing,
                                             zoom: _defaultZoom,
                                           ),
@@ -738,8 +799,15 @@ class _DriverTrayReturnTrackingState extends State<DriverTrayReturnTracking> {
                                         borderRadius: BorderRadius.circular(8),
                                       ),
                                     ),
-                                    icon: const Icon(Icons.school, size: 18),
-                                    label: const Text('Sekolah'),
+                                    icon: Icon(
+                                      isDestinationDapur
+                                          ? Icons.restaurant
+                                          : Icons.school,
+                                      size: 18,
+                                    ),
+                                    label: Text(
+                                      isDestinationDapur ? 'Dapur' : 'Sekolah',
+                                    ),
                                   ),
                                 ),
                               ],

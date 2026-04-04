@@ -7,7 +7,7 @@ import 'package:mbg_mobile_app/features/driver/screens/driver_tray_return/widget
 import 'package:mbg_mobile_app/utils/constants/colors.dart';
 import 'package:mbg_mobile_app/utils/constants/sizes.dart';
 import 'package:mbg_mobile_app/utils/helpers/helper_functions.dart';
-import 'package:mbg_mobile_app/utils/popups/loaders.dart';
+
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 
 class DriverTrayReturnCard extends StatelessWidget {
@@ -189,16 +189,7 @@ class DriverTrayReturnCard extends StatelessWidget {
                 Expanded(
                   child: ElevatedButton.icon(
                     onPressed: () {
-                      if (item.driverId != null) {
-                        Get.to(
-                          () => DriverTrayReturnTracking(trayReturn: item),
-                        );
-                      } else {
-                        MBGLoaders.successSnackBar(
-                          title: 'Tracking Driver',
-                          message: 'Fitur tracking akan segera hadir',
-                        );
-                      }
+                      Get.to(() => DriverTrayReturnTracking(trayReturn: item));
                     },
                     icon: const Icon(
                       Iconsax.truck,

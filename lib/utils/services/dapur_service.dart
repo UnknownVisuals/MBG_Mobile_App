@@ -640,11 +640,14 @@ class DapurService extends GetxService {
   // TRAY RETURN
   // ====================
 
-  Future<DapurTrayReturnModel> receiveTrayReturn(String qrCodeId) async {
+  Future<DapurTrayReturnModel> receiveTrayReturn(
+    String qrCodeId,
+    int jumlahTrayDiterima,
+  ) async {
     MBGHttpHelper.loadSessionToken();
     final response = await _httpHelper.postRequest(
       'tray-return/$qrCodeId/received-at-kitchen',
-      const {},
+      {'jumlahTrayDiterima': jumlahTrayDiterima},
     );
 
     if (!_isSuccess(response)) {

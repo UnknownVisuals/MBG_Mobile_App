@@ -158,17 +158,85 @@ class DapurTrayReturnScreen extends StatelessWidget {
     DapurTrayReturnController controller,
     String qrCodeId,
   ) {
-    Get.defaultDialog(
-      title: 'Konfirmasi Penerimaan',
-      middleText:
-          'Apakah Anda yakin ingin menerima tray dengan ID:\n$qrCodeId?',
-      textConfirm: 'Ya, Terima',
-      textCancel: 'Batal',
-      confirmTextColor: Colors.white,
-      onConfirm: () {
-        Get.back(); // Close dialog
-        controller.receiveTray(qrCodeId);
-      },
+    final quantityController = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Konfirmasi Penerimaan'),
+        content: Form(
+          key: formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Konfirmasi penerimaan tray dengan QRCode:',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                qrCodeId,
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                  fontFamily: 'Monospace',
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: MBGSizes.spaceBtwSections),
+              TextFormField(
+                controller: quantityController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: 'Jumlah Tray Diterima',
+                  prefixIcon: const Icon(Iconsax.box),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(
+                      MBGSizes.inputFieldRadius,
+                    ),
+                  ),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Wajib diisi';
+                  }
+                  if (int.tryParse(value) == null) {
+                    return 'Harus berupa angka';
+                  }
+                  return null;
+                },
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: Text(
+              'Batal',
+              style: TextStyle(color: MBGColors.textSecondary),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              if (formKey.currentState!.validate()) {
+                final count = int.parse(quantityController.text);
+                Get.back();
+                controller.receiveTray(qrCodeId, count);
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: MBGColors.primary,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            ),
+            child: const Text('Terima'),
+          ),
+        ],
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(MBGSizes.borderRadiusLg),
+        ),
+      ),
     );
   }
 }

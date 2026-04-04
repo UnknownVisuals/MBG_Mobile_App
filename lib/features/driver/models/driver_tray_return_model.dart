@@ -174,17 +174,24 @@ class DriverTrayReturnDriverSummary {
     required this.id,
     required this.name,
     this.nomorKendaraan,
+    this.driverOf,
   });
 
   final String id;
   final String name;
   final String? nomorKendaraan;
+  final DriverTrayReturnDapurSummary? driverOf;
 
   factory DriverTrayReturnDriverSummary.fromJson(Map<String, dynamic> json) {
     return DriverTrayReturnDriverSummary(
       id: (json['id'] ?? '') as String,
       name: (json['name'] ?? '') as String,
       nomorKendaraan: json['nomorKendaraan'] as String?,
+      driverOf: json['driverOf'] != null
+          ? DriverTrayReturnDapurSummary.fromJson(
+              json['driverOf'] as Map<String, dynamic>,
+            )
+          : null,
     );
   }
 
@@ -193,6 +200,43 @@ class DriverTrayReturnDriverSummary {
       'id': id,
       'name': name,
       if (nomorKendaraan != null) 'nomorKendaraan': nomorKendaraan,
+      if (driverOf != null) 'driverOf': driverOf!.toJson(),
+    };
+  }
+}
+
+class DriverTrayReturnDapurSummary {
+  DriverTrayReturnDapurSummary({
+    required this.id,
+    required this.nama,
+    this.alamat,
+    this.latitude,
+    this.longitude,
+  });
+
+  final String id;
+  final String nama;
+  final String? alamat;
+  final double? latitude;
+  final double? longitude;
+
+  factory DriverTrayReturnDapurSummary.fromJson(Map<String, dynamic> json) {
+    return DriverTrayReturnDapurSummary(
+      id: (json['id'] ?? '') as String,
+      nama: (json['nama'] ?? '') as String,
+      alamat: json['alamat'] as String?,
+      latitude: _parseNullableDouble(json['latitude']),
+      longitude: _parseNullableDouble(json['longitude']),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'nama': nama,
+      if (alamat != null) 'alamat': alamat,
+      if (latitude != null) 'latitude': latitude,
+      if (longitude != null) 'longitude': longitude,
     };
   }
 }

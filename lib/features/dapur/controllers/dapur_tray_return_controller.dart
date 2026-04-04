@@ -57,11 +57,14 @@ class DapurTrayReturnController extends GetxController {
     }
   }
 
-  Future<void> receiveTray(String qrCodeId) async {
+  Future<void> receiveTray(String qrCodeId, int jumlahTrayDiterima) async {
     try {
       MBGLoadingOverlay.show();
 
-      final newReceive = await _dapurService.receiveTrayReturn(qrCodeId);
+      final newReceive = await _dapurService.receiveTrayReturn(
+        qrCodeId,
+        jumlahTrayDiterima,
+      );
 
       MBGLoadingOverlay.hide();
 
