@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mbg_mobile_app/utils/helpers/image_compression_helper.dart';
 import 'package:mbg_mobile_app/features/driver/models/driver_tray_return_model.dart';
 import 'package:mbg_mobile_app/utils/helpers/loading_overlay.dart';
 import 'package:mbg_mobile_app/utils/popups/loaders.dart';
@@ -114,16 +115,25 @@ class DriverTrayReturnController extends GetxController {
   }
 
   Future<void> pickImage(ImageSource source) async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(
-      source: source,
-      imageQuality: 70,
-      maxHeight: 1000,
-      maxWidth: 1000,
-    );
+    try {
+      final picker = ImagePicker();
+      final pickedFile = await picker.pickImage(
+        source: source,
+        imageQuality: 70,
+        maxHeight: 1000,
+        maxWidth: 1000,
+      );
 
-    if (pickedFile != null) {
-      selectedPhoto.value = File(pickedFile.path);
+      if (pickedFile != null) {
+        selectedPhoto.value = await compressImageFileToMaxSize(
+          File(pickedFile.path),
+        );
+      }
+    } catch (e) {
+      MBGLoaders.errorSnackBar(
+        title: 'Gagal Memilih Foto',
+        message: e.toString(),
+      );
     }
   }
 

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mbg_mobile_app/utils/helpers/image_compression_helper.dart';
 import 'package:mbg_mobile_app/utils/popups/loaders.dart';
 import 'package:image/image.dart' as img;
 import 'package:intl/intl.dart';
@@ -21,13 +22,13 @@ class CameraController extends GetxController {
     try {
       final pickedFile = await ImagePicker().pickImage(
         source: ImageSource.gallery,
-        imageQuality: 50,
       );
       if (pickedFile != null) {
         File file = File(pickedFile.path);
         if (addWatermark) {
           file = await _addWatermark(file);
         }
+        file = await compressImageFileToMaxSize(file);
         selectedImage.value = file;
       } else {
         MBGLoaders.errorSnackBar(
@@ -48,13 +49,13 @@ class CameraController extends GetxController {
     try {
       final pickedFile = await ImagePicker().pickImage(
         source: ImageSource.camera,
-        imageQuality: 50,
       );
       if (pickedFile != null) {
         File file = File(pickedFile.path);
         if (addWatermark) {
           file = await _addWatermark(file);
         }
+        file = await compressImageFileToMaxSize(file);
         selectedImage.value = file;
       } else {
         MBGLoaders.errorSnackBar(

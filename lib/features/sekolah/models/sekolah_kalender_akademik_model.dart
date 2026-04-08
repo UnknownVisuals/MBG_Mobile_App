@@ -21,17 +21,17 @@ class SekolahKalenderAkademikModel {
     return SekolahKalenderAkademikModel(
       id: json['id'] as String,
       tanggalMulai: json['tanggalMulai'] != null
-          ? DateTime.parse(json['tanggalMulai'] as String)
+          ? DateTime.parse(json['tanggalMulai'] as String).toLocal()
           : null,
       tanggalSelesai: json['tanggalSelesai'] != null
-          ? DateTime.parse(json['tanggalSelesai'] as String)
+          ? DateTime.parse(json['tanggalSelesai'] as String).toLocal()
           : null,
       deskripsi: json['deskripsi'] as String?,
       createdAt: json['createdAt'] != null
-          ? DateTime.parse(json['createdAt'] as String)
+          ? DateTime.parse(json['createdAt'] as String).toLocal()
           : null,
       updatedAt: json['updatedAt'] != null
-          ? DateTime.parse(json['updatedAt'] as String)
+          ? DateTime.parse(json['updatedAt'] as String).toLocal()
           : null,
       sekolahId: json['sekolahId'] as String,
     );

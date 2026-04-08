@@ -45,10 +45,10 @@ class SekolahInfoModel {
       provinceId: json['provinceId'] as String?,
       regencyId: json['regencyId'] as String?,
       createdAt: json['createdAt'] != null
-          ? DateTime.parse(json['createdAt'] as String)
+          ? DateTime.parse(json['createdAt'] as String).toLocal()
           : null,
       updatedAt: json['updatedAt'] != null
-          ? DateTime.parse(json['updatedAt'] as String)
+          ? DateTime.parse(json['updatedAt'] as String).toLocal()
           : null,
       province: json['province'] != null
           ? SekolahInfoProvinceSummary.fromJson(
@@ -243,10 +243,10 @@ class SekolahInfoKelasSummary {
       nama: json['nama'] as String?,
       tingkat: json['tingkat'] as int?,
       createdAt: json['createdAt'] != null
-          ? DateTime.parse(json['createdAt'] as String)
+          ? DateTime.parse(json['createdAt'] as String).toLocal()
           : null,
       updatedAt: json['updatedAt'] != null
-          ? DateTime.parse(json['updatedAt'] as String)
+          ? DateTime.parse(json['updatedAt'] as String).toLocal()
           : null,
       count: json['_count'] != null
           ? SekolahInfoKelasCount.fromJson(
@@ -308,7 +308,7 @@ class SekolahInfoDapurPelayananSummary {
       sekolahId: json['sekolahId'] as String,
       dapurId: json['dapurId'] as String,
       createdAt: json['createdAt'] != null
-          ? DateTime.parse(json['createdAt'] as String)
+          ? DateTime.parse(json['createdAt'] as String).toLocal()
           : null,
       dapur: json['dapur'] != null
           ? SekolahInfoDapur.fromJson(json['dapur'] as Map<String, dynamic>)

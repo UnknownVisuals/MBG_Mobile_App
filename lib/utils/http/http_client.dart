@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
+import 'package:mbg_mobile_app/utils/helpers/image_compression_helper.dart';
 import 'package:mbg_mobile_app/utils/helpers/file_helper.dart';
 import 'package:mbg_mobile_app/utils/local_storage/storage_utility.dart';
 
@@ -159,13 +160,15 @@ class MBGHttpHelper extends GetConnect {
       };
 
       if (file != null) {
+        final uploadFile = await compressImageFileToMaxSize(file);
+        await ensureImageFileWithinMaxSize(uploadFile);
         final resolvedName =
-            fileName ?? file.path.split(Platform.pathSeparator).last;
+            fileName ?? uploadFile.path.split(Platform.pathSeparator).last;
         final resolvedContentType =
-            contentType ?? MBGFileHelper.inferImageContentType(file);
+            contentType ?? MBGFileHelper.inferImageContentType(uploadFile);
 
         formMap[fileFieldName] = MultipartFile(
-          file,
+          uploadFile,
           filename: resolvedName,
           contentType: resolvedContentType,
         );

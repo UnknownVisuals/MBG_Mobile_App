@@ -28,11 +28,12 @@ class DapurCheckpointModel {
       fotoUrl: json['fotoUrl'] as String?,
       deskripsi: json['deskripsi'] as String?,
       timestamp: json['timestamp'] != null
-          ? DateTime.tryParse(json['timestamp'] as String) ?? DateTime.now()
+          ? DateTime.tryParse(json['timestamp'] as String)?.toLocal() ??
+                DateTime.now()
           : null,
       durasi: json['durasi'] as int?,
       createdAt: json['createdAt'] != null
-          ? DateTime.tryParse(json['createdAt'] as String)
+          ? DateTime.tryParse(json['createdAt'] as String)?.toLocal()
           : null,
       menuHarianId: json['menuHarianId'] as String?,
       menuHarian: json['menuHarian'] as Map<String, dynamic>?,

@@ -37,7 +37,7 @@ class DapurMenuHarianModel {
     return DapurMenuHarianModel(
       id: json['id'] as String,
       tanggal: json['tanggal'] != null
-          ? DateTime.tryParse(json['tanggal'] as String)
+          ? DateTime.tryParse(json['tanggal'] as String)?.toLocal()
           : null,
       namaMenu: json['namaMenu'] as String?,
       biayaPerTray: json['biayaPerTray'] as int?,
@@ -49,10 +49,10 @@ class DapurMenuHarianModel {
       lemak: (json['lemak'] as num?)?.toDouble(),
       targetTray: json['targetTray'] as int?,
       createdAt: json['createdAt'] != null
-          ? DateTime.tryParse(json['createdAt'] as String)
+          ? DateTime.tryParse(json['createdAt'] as String)?.toLocal()
           : null,
       updatedAt: json['updatedAt'] != null
-          ? DateTime.tryParse(json['updatedAt'] as String)
+          ? DateTime.tryParse(json['updatedAt'] as String)?.toLocal()
           : null,
       menuPlanningId: json['menuPlanningId'] as String?,
       checkpoint: (json['checkpoint'] as List<dynamic>?)
@@ -108,7 +108,7 @@ class DapurMenuHarianCheckpointSummary {
       tipe: json['tipe'] as String?,
       fotoUrl: json['fotoUrl'] as String?,
       timestamp: json['timestamp'] != null
-          ? DateTime.tryParse(json['timestamp'] as String)
+          ? DateTime.tryParse(json['timestamp'] as String)?.toLocal()
           : null,
       durasi: json['durasi'] as int?,
     );

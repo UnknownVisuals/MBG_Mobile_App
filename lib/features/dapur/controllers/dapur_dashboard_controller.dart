@@ -41,11 +41,16 @@ class DapurDashboardController extends GetxController {
   // 1. Today's Menus
   List<DapurMenuHarianModel> get todayMenus {
     final today = DateTime.now();
+    final todayLocal = DateTime(today.year, today.month, today.day);
     return _menuHarianController.menuHarianList.where((menu) {
       if (menu.tanggal == null) return false;
-      return menu.tanggal!.year == today.year &&
-          menu.tanggal!.month == today.month &&
-          menu.tanggal!.day == today.day;
+      final menuDateLocal = menu.tanggal!.toLocal();
+      final menuDate = DateTime(
+        menuDateLocal.year,
+        menuDateLocal.month,
+        menuDateLocal.day,
+      );
+      return menuDate.isAtSameMomentAs(todayLocal);
     }).toList();
   }
 

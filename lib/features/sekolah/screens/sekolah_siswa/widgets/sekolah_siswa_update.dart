@@ -291,7 +291,10 @@ class _SekolahSiswaUpdateState extends State<SekolahSiswaUpdate> {
             children: [
               Expanded(
                 child: OutlinedButton(
-                  onPressed: cameraController.selectedImage.value != null
+                  onPressed:
+                      (cameraController.selectedImage.value != null ||
+                          (widget.siswa.fotoUrl != null &&
+                              widget.siswa.fotoUrl!.isNotEmpty))
                       ? () => MBGImagePickerBottomSheet.show(context: context)
                       : null,
                   child: const Text('Ubah Foto'),

@@ -38,10 +38,10 @@ class DapurInfoModel {
       longitude: (json['longitude'] as num?)?.toDouble(),
       status: json['status'] as String?,
       createdAt: json['createdAt'] != null
-          ? DateTime.tryParse(json['createdAt'] as String)
+          ? DateTime.tryParse(json['createdAt'] as String)?.toLocal()
           : null,
       updatedAt: json['updatedAt'] != null
-          ? DateTime.tryParse(json['updatedAt'] as String)
+          ? DateTime.tryParse(json['updatedAt'] as String)?.toLocal()
           : null,
       picDapur: (json['picDapur'] as List<dynamic>?)
           ?.whereType<Map<String, dynamic>>()
@@ -228,7 +228,7 @@ class SekolahDilayaniSummary {
     return SekolahDilayaniSummary(
       id: json['id'] as String,
       createdAt: json['createdAt'] != null
-          ? DateTime.tryParse(json['createdAt'] as String)
+          ? DateTime.tryParse(json['createdAt'] as String)?.toLocal()
           : null,
       sekolahId: json['sekolahId'] as String?,
       dapurId: json['dapurId'] as String?,

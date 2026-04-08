@@ -33,10 +33,10 @@ class SekolahKelasModel {
       jumlahSiswa: count?.siswa,
       sekolahId: json['sekolahId'] as String,
       createdAt: json['createdAt'] != null
-          ? DateTime.parse(json['createdAt'] as String)
+          ? DateTime.parse(json['createdAt'] as String).toLocal()
           : null,
       updatedAt: json['updatedAt'] != null
-          ? DateTime.parse(json['updatedAt'] as String)
+          ? DateTime.parse(json['updatedAt'] as String).toLocal()
           : null,
       sekolah: json['sekolah'] != null
           ? SekolahKelasSekolahSummary.fromJson(

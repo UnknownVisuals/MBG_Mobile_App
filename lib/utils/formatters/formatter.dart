@@ -16,7 +16,9 @@ class MBGFormatter {
   }
 
   static String formatDateRange(DateTime start, DateTime end) {
-    return '${formatShortDate(start)} - ${formatShortDate(end)} ${DateFormat('yyyy').format(end)}';
+    final startLocal = start.toLocal();
+    final endLocal = end.toLocal();
+    return '${formatShortDate(startLocal)} - ${formatShortDate(endLocal)} ${DateFormat('yyyy').format(endLocal)}';
   }
 
   static String formatCurrency(double amount) {

@@ -67,8 +67,8 @@ class SekolahSiswaModel {
   factory SekolahSiswaModel.fromJson(Map<String, dynamic> json) {
     DateTime? parseDateTime(dynamic value) {
       if (value == null) return null;
-      if (value is DateTime) return value;
-      return DateTime.tryParse(value.toString());
+      if (value is DateTime) return value.toLocal();
+      return DateTime.tryParse(value.toString())?.toLocal();
     }
 
     List<SekolahSiswaAlergiSummary>? parseAlergiList(dynamic value) {

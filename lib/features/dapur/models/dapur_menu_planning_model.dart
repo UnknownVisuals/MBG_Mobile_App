@@ -30,16 +30,16 @@ class DapurMenuPlanningModel {
       id: json['id'] as String,
       mingguanKe: json['mingguanKe'] as int?,
       tanggalMulai: json['tanggalMulai'] != null
-          ? DateTime.tryParse(json['tanggalMulai'] as String)
+          ? DateTime.tryParse(json['tanggalMulai'] as String)?.toLocal()
           : null,
       tanggalSelesai: json['tanggalSelesai'] != null
-          ? DateTime.tryParse(json['tanggalSelesai'] as String)
+          ? DateTime.tryParse(json['tanggalSelesai'] as String)?.toLocal()
           : null,
       createdAt: json['createdAt'] != null
-          ? DateTime.tryParse(json['createdAt'] as String)
+          ? DateTime.tryParse(json['createdAt'] as String)?.toLocal()
           : null,
       updatedAt: json['updatedAt'] != null
-          ? DateTime.tryParse(json['updatedAt'] as String)
+          ? DateTime.tryParse(json['updatedAt'] as String)?.toLocal()
           : null,
       dapurId: json['dapurId'] as String?,
       sekolahId: json['sekolahId'] as String?,

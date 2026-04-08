@@ -70,10 +70,10 @@ class DapurKaryawanModel {
           ? KaryawanStatus.values.firstWhere((e) => e.name == json['status'])
           : null,
       createdAt: json['createdAt'] != null
-          ? DateTime.tryParse(json['createdAt'] as String)
+          ? DateTime.tryParse(json['createdAt'] as String)?.toLocal()
           : null,
       updatedAt: json['updatedAt'] != null
-          ? DateTime.tryParse(json['updatedAt'] as String)
+          ? DateTime.tryParse(json['updatedAt'] as String)?.toLocal()
           : null,
       dapurSummary: json['dapur'] != null
           ? KaryawanDapurSummary.fromJson(json['dapur'] as Map<String, dynamic>)
